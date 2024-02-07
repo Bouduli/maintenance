@@ -4,9 +4,15 @@
   "description": "Axamini - Axami-Mini : a system for administering maintenance of (houses/products/machinery)",
   "main": "index.js",
   "scripts": {
-    "dev" : "nodemon index",
-    "start" : "node index"
+    "dev": "nodemon index",
+    "start": "node index"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
 }
