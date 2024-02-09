@@ -35,3 +35,4 @@ Dessutom skulle det vara bra att faktiskt säkerställa att epost-addresser som 
 En separat katalog i projektet har skapats där allt som har med databasen att göra, inklusive GPT prompts och eventuella skisser och tanke-dokument skall äga rum. Huvudsakligen skall denna katalog användas för att innehålla en backup av databasens struktur (inklusive sub-routines) **när en sådan väl har färdigställts.**
 
 **Sidenote:** *Detta dokument har påbörjats.*
+**P.S:** det är inte kul att försöka ångra sina commits och försöka få snyggare historik.
