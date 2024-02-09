@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS House;
+CREATE TABLE House (
+    houseID INT AUTO_INCREMENT PRIMARY KEY,
+    userID INT,
+    address VARCHAR(255) NOT NULL,
+    FOREIGN KEY (userID) REFERENCES Users(userID)
+);
