@@ -5,7 +5,9 @@ CREATE TABLE Contractors (
     occupation VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL
 );
-DELIMITER $$
+
+
+/* DELIMITER $$
 
 CREATE TRIGGER check_email_format
 BEFORE INSERT ON Contractors, 
@@ -18,3 +20,4 @@ BEGIN
 END$$
 
 DELIMITER ;
+ */
