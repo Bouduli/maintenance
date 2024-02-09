@@ -1,0 +1,37 @@
+# Loggbok
+*Detta är en loggbok över projektets förlopp, vars syfte är att ha dokumenterat (nästan) hela projektet från start(\*) till finish*
+
+### Onsdag 07/02
+Projektet inleds, en beskrivning av uppgiften fås av Fredric, och tankar över upplägg och struktur genomtänks. 
+
+**Funderingar över en tech-stack resulterar ungefär i:**
+- **Server:** NodeJS + Express
+- **Front-end:** Svelte
+- **Databas:** MySQL - koppling till server med en ORM eller driver (mysql2)
+
+Valet av server motiveras i den mån att jag är van vid att skriva back-end med Express. Därför känner jag att jag rimligtvis kommer kunna skriva och hantera en API, mer än jag hade förhållandevis kunnat med Go+Fiber eller Rust+Axum.
+
+PHP har säkert sina fördelar med att möjligheten att vara hårt typat, samtidigt som det kan vara smidigt för att komma igång också. Dock ser jag några fallgropar med att använda PHP för denna API, nämligen:
+- **Jag vill kunna skriva explicita `DELETE`, `PUT` och `PATCH` routes** - vilket PHP och 'ramverket' för routing jag hade valt (*[php-router](https://phprouter.com/)*)
+- Jag tycker om friheten i att välja individuella npm paket och moduler för att fylla mina ändamål - medan PHP ger en det mesta
+- PHPs variabel-scoping, där mina variabler inte kan 'läcka in' i ett mindre scope. 
+
+### Torsdag 08/02
+Planer över min databas-struktur funderas över och mina krav promptas till ChatGPT för att ge mig en huvudsaklig databas-struktur.
+Huvudsakligen skall data lagras i tabellerna:
+- Users
+- Houses
+- Tasks
+- Contractors
+- Contractor_Tasks
+
+**Users** och **Contractors** tabellerna skall huvudsakligen innehålla kontaktuppgifter, såsom epost, namn och telefonnummer. Eftersom User skall använda stateful login skall denna tabelle också innehålla ett *password-hash*, därför skall även en lösning för detta att implementeras på servern. Då Contractors skall använda passwordless-inloggning skall den tabellen inte inehålla någon hash, samtidigt som JWT och en Epost-klient behöver implementeras på servern.
+
+### Fredag 09/02
+*Fortsatt grubblande över databas-struktur...*
+
+Dessutom skulle det vara bra att faktiskt säkerställa att epost-addresser som skickas in till servern faktiskt är epost-adresser. Herr ChatGPT har promptas för hur detta kan implementeras i databasen, dock skulle det säkert kunna räcka, och vara bättre om detta kollas på servern först...
+
+En separat katalog i projektet har skapats där allt som har med databasen att göra, inklusive GPT prompts och eventuella skisser och tanke-dokument skall äga rum. Huvudsakligen skall denna katalog användas för att innehålla en backup av databasens struktur (inklusive sub-routines) **när en sådan väl har färdigställts.**
+
+**Sidenote:** *Detta dokument har påbörjats.*
