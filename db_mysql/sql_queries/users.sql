@@ -5,7 +5,7 @@ CREATE TABLE Users (
     email VARCHAR(255) NOT NULL
 );
 
-DELIMITER $$
+/* DELIMITER $$
 
 CREATE TRIGGER check_email_format
 BEFORE INSERT ON Users 
@@ -18,4 +18,4 @@ BEGIN
 END 
 $$
 
-DELIMITER ;
+DELIMITER ; */
