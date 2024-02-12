@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS Images;
+
+CREATE TABLE Images(
+    imageID INT AUTO_INCREMENT PRIMARY KEY,
+    houseID INT,
+    filePath VARCHAR(255),
+    FOREIGN KEY (houseID) REFERENCES House(houseID)
+);

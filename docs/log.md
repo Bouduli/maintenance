@@ -36,3 +36,14 @@ En separat katalog i projektet har skapats där allt som har med databasen att g
 
 **Sidenote:** *Detta dokument har påbörjats.*
 **P.S:** det är inte kul att försöka ångra sina commits och försöka få snyggare historik.
+
+### Måndag 12/02
+dagens tankar: 
+- **Bilder? -** Lagra filer separat på servern (NodeJS FS) och spara filepath med I en separat SQL tabell. som är typ: 
+```sql
+    DROP TABLE IF EXISTS Images
+    imageID INT AUTO_INCREMENT PRIMARY KEY,
+    houseID INT,
+    filePath VARCHAR(255),
+    FOREIGN KEY (houseID) REFERENCES House(houseID)
+```
