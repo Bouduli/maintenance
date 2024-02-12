@@ -47,3 +47,4 @@ dagens tankar:
     filePath VARCHAR(255),
     FOREIGN KEY (houseID) REFERENCES House(houseID)
 ```
+- QueryBuilder till Mysql. 

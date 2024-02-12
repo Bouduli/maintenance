@@ -7,6 +7,8 @@ app.use(express.urlencoded({
     extended:true
 }));
 
+const db = require("./db");
+
 
 const PORT = process.env.PORT || 12345; 
 app.listen(PORT, (err)=>{
@@ -27,8 +29,9 @@ houseRouter.get("/", (req,res)=>{
         hello:"world"
     });
 });
-houseRouter.post("/", (req,res)=>{
-    res.status(200).json(req.body);
+houseRouter.post("/", async (req,res)=>{
+    const stuff = await db.find();
+    res.status(200).json(stuff);
 })
 
 app.use("/house",houseRouter);
