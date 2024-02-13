@@ -22,16 +22,18 @@ async function init(){
 
 }
 
-async function find(table, where){
+async function select(table, where=""){
     return new Promise(async function(resolve, reject){
         
         const con = await pool.getConnection();
         try {
             const sql = `SELECT * FROM ${table} ${where};`
-
+            console.log("sql @ select: ", sql);
             const data = await con.query(sql);
 
-            
+            console.log("data @select: ", data);
+
+
             pool.releaseConnection(con)
             return resolve(data[0]);
 
@@ -43,7 +45,7 @@ async function find(table, where){
     
 }
 
-async function insert(table, object){
+/* async function insert(table, object){
     return new Promise(async function(resolve, reject){
         const con = await pool.getConnection();
 
@@ -60,7 +62,7 @@ async function insert(table, object){
             return reject(err)
         }
     })
-}
+} */
 async function insertHouse(house){
     return new Promise(async function(resolve, reject){
         const con = await pool.getConnection();
@@ -88,4 +90,7 @@ async function insertHouse(house){
 
 
 
-module.exports = {init, find, insertHouse};
+
+
+
+module.exports = {init, select, insertHouse};
