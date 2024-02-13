@@ -78,13 +78,35 @@ async function insertHouse(house){
             return resolve(data[0].insertedId);
 
         } catch (err) {
-            // pool.releaseConnection(con);
+
+            pool.releaseConnection(con);
             return reject(err)
         }
     });
 
 };
 
+async function deleteHouse(id){
+
+   return new Promise(async function(resolve, reject){   
+        const con = await pool.getConnection();
+
+        try {
+            const sql = "DELETE FROM Houses WHERE houseID = ?"
+            const data = await con.query(sql, [id]);
+            // console.log("data @deleteHouse : ", data);
+
+            pool.releaseConnection(con);
+
+            return resolve(data[0]);
+        } catch (err) {
+            
+            pool.releaseConnection(con);
+
+            return reject(err);
+        }
+   })
+}
 
 
 
@@ -93,4 +115,6 @@ async function insertHouse(house){
 
 
 
-module.exports = {init, select, insertHouse};
+
+
+module.exports = {init, select, insertHouse, deleteHouse};
