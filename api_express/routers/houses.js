@@ -35,7 +35,7 @@ router.get("/:id", async(req,res)=>{
 
     } catch (err) {
 
-        console.log("Error @ GET/:id: ",err);
+        console.log("Error @ GET/houses/:id - ",err);
         return res.status(500).json(err);
     }
 });
@@ -91,7 +91,7 @@ router.post("/", async(req,res)=>{
 })
 
 
-//destroy
+/* //destroy
 router.delete("/:id", async (req,res)=>{
     try {
         
@@ -113,7 +113,33 @@ router.delete("/:id", async (req,res)=>{
         return res.status(500).json(err);
     }
 
-});
+}); */
+
+//destroy
+router.delete("/q/:id", async (req,res)=>{
+
+try {
+    const {id} = req.params;
+    if(!id) return res.status(400).json({
+        error: "no id provided for delete"
+    });
+
+    const sql = "DELETE FROM Houses WHERE houseID = ?";
+    const data = await db.query(sql, [id]);
+
+    if (!data.affectedRows) return res.status(404).json({
+        error:"resource with specified id could not be found",
+        id
+    });
+
+    return res.status(200).json(data);
+
+} catch (err) {
+    console.log("Error @ DELETE/houses/q/:id - ", err);
+    return res.status(500).json(err);
+}
+
+})
 
 //update
 router.put("/:id", async (req,res)=>{
@@ -153,14 +179,14 @@ router.put("/:id", async (req,res)=>{
         return res.status(200).json({success:true, id: id});
 
     } catch (err) {
-        console.log("error @QPutHouse", err);
+        console.log("Error @ PUT/houses/:id - ", err);
 
         return res.status(500).json({err});
     }
 })
 
-//update
-/* router.put("/:id", async (req,res)=>{
+/*//update
+router.put("/:id", async (req,res)=>{
 
     try {
         const {id} = req.params;
