@@ -41,13 +41,16 @@ router.get("/:id", async(req,res)=>{
 });
 
 //create
-router.post("/", async (req,res)=>{
+/* router.post("/", async (req,res)=>{
     try {
         const {address, userID} = req.body;
         if( !address ||  !userID) return res.status(400).json({
             error: "userID or address not provided",
             userID, address
         });
+
+        const sql = await db.inserter("houses", {address, userID});
+        console.log("insertersql: ",sql)
     
         const insertedId = await db.insertHouse( {address, userID});
         return res.status(201).json({
@@ -63,7 +66,30 @@ router.post("/", async (req,res)=>{
         console.log(err);
         return res.status(500).json(err);
     }
+}) */
+
+//create 
+router.post("/", async(req,res)=>{
+    try {
+        const {address, userID, description, name} = req.body;
+
+        if(!address || !userID) return res.status(400).json({
+            error:"userID and address must be provided",
+            userID : userID || null,
+            address : address || null,
+        });
+
+        const sql = "INSERT INTO Houses (userID, address, description, name) VALUES (?,?,?)";
+        const data = await db.query(sql, [userID, address, description||null, name||null]); 
+
+        return res.status(201).json({id: data.insertedId});
+    } catch (err) {
+        console.log(err);
+
+        return res.status(500).json(err);
+    }
 })
+
 
 //destroy
 router.delete("/:id", async (req,res)=>{
@@ -89,6 +115,7 @@ router.delete("/:id", async (req,res)=>{
 
 });
 
+//update
 router.put("/:id", async (req,res)=>{
 
     try {
@@ -99,7 +126,7 @@ router.put("/:id", async (req,res)=>{
             error: "no id provided for update"
         });
 
-        const data = await db.updateHouse(id, {userID, address, name, description});
+        const data = await db.house.update(id, {userID, address, name, description});
 
         return res.status(200).json(data);
 
