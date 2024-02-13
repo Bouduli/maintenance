@@ -7,6 +7,8 @@ app.use(express.urlencoded({
     extended:true
 }));
 
+const db = require("./db");
+
 
 const PORT = process.env.PORT || 12345; 
 app.listen(PORT, (err)=>{
@@ -18,19 +20,9 @@ app.get("/", (req,res)=>{
     res.status(200).send("Hello World")
 })
 
-//#region houserouter
-
-const houseRouter = express.Router();
-
-houseRouter.get("/", (req,res)=>{
-    res.status(200).json({
-        hello:"world"
-    });
-});
-houseRouter.post("/", (req,res)=>{
-    res.status(200).json(req.body);
-})
-
+const houseRouter = require("./routers/houses");
 app.use("/house",houseRouter);
 
-//#endregion
+
+const taskRouter = require("./routers/tasks");
+app.use("/tasks", taskRouter);

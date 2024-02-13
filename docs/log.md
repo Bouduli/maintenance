@@ -47,3 +47,15 @@ dagens tankar:
     filePath VARCHAR(255),
     FOREIGN KEY (houseID) REFERENCES House(houseID)
 ```
+- QueryBuilder till Mysql. 
+
+### Tisdag 13/02
+Dagens saker:
+- Querybuilder abandonas i stunden, med motivering att jag behöver komma igång med att göra en säker och funktionell api. 
+- Api-Routes och databas funktioner håller på att skrivas för Houses och Tasks. 
+
+**Plan för framtiden är:** 
+1. Skapa alla routes (och hårdkodade databasfunktioner) för att uppfylla all funktionalitet
+2. Fixa filuppladdning och strukturera det på något vettigt sett. 
+3. Säkra upp systemet med Stateful authentication för SuperAdmins och kunder, och PWL för contractors. 
+4. Skapa gränssnitt med Svelte.
