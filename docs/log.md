@@ -59,3 +59,20 @@ Dagens saker:
 2. Fixa filuppladdning och strukturera det på något vettigt sett. 
 3. Säkra upp systemet med Stateful authentication för SuperAdmins och kunder, och PWL för contractors. 
 4. Skapa gränssnitt med Svelte.
+
+Har strukturerat om routers, för nu började index bli väldigt stor.
+
+Generellt gäller följande struktur:
+
+```
+~api_express/
+    index.js
+    db.js
+    routers/
+        | houses.js
+        | tasks.js
+        | contractors.js
+    
+    
+
+```
