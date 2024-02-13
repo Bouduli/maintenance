@@ -30,8 +30,19 @@ houseRouter.get("/", (req,res)=>{
     });
 });
 houseRouter.post("/", async (req,res)=>{
-    const stuff = await db.find();
-    res.status(200).json(stuff);
+    try {
+        const {address, userID} = req.body;
+        if( !address ||  !userID) return res.status(400).json({
+            error: "userID or address not provided",
+            userID, address
+        });
+    
+        const stuff = await db.insertHouse( {address, userID});
+        return res.status(200).json(stuff);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json(err);
+    }
 })
 
 app.use("/house",houseRouter);

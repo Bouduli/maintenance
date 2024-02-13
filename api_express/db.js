@@ -22,13 +22,14 @@ async function init(){
 
 }
 
-async function find(q=""){
+async function find(table, where){
     return new Promise(async function(resolve, reject){
         
         const con = await pool.getConnection();
         try {
-            const sql = "SELECT * FROM Houses";
-            const data = con.query(sql);
+            const sql = `SELECT * FROM ${table} ${where};`
+
+            const data = await con.query(sql);
 
             
             pool.releaseConnection(con)
@@ -46,25 +47,45 @@ async function insert(table, object){
     return new Promise(async function(resolve, reject){
         const con = await pool.getConnection();
 
-        try {
-            const sql = "INSERT INTO ? ("
+        object = {
+            userID: 1,
+            adress: "Vattugatan 8"
+        }
 
+        try {
+            const sql = `INSERT INTO ${table} ${Object.keys(object).map(k=>k+",")} VALUES(${Object.keys(object).map(k=>"?")})`
+            console.log(sql);
         } catch (err) {
-            pool.releaseConnection(con);
+            // pool.releaseConnection(con);
             return reject(err)
         }
     })
 }
+async function insertHouse(house){
+    return new Promise(async function(resolve, reject){
+        const con = await pool.getConnection();
+    
+
+        try {
+            const sql = `INSERT INTO houses (userID, address) VALUES (?,?)`;
+
+            const data = await con.query(sql, [house.userID, house.address]);
+            console.log(data[0]);
+            pool.releaseConnection(con);
+
+            return resolve(data[0].insertedId);
+
+        } catch (err) {
+            // pool.releaseConnection(con);
+            return reject(err)
+        }
+    });
+
+};
 
 
-class QueryBuilder{
-    constructor(){
-        this.type ="",
-        this.table = "",
-        this.values = "",
-        this.where="",
-        
-    }
-}
 
-module.exports = {init, find};
+
+
+
+module.exports = {init, find, insertHouse};
