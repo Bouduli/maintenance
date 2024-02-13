@@ -166,17 +166,7 @@ async function insertTask(task){
 //#endregion
 
 
-function inserter(table, obj){
-    return `INSERT INTO ${table} (${Object.keys(obj).join(' , ')}) VALUES (${Object.keys(obj).map(e=>'?').join(',')})`
-}
 
-function deleter(table, where){
-    const sql = `DELETE FROM ${table} WHERE ${where}`;
-    return sql;
-}
-function updater(table, obj, where){
-    const select_sql = `SELECT * FROM ${table} WHERE ${where} `
-}
 async function QueryBuilder(method, table, obj){
 
     let sql;

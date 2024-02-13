@@ -74,3 +74,5 @@ Generellt gäller följande struktur:
         | tasks.js
         | contractors.js
 ```
+
+**Ett säkert\* sätt att skicka och minska boilerplaten som skickas har skapats:** - En funktion tar emot en SQL query, och skickar eventuella props. SQL queryn skrivs av caller-funktionen, och är på så sätt validerad från callern - På så sätt kommer inte felaktiga/farliga request kunna uppstå av en användares input, eftersom detta direkt inte påverkar hur queryn ser ut. 
