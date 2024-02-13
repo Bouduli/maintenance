@@ -87,6 +87,27 @@ router.delete("/:id", async (req,res)=>{
         return res.status(500).json(err);
     }
 
+});
+
+router.put("/:id", async (req,res)=>{
+
+    try {
+        const {id} = req.params;
+        const {userID, address, name, description} = req.body;
+
+        if(!id) return res.status(400).json({
+            error: "no id provided for update"
+        });
+
+        const data = await db.updateHouse(id, {userID, address, name, description});
+
+        return res.status(200).json(data);
+
+
+    } catch (err) {
+        console.log("err @housePut: ",err);
+        return res.status(500).json(err);
+    }
 })
 
 

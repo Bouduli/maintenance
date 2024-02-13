@@ -52,7 +52,8 @@ dagens tankar:
 ### Tisdag 13/02
 Dagens saker:
 - Querybuilder abandonas i stunden, med motivering att jag behöver komma igång med att göra en säker och funktionell api. 
-- Api-Routes och databas funktioner håller på att skrivas för Houses och Tasks. 
+- Api-Routes och databas funktioner håller på att skrivas för Houses och Tasks.-
+- databas kanske skall struktureras om (?) för att den börjar bli jobbig nu.
 
 **Plan för framtiden är:** 
 1. Skapa alla routes (och hårdkodade databasfunktioner) för att uppfylla all funktionalitet
@@ -72,7 +73,4 @@ Generellt gäller följande struktur:
         | houses.js
         | tasks.js
         | contractors.js
-    
-    
-
 ```
