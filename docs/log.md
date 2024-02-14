@@ -80,4 +80,5 @@ Generellt gäller följande struktur:
 ### Onsdag 14/02
 Dagens saker: 
 - Alla handlers för Houses använder just nu `db.query()` för att skicka sina requests och minimera boilerplate för databasen. 
-- städa upp db.js
+- `db.js` är städad, och innehåller nu bara `query()`.
+- Alla handlers för task är klara och färdiga. 
