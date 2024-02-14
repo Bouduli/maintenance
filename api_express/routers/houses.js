@@ -7,12 +7,21 @@ const db = require("../db");
 //index
 router.get("/", async (req,res)=>{
     try {
-        const data = await db.select("houses");
+        const data = await db.query("SELECT * FROM HOUSES");
 
-        res.status(200).json(data);
+        if(!data.length) return res.status(404).json({
+            error:"not found"
+        })
+        
+        return res.status(200).json({
+            content: data
+        });
         
     } catch (err) {
-        return res.status(500).json(err);
+        console.log("Error @ GET/houses - ", err);
+        return res.status(500).json({
+            error: "The operation failed"
+        });
     }
 });
 
@@ -26,47 +35,24 @@ router.get("/:id", async(req,res)=>{
 
 
 
-        const data = await db.select("houses", `WHERE houseID = ${id}`);
+        const data = await db.query("SELECT * FROM Houses WHERE houseID = ?", [id]);
 
         if(!data.length) return res.status(404).json({error: "House not found with the id provided", id});
 
-        return res.status(200).json(data);
+        return res.status(200).json({
+            content:data
+        });
 
 
     } catch (err) {
 
         console.log("Error @ GET/houses/:id - ",err);
-        return res.status(500).json(err);
+        return res.status(500).json({
+            error: "the operation failed unexpectedly."
+        });
     }
 });
 
-//create
-/* router.post("/", async (req,res)=>{
-    try {
-        const {address, userID} = req.body;
-        if( !address ||  !userID) return res.status(400).json({
-            error: "userID or address not provided",
-            userID, address
-        });
-
-        const sql = await db.inserter("houses", {address, userID});
-        console.log("insertersql: ",sql)
-    
-        const insertedId = await db.insertHouse( {address, userID});
-        return res.status(201).json({
-            insertedId, 
-            house:{
-                address,
-                userID
-            }
-        });
-
-
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json(err);
-    }
-}) */
 
 //create 
 router.post("/", async(req,res)=>{
@@ -79,44 +65,21 @@ router.post("/", async(req,res)=>{
             address : address || null,
         });
 
-        const sql = "INSERT INTO Houses (userID, address, description, name) VALUES (?,?,?)";
+        const sql = "INSERT INTO Houses (userID, address, description, name) VALUES (?,?,?,?)";
         const data = await db.query(sql, [userID, address, description||null, name||null]); 
 
-        return res.status(201).json({id: data.insertedId});
+        return res.status(201).json({content: {id: data.insertId}});
     } catch (err) {
         console.log(err);
 
-        return res.status(500).json(err);
+        return res.status(500).json({error: "operation failed"});
     }
 })
 
 
-/* //destroy
-router.delete("/:id", async (req,res)=>{
-    try {
-        
-        const {id} = req.params;
-
-        if(!id) return res.status(400).json({
-            error:"no id provided for delete"
-        });
-
-        const sql = "DELETE FROM Houses WHERE houseID = ?";
-        const data = await db.deleteHouse(id);
-
-        // console.log("data @ deleteRoute: ", data);
-
-        return res.status(200).json(data);
-
-    } catch (err) {
-        console.log("error @ deleteRoute: ", err);
-        return res.status(500).json(err);
-    }
-
-}); */
 
 //destroy
-router.delete("/q/:id", async (req,res)=>{
+router.delete("/:id", async (req,res)=>{
 
 try {
     const {id} = req.params;
@@ -132,11 +95,13 @@ try {
         id
     });
 
-    return res.status(200).json(data);
+    return res.status(200).json({content: data});
 
 } catch (err) {
     console.log("Error @ DELETE/houses/q/:id - ", err);
-    return res.status(500).json(err);
+    return res.status(500).json({
+        error:"operation failed unexpectedly"
+    });
 }
 
 })
@@ -174,41 +139,18 @@ router.put("/:id", async (req,res)=>{
         const update_sql = "UPDATE houses SET userID = ?, address = ?, name = ?, description = ? WHERE houseID = ?";
         const data = await db.query(update_sql, [updated.userID, updated.address, updated.name, updated.description, updated.houseID]);
         if(!data.changedRows) return res.status(304).json({
-            message: "nothing changed",
+            error: "nothing changed",
             id
         });
-        console.log(data);
+        // console.log(data);
 
-        return res.status(200).json({success:true, id: id});
+        return res.status(200).json({content: {id: id} });
 
     } catch (err) {
         console.log("Error @ PUT/houses/:id - ", err);
 
-        return res.status(500).json({err});
+        return res.status(500).json({error: "operation failed"});
     }
 })
-
-/*//update
-router.put("/:id", async (req,res)=>{
-
-    try {
-        const {id} = req.params;
-        const {userID, address, name, description} = req.body;
-
-        if(!id) return res.status(400).json({
-            error: "no id provided for update"
-        });
-
-        const data = await db.house.update(id, {userID, address, name, description});
-
-        return res.status(200).json(data);
-
-
-    } catch (err) {
-        console.log("err @housePut: ",err);
-        return res.status(500).json(err);
-    }
-}) */
-
 
 module.exports = router;
