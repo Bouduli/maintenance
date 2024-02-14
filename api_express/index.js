@@ -25,4 +25,4 @@ app.use("/house",houseRouter);
 
 
 const taskRouter = require("./routers/tasks");
-app.use("/tasks", taskRouter);
+app.use("/task", taskRouter);
