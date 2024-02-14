@@ -30,6 +30,7 @@ router.get("/:id", async (req,res)=>{
     try {
         const {id} = req.params;
 
+        //empty id should not be the case, if the endpoint is reached
         if(!id) return res.status(400).json({
             error:"no id provided"
         });
@@ -40,7 +41,7 @@ router.get("/:id", async (req,res)=>{
             error: "no task found with the provided id",
             id
         })
-
+        
         return res.status(200).json({
             content: data
         });
@@ -51,6 +52,34 @@ router.get("/:id", async (req,res)=>{
         return res.status(500).json(err);
     }
 });
+
+//create 
+router.post("/", async (req,res)=>{
+    try {
+        
+        const {houseID, description} = req.body;
+
+        if(!houseID || !description) return res.status(400).json({
+            error:"Either houseID or description was not provided",
+            //if it is undefined, then it is written out as null in the response object. claritys sake
+            id: houseID || null,
+            description: description|| null
+        });
+        const sql = "INSERT INTO tasks (houseID, description) VALUES (?,?)";
+        const data = await db.query(sql, [houseID, description]);
+
+        return res.status(201).json({content:{id: data.insertId} });
+
+    } catch (err) {
+        console.log("Err @ POST/tasks : ", err);
+        return res.status(500).json({
+            error: "operation failed"
+        })
+    }
+
+})
+
+
 
 
 module.exports = router;
