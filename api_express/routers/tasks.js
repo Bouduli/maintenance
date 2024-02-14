@@ -41,7 +41,7 @@ router.get("/:id", async (req,res)=>{
             error: "no task found with the provided id",
             id
         })
-        
+
         return res.status(200).json({
             content: data
         });
@@ -77,6 +77,35 @@ router.post("/", async (req,res)=>{
         })
     }
 
+})
+
+//destroy
+router.delete("/:id", async(req,res)=>{
+    try {
+        
+        const {id} = req.params;
+
+        const sql = "DELETE FROM tasks WHERE taskID = ?";
+        const data = await db.query(sql, [id]);
+
+        if(!data.affectedRows) return res.status(404).json({
+            error:"not found",
+            id
+        });
+
+        return res.status(200).json({
+            content: {
+                message: "successfully deleted task",
+                id: id
+            }
+        });
+    } catch (err) {
+        console.log("Err @ DELETE/tasks/:id  : ", err);
+        return res.status(500).json({
+
+            error : "operation failed"
+        });
+    }
 })
 
 
