@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
     service:"gmail",
     auth:{
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        pass: process.env.EMAIL_PW
     }
 });
 
@@ -27,7 +27,8 @@ async function send(address){
         };
     
         transporter.sendMail(headers, (err,info)=>{
-
+            console.log("Err: ", err);
+            console.log("info: ", info)
             if(err) return reject(err);
             if(info) return resolve(info);
         })
