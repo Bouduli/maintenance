@@ -8,7 +8,7 @@ app.use(express.urlencoded({
 }));
 
 const db = require("./db");
-
+const email = require("./email")
 
 const PORT = process.env.PORT || 12345; 
 app.listen(PORT, (err)=>{
@@ -16,8 +16,22 @@ app.listen(PORT, (err)=>{
     console.log("Server at http://localhost:"+ PORT)
 });
 
-app.get("/", (req,res)=>{
-    res.status(200).send("Hello World")
+app.get("/", async (req,res)=>{
+
+    try {
+        const info = await email.send("oliverbertil2@gmail.com");
+        return res.status(200).json({
+
+            content:{
+                info: info
+            }
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            error: "email failed"
+        })
+    }
 })
 
 const houseRouter = require("./routers/houses");
