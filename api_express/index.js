@@ -20,7 +20,8 @@ app.listen(PORT, (err)=>{
 app.get("/", async (req,res)=>{
 
     try {
-        const info = await email.send(process.env.EMAIL_TEST_RECIPIENT);
+        // const info = await email.send(process.env.EMAIL_TEST_RECIPIENT);
+        const info = "hi bro";
         res.status(200).json({
 
             content:{
