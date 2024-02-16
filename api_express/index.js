@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 
 const app = express();
 
@@ -19,14 +20,14 @@ app.listen(PORT, (err)=>{
 app.get("/", async (req,res)=>{
 
     try {
-        const info = await email.send("oliverbertil2@gmail.com");
-        return res.status(200).json({
+        const info = await email.send(process.env.EMAIL_TEST_RECIPIENT);
+        res.status(200).json({
 
             content:{
                 info: info
             }
         });
-
+        
     } catch (err) {
         return res.status(500).json({
             error: "email failed"
