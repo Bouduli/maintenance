@@ -1,8 +1,7 @@
 // module.exports = {send}
-
 const nodemailer = require("nodemailer");
 
-
+//make sure that env variables are present in .env file, and that require("dotenv").config() is ran at startup.
 const transporter = nodemailer.createTransport({
 
     service:"gmail",
