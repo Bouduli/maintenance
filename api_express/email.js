@@ -44,6 +44,8 @@ async function send(address){
  */
 async function sendHttpMail(email, content){
     return new Promise(function(resolve,reject){
+
+        //Kinda hardcoded html content for sending a message. 
         const html = 
         `<body><header><h1>${content.Header}</h1></header><main><p>${content.Body}</p></main>`
             + (content.Footer? `<footer><i>${content.Footer}</i></footer>` : "" )+ 
@@ -66,7 +68,7 @@ async function sendHttpMail(email, content){
 
     })
 }
-//testing the email client. 
+/* //testing the email client. 
 (async ()=>{
     let email = process.env.EMAIL_TEST_RECIPIENT;
 
@@ -81,5 +83,5 @@ async function sendHttpMail(email, content){
     console.log(data);
 
 
-})();
+})(); */
 module.exports = {send}
