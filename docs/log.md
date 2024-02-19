@@ -84,4 +84,4 @@ Dagens saker:
 - Alla handlers för task är klara och färdiga. 
 
 ### Måndag 19/02
-*Contractors.js*
+*Contractors.js - ännu en router*
