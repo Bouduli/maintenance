@@ -82,3 +82,6 @@ Dagens saker:
 - Alla handlers för Houses använder just nu `db.query()` för att skicka sina requests och minimera boilerplate för databasen. 
 - `db.js` är städad, och innehåller nu bara `query()`.
 - Alla handlers för task är klara och färdiga. 
+
+### Måndag 19/02
+*Contractors.js - ännu en router*
