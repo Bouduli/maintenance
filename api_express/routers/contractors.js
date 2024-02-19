@@ -63,6 +63,40 @@ router.get("/:id", async (req,res)=>{
 
 })
 
+//create
+router.post("/", async(req,res)=>{
 
+    try {
+        
+        const {name, occupation, email, phone} = req.body;
+        
+        if(!name || !occupation, !email, !phone) return res.status(400).json({
+            error:"One or more parameters not provided",
+            name: name || null,
+            occupation : occupation || null,
+            email : email || null,
+            phone : phone  || null
+        });
+
+        const sql = "INSERT INTO contractors (name, occupation, email, phone) VALUES (?,?,?,?)";
+        const data = await db.query(sql, [name, occupation, email, phone]);
+
+        if (!data.insertId) return res.status(400).json({
+            //shouldnt't be malformed tho
+            error:"insertion was unsucessful due to a malformed request",
+            name: name || null,
+            occupation : occupation || null,
+            email : email || null,
+            phone : phone  || null
+        });
+
+        return res.status(201).json({ content: {id: data.insertId} })
+
+    } catch (err) {
+        console.log("err @ POST contractors/  : ", err);
+
+        return res.status(500).json({error:"internal server error"});
+    }
+})
 
 module.exports=router;
