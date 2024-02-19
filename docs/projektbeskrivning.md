@@ -41,3 +41,5 @@ Hantverkare och servicetekniker skall kunna registrera sig med en aktiveringslä
 - Passwordless inloggning (epost)
 - Lista och Uppdatera (med checkboxar, kommentarer) **Serviceärenden**  \[RU]
 - Skapa och Lista **Önskemål Till Serviceärenden** \[CR]
+
+

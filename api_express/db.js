@@ -3,6 +3,7 @@ const mysql = require("mysql2/promise");
 const pool = mysql.createPool({
     host:'localhost',
     user:'root',
+    password: process.env.MYSQL_PASS || "",
     database:'maintenance',
     waitForConnections:'true',
     connectionLimit:10,
@@ -22,99 +23,38 @@ async function init(){
 
 }
 
-async function select(table, where=""){
-    return new Promise(async function(resolve, reject){
-        
-        const con = await pool.getConnection();
+
+/**
+ * Fires a query to the MySQL database using a pre-written sql request with optional properties.
+ * @param {*} sql The query to send, preferably a prepared statement, with a '?'
+ * @param {*} props Optional properties to be provided when using prepared statements. 
+ * @returns Data when the operation is successful, otherwhise an error.
+ * 
+ * @example
+ * const h = { userId, address, description }
+ * const data = await db.query("INSERT INTO Houses (userID, address, description) VALUES (?,?,?)", [h.userID, h.address, h.description])
+ */
+async function query(sql, props=false){
+    return new Promise(async function(resolve, reject){   
+        const con = await pool.getConnection();    
         try {
-            const sql = `SELECT * FROM ${table} ${where};`
-            console.log("sql @ select: ", sql);
-            const data = await con.query(sql);
-
-            console.log("data @select: ", data);
-
-
-            pool.releaseConnection(con)
-            return resolve(data[0]);
-
-        } catch (err) {
-            pool.releaseConnection(con)
-            return reject(err)
-        }
-    });
-    
-}
-
-/* async function insert(table, object){
-    return new Promise(async function(resolve, reject){
-        const con = await pool.getConnection();
-
-        object = {
-            userID: 1,
-            adress: "Vattugatan 8"
-        }
-
-        try {
-            const sql = `INSERT INTO ${table} ${Object.keys(object).map(k=>k+",")} VALUES(${Object.keys(object).map(k=>"?")})`
-            console.log(sql);
-        } catch (err) {
-            // pool.releaseConnection(con);
-            return reject(err)
-        }
-    })
-} */
-async function insertHouse(house){
-    return new Promise(async function(resolve, reject){
-        const con = await pool.getConnection();
-    
-
-        try {
-            const sql = `INSERT INTO houses (userID, address) VALUES (?,?)`;
-
-            const data = await con.query(sql, [house.userID, house.address]);
-            console.log(data[0]);
-            pool.releaseConnection(con);
-
-            return resolve(data[0].insertedId);
-
-        } catch (err) {
-
-            pool.releaseConnection(con);
-            return reject(err)
-        }
-    });
-
-};
-
-async function deleteHouse(id){
-
-   return new Promise(async function(resolve, reject){   
-        const con = await pool.getConnection();
-
-        try {
-            const sql = "DELETE FROM Houses WHERE houseID = ?"
-            const data = await con.query(sql, [id]);
-            // console.log("data @deleteHouse : ", data);
-
-            pool.releaseConnection(con);
-
-            return resolve(data[0]);
-        } catch (err) {
             
+            const data = props? await con.query(sql, props) : await con.query(sql);
+
+            pool.releaseConnection(con);
+
+            return resolve(data[0]);
+            
+        } catch (err) {
+
+
             pool.releaseConnection(con);
 
             return reject(err);
-        }
-   })
+            
+        } 
+        
+        
+    })
 }
-
-
-
-
-
-
-
-
-
-
-module.exports = {init, select, insertHouse, deleteHouse};
+module.exports = {init,query};
