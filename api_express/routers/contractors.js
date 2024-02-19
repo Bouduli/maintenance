@@ -130,4 +130,56 @@ router.delete("/:id", async(req,res)=>{
 
 
 });
+
+//update
+router.put("/:id", async(req,res)=>{
+    try {
+        const {id} = req.params;
+        const {name, occupation, email, phone} = req.body;
+    
+        if(!id) return res.status(400).json({
+            error: "No id provided for update"
+        });
+    
+        //find old resource, to make sure that an update can take place.
+        const find_sql = "SELECT * FROM contractors WHERE contractorID = ?";
+        const found = await db.query(find_sql, [id]); 
+        if (!found.length) return res.status(404).json({
+            error: "A resource with the specified id could not be found",
+            id
+        });
+
+        //contractor should be unique, therefore first index,
+        const old = found[0];
+
+        const updated = {
+            contractorID : old.contractorID,
+            name : name || old.name,
+            occupation : occupation || old.occupation,
+            email : email || old.email,
+            phone : phone || old.phone
+        }
+
+        const update_sql = "UPDATE contractors SET name=?, occupation=?, email=?, phone=? WHERE contractorID = ?"
+        const data = await db.query(update_sql, [updated.name, updated.occupation, updated.email, updated.phone, id]);
+        
+        if(!data.changedRows) return res.status(304).json({
+            error: "nothing changed",
+            id
+        });
+
+        return res.status(200).json({
+            content: {
+                id: id
+            }
+        });
+
+    } catch (err) {
+        console.log("err @ PUT/contractors/:id  : ", err);
+
+        return res.status(500).json({
+            error:"internal server error"
+        })
+    }
+})
 module.exports=router;
