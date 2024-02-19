@@ -99,4 +99,35 @@ router.post("/", async(req,res)=>{
     }
 })
 
+//destroy
+router.delete("/:id", async(req,res)=>{
+
+    try {
+        const {id} = req.params;
+    
+        if(!id) return res.status(400).json({
+            error:"id not provided for delete"
+        });
+    
+        const data = await db.query("DELETE FROM contractors WHERE contractorID = ?", [id]);
+    
+        if(!data.affectedRows) return res.status(404).json({
+            error:"resource with specified id could not be found",
+            id
+        });
+    
+        return res.status(200).json({
+            data: data
+        });
+    
+    } catch (err) {
+        console.log("err @ DELETE/contractors/:id  : ", err);
+        
+        return res.status(500).json({
+            error:"internal server error"
+        });
+    }
+
+
+});
 module.exports=router;
