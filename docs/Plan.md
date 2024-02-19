@@ -12,7 +12,7 @@
 
 - [x] Router med CRUD för Fastigheter
 - [x] Router med CRUD för Tasks
-- [ ] Router med CRUD för Workers.
+- [x] Router med CRUD för Workers.
 - [ ] Stateful inloggning.
 
 ##### Workers
