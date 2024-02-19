@@ -59,3 +59,12 @@ Dagens saker:
 2. Fixa filuppladdning och strukturera det på något vettigt sett. 
 3. Säkra upp systemet med Stateful authentication för SuperAdmins och kunder, och PWL för contractors. 
 4. Skapa gränssnitt med Svelte.
+
+
+### Fredag 16/02
+Epost-klient har skapats med nodemailer...
+Och en plan.md har upprättats för att underlätta framtida arbete.
+
+### Måndag 16/02
+Epost-klienten har testats för Html funktionalitet.
+Funderar på att använda bilder med ett json fält, för varje 'sak' i databasen. 
