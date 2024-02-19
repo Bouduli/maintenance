@@ -1,3 +1,4 @@
+//module.exports=router
 const router = require("express").Router();
 
 const db = require("../db");
@@ -7,7 +8,7 @@ const db = require("../db");
 router.get("/", async(req,res)=>{
 
     try {
-        const data = db.query("SELECT * FROM contractors");
+        const data = await db.query("SELECT * FROM contractors");
         
         if(!data.length) return res.status(404).json({
             error: "not found"
@@ -38,7 +39,7 @@ router.get("/:id", async (req,res)=>{
         });
     
         const sql = "SELECT * FROM contractors WHERE contractorID = ?";
-        const data = db.query(sql, [id]);
+        const data = await db.query(sql, [id]);
     
         if(!data.length) return res.status(404).json({
             error:"resource not found with requested id",
@@ -61,3 +62,7 @@ router.get("/:id", async (req,res)=>{
 
 
 })
+
+
+
+module.exports=router;

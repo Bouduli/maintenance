@@ -4,6 +4,9 @@ CREATE TABLE Users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL
 );
+INSERT INTO users(name, email) VALUES
+('Oliver', 'oliver@oliver.se'),
+('erik', 'erik@erikurry.se')
 
 /* DELIMITER $$
 
