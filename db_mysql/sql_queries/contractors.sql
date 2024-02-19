@@ -5,7 +5,9 @@ CREATE TABLE Contractors (
     occupation VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL
 );
-
+INSERT INTO Contractors (name, occupation, email) VALUES
+('Linus Torvalds', 'Linux', 'linus@torvalds.fi'),
+('Adam Ahlgren', 'Plumber', 'adaahl0431@edu.halmstad.se')
 
 /* DELIMITER $$
 
