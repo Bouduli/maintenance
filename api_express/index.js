@@ -10,7 +10,8 @@ app.use(express.urlencoded({
 
 const fu = require("express-fileupload");
 const fs = require("fs");
-//Make sure that uploads folder exists. 
+
+//This makes sure that uploads folder exists. 
 if(!fs.existsSync('./uploads')){
 
     fs.mkdir("./uploads", (err)=>{
