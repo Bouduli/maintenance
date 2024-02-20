@@ -15,7 +15,7 @@ const fs = require("fs");
 if(!fs.existsSync('./uploads')){
 
     fs.mkdir("./uploads", (err)=>{
-        console.log(err);
+        if(err) console.log(err);
     })
 }
 
