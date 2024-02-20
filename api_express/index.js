@@ -10,6 +10,7 @@ app.use(express.urlencoded({
 
 const fu = require("express-fileupload");
 const fs = require("fs");
+const path = require("path")
 
 //This makes sure that uploads folder exists. 
 if(!fs.existsSync('./uploads')){
@@ -19,8 +20,7 @@ if(!fs.existsSync('./uploads')){
     })
 }
 
-
-app.use(express.static('uploads'));
+app.use("/static", express.static(path.join(__dirname,'uploads')));
 
 const PORT = process.env.PORT || 12345; 
 app.listen(PORT, (err)=>{
