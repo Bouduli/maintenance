@@ -85,3 +85,6 @@ Dagens saker:
 
 ### Måndag 19/02
 *Contractors.js - ännu en router*
+
+### Tisdag 20/02
+*Futtigt försök till att implementera FileUpload. - tänker istället gå över till access-control..*
