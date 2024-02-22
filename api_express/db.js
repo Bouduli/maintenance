@@ -1,26 +1,32 @@
 const mysql = require("mysql2/promise");
 
-const pool = mysql.createPool({
-    host:'localhost',
-    user:'root',
-    password: process.env.MYSQL_PASS || "",
-    database:'maintenance',
-    waitForConnections:'true',
-    connectionLimit:10,
-    maxIdle:10,
-    idleTimeout:60000,
-    queueLimit: 0,
-    enableKeepAlive:true,
-    keepAliveInitialDelay:0,
-});
-
-
+let pool;
 async function init(){
+    return new Promise(async function(resolve,reject){
+        try {
+            pool = mysql.createPool({
+                host:'localhost',
+                user:'root',
+                password: process.env.MYSQL_PASS || "",
+                database:'maintenance',
+                waitForConnections:'true',
+                connectionLimit:10,
+                maxIdle:10,
+                idleTimeout:60000,
+                queueLimit: 0,
+                enableKeepAlive:true,
+                keepAliveInitialDelay:0,
+            });
+            const testpool = await pool.getConnection();
+            pool.releaseConnection(testpool);
 
-    const con = pool.getConnection();
+            resolve(true);
+        } catch (err) {
+            console.log("err @ db.init() : ", err);
 
-    pool.releaseConnection(con);
-
+            reject(false);
+        }
+    })
 }
 
 

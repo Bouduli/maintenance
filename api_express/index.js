@@ -10,6 +10,15 @@ app.use(express.urlencoded({
 
 const db = require("./db");
 
+(async()=>{
+    try {
+        if(await db.init()) console.log("Database opened at 3306");
+
+    } catch {
+        console.log("Database could not be opened");
+        process.exit(1);
+    }
+})()
 
 const PORT = process.env.PORT || 12345; 
 app.listen(PORT, (err)=>{
