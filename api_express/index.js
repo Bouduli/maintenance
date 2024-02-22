@@ -30,3 +30,6 @@ app.use("/task", taskRouter);
 
 const contractorRouter = require("./routers/contractors");
 app.use("/contractor",contractorRouter);
+
+const authRouter = require("./routers/authentication");
+app.use("/auth", authRouter);
