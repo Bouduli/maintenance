@@ -32,10 +32,26 @@ router.post("/register", async(req,res)=>{
             email: email
         });
 
+        //validate that no user has taken that email.
         const select_sql = "SELECT * FROM USERS WHERE email = ?";
         const select_result = await db.query(select_sql, [email]);
+        if(select_result.length) return res.status(409).json({
+            error:"a user with that email already exists"
+        });
 
-        return res.status(200).json(select_result);
+        //makes a hash of the password
+        const hash = await bcrypt.hash(password, 12);
+
+        const insert_sql = "INSERT INTO users (name, email, hash) VALUES (?,?,?)";
+        const insert_data = await db.query(insert_sql, [name, email, hash]);
+
+        console.log(insert_data);
+        
+        return res.status(200).json({
+            content:{
+                id : insert_data.insertId
+            }
+        });
 
 
     } catch (err) {
