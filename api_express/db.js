@@ -1,6 +1,16 @@
 const mysql = require("mysql2/promise");
 
+/**
+ * MySQL connectionPool ininitalized with {@link init()}
+ * @type {mysql.Pool}
+ */
 let pool;
+
+/**
+ * init function that creates the connectionPool with pre-determined options, 
+ * and tries using it, which throws an exception if the connection cannot be retreived.
+ * @returns {Promise<true,false>} True, if the connectionPool is established and works; otherwise false.
+ */
 async function init(){
     return new Promise(async function(resolve,reject){
         try {
@@ -59,7 +69,6 @@ async function query(sql, props=false){
             return reject(err);
             
         } 
-        
         
     })
 }
