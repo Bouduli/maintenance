@@ -85,3 +85,11 @@ Dagens saker:
 
 ### Måndag 19/02
 *Contractors.js - ännu en router*
+
+
+### Torsdag 22/02 
+**Plan: Implementera access control, på något sätt.**
+Steg för att uppnå detta:
+- [ ] Lägga till en "Hash" kolumn i användartabellen. 
+- [ ] Göra ett sätt att registrera en användare (som endast SuperAdmin har tillgång till.)
+- [ ] Middleware över existerande routers.
