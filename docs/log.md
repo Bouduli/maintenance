@@ -98,5 +98,5 @@ Också:
 Steg för att uppnå detta:
 - [x] Lägga till en "Hash" kolumn i användartabellen. 
 - [x] Göra ett sätt att registrera en användare (som endast SuperAdmin har tillgång till.)
-- [ ] Göra inloggning
+- [x] Göra inloggning
 - [ ] Middleware över existerande routers.
