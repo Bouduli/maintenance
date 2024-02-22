@@ -90,6 +90,7 @@ Dagens saker:
 ### Torsdag 22/02 
 **Plan: Implementera access control, på något sätt.**
 Steg för att uppnå detta:
-- [ ] Lägga till en "Hash" kolumn i användartabellen. 
-- [ ] Göra ett sätt att registrera en användare (som endast SuperAdmin har tillgång till.)
+- [x] Lägga till en "Hash" kolumn i användartabellen. 
+- [x] Göra ett sätt att registrera en användare (som endast SuperAdmin har tillgång till.)
+- [ ] Göra inloggning
 - [ ] Middleware över existerande routers.
