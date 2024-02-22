@@ -1,6 +1,7 @@
 //module.exports = router;
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const db = require("../db");
 
@@ -70,36 +71,50 @@ router.post("/login", async (req,res)=>{
     try {
 
         const {email, password} = req.body;
-        if(!email || !password) res.status(400).json({
+        if(!email || !password) return res.status(400).json({
             error : "password or email not provided"
         });
 
         //selecting hash from database, also makes sure that the user exists.
-        const select_sql = "SELECT hash FROM users WHERE email = ?";
+        const select_sql = "SELECT hash,name FROM users WHERE email = ?";
         const select_data = await db.query(select_sql, [email]);
 
         if(!select_data.length) return res.status(401).json({
             error:"something went wrong with the login, check email and password"
         });
         
-        const hash = select_data[0].hash;
-
-
+        const user = select_data[0];
+        const hash = user.hash;
         const successful_login = await bcrypt.compare(password, hash);
 
-
-        if(successful_login){
-            
-        }
-        return res.status(200).json({
-            content:{
-                loggedIn: successful_login
-            }
+        //ctrl+c ctrl+v to be consistent (security) with resposne above.
+        if(!successful_login) return res.status(401).json({
+            error:"something went wrong with the login, check email and password"
         });
 
+        const payload ={
+            name: user.name,
+            email: user.email
+        };
+        //----------------------------------> CHANGE THIS THIS <---------------------------------------------
+        //----------------------------------> CHANGE THIS THIS <---------------------------------------------
+        //----------------------------------> CHANGE THIS THIS <---------------------------------------------
+/*--->*/const token = await jwt.sign(payload, "this is a token", { //<---------------------------------------
+        //----------------------------------> CHANGE THIS THIS <---------------------------------------------    
+        //----------------------------------> CHANGE THIS THIS <---------------------------------------------    
+        //----------------------------------> CHANGE THIS THIS <---------------------------------------------    
+            expiresIn: "30"
+        });
+        res.cookie("auth-token", token, {
+            httpOnly: true
+        })
 
-
-
+        return res.status(200).json({
+            content:{
+                token: token
+            }
+        });
+        
     } catch (err) {
         console.log("err @ POST/auth/login  : ", err);
 
