@@ -9,7 +9,6 @@ app.use(express.urlencoded({
 }));
 
 const db = require("./db");
-const email = require("./email");
 const mw = require("./middleware");
 
 //parsing cookies on all routes
@@ -35,8 +34,7 @@ app.listen(PORT, (err)=>{
 app.get("/", async (req,res)=>{
 
     try {
-        // const info = await email.send(process.env.EMAIL_TEST_RECIPIENT);
-        const info = "hi bro";
+        const info = await email.send(process.env.EMAIL_TEST_RECIPIENT);
         res.status(200).json({
 
             content:{
@@ -53,15 +51,12 @@ app.get("/", async (req,res)=>{
 
 const houseRouter = require("./routers/houses");
 app.use("/house", mw.loggedIn(), houseRouter);
-app.use("/house", mw.loggedIn(), houseRouter);
 
 
 const taskRouter = require("./routers/tasks");
 app.use("/task", mw.loggedIn(), taskRouter);
-app.use("/task", mw.loggedIn(), taskRouter);
 
 const contractorRouter = require("./routers/contractors");
-app.use("/contractor", mw.loggedIn(), contractorRouter);
 app.use("/contractor", mw.loggedIn(), contractorRouter);
 
 const authRouter = require("./routers/authentication");
