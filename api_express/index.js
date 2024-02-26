@@ -9,6 +9,11 @@ app.use(express.urlencoded({
 }));
 
 const db = require("./db");
+const mw = require("./middleware");
+
+//parsing cookies on all routes
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 (async()=>{
     try {
@@ -31,14 +36,14 @@ app.get("/", (req,res)=>{
 })
 
 const houseRouter = require("./routers/houses");
-app.use("/house",houseRouter);
+app.use("/house", mw.loggedIn(), houseRouter);
 
 
 const taskRouter = require("./routers/tasks");
-app.use("/task", taskRouter);
+app.use("/task", mw.loggedIn(), taskRouter);
 
 const contractorRouter = require("./routers/contractors");
-app.use("/contractor",contractorRouter);
+app.use("/contractor", mw.loggedIn(), contractorRouter);
 
 const authRouter = require("./routers/authentication");
-app.use("/auth", authRouter);
+app.use("/auth", mw.loggedIn(), authRouter);
