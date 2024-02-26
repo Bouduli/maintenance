@@ -9,7 +9,8 @@ app.use(express.urlencoded({
 }));
 
 const db = require("./db");
-const email = require("./email")
+const email = require("./email");
+
 (async()=>{
     try {
         if(await db.init()) console.log("Database opened at 3306");
