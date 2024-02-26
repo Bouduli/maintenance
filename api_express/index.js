@@ -19,7 +19,7 @@ const email = require("./email");
         console.log("Database could not be opened");
         process.exit(1);
     }
-})()
+})();
 
 const PORT = process.env.PORT || 12345; 
 app.listen(PORT, (err)=>{
