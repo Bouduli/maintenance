@@ -2,6 +2,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const db = require("../db");
 
@@ -66,6 +67,7 @@ router.post("/register", async(req,res)=>{
 });
 
 
+router.post("/login", async (req,res)=>{
 router.post("/login", async (req,res)=>{
 
     try {

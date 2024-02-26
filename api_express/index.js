@@ -53,12 +53,15 @@ app.get("/", async (req,res)=>{
 
 const houseRouter = require("./routers/houses");
 app.use("/house", mw.loggedIn(), houseRouter);
+app.use("/house", mw.loggedIn(), houseRouter);
 
 
 const taskRouter = require("./routers/tasks");
 app.use("/task", mw.loggedIn(), taskRouter);
+app.use("/task", mw.loggedIn(), taskRouter);
 
 const contractorRouter = require("./routers/contractors");
+app.use("/contractor", mw.loggedIn(), contractorRouter);
 app.use("/contractor", mw.loggedIn(), contractorRouter);
 
 const authRouter = require("./routers/authentication");
