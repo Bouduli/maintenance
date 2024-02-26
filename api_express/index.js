@@ -62,4 +62,4 @@ const contractorRouter = require("./routers/contractors");
 app.use("/contractor", mw.loggedIn(), contractorRouter);
 
 const authRouter = require("./routers/authentication");
-app.use("/auth", mw.loggedIn(), authRouter);
+app.use("/auth", authRouter);
