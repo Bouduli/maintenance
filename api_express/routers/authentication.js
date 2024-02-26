@@ -97,7 +97,7 @@ router.post("/login", async (req,res)=>{
             email: user.email
         };
         
-        const token = await jwt.sign(payload, process.env.STATEFUL_JWT, {
+        const token = await jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "1h"
         });
         res.cookie("auth-token", token, {
