@@ -96,14 +96,9 @@ router.post("/login", async (req,res)=>{
             name: user.name,
             email: user.email
         };
-        //----------------------------------> CHANGE THIS THIS <---------------------------------------------
-        //----------------------------------> CHANGE THIS THIS <---------------------------------------------
-        //----------------------------------> CHANGE THIS THIS <---------------------------------------------
-/*--->*/const token = await jwt.sign(payload, "this is a token", { //<---------------------------------------
-        //----------------------------------> CHANGE THIS THIS <---------------------------------------------    
-        //----------------------------------> CHANGE THIS THIS <---------------------------------------------    
-        //----------------------------------> CHANGE THIS THIS <---------------------------------------------    
-            expiresIn: "30"
+        
+        const token = await jwt.sign(payload, process.env.STATEFUL_JWT, {
+            expiresIn: "1h"
         });
         res.cookie("auth-token", token, {
             httpOnly: true
@@ -126,4 +121,11 @@ router.post("/login", async (req,res)=>{
 
 });
 
+router.get("/logout", async(req,res)=>{
+    res.clearCookie("auth-token");
+    return res.status(200).json({
+        message: "logged out"
+    });
+
+})
 module.exports = router;
