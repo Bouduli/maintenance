@@ -4,7 +4,8 @@
 ### Generella saker
 - [ ] Filuppladdning för diverse olika databasobjekt
 - [ ] Middlewares för att access control
-- [ ] Epost-klient för att kuna skicka iväg epost.
+- [x] Epost-klient för att kuna skicka iväg epost.
+    - [x] Testa epost-klienten. 
 - [ ] **(!!!) Script eller något sätt att skapa en databas åt en organisation.**
 
 ### För användargrupper

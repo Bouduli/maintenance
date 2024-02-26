@@ -61,6 +61,19 @@ Dagens saker:
 3. Säkra upp systemet med Stateful authentication för SuperAdmins och kunder, och PWL för contractors. 
 4. Skapa gränssnitt med Svelte.
 
+### Onsdag 14/02
+Dagens saker: 
+- Alla handlers för Houses använder just nu `db.query()` för att skicka sina requests och minimera boilerplate för databasen. 
+- `db.js` är städad, och innehåller nu bara `query()`.
+- Alla handlers för task är klara och färdiga. 
+
+### Fredag 16/02
+Epost-klient har skapats med nodemailer...
+Och en plan.md har upprättats för att underlätta framtida arbete.
+
+### Måndag 16/02
+Epost-klienten har testats för Html funktionalitet.
+Funderar på att använda bilder med ett json fält, för varje 'sak' i databasen. 
 Har strukturerat om routers, för nu började index bli väldigt stor.
 
 Generellt gäller följande struktur:
@@ -77,11 +90,6 @@ Generellt gäller följande struktur:
 
 **Ett säkert\* sätt att skicka och minska boilerplaten som skickas har skapats:** - En funktion tar emot en SQL query, och skickar eventuella props. SQL queryn skrivs av caller-funktionen, och är på så sätt validerad från callern - På så sätt kommer inte felaktiga/farliga request kunna uppstå av en användares input, eftersom detta direkt inte påverkar hur queryn ser ut. 
 
-### Onsdag 14/02
-Dagens saker: 
-- Alla handlers för Houses använder just nu `db.query()` för att skicka sina requests och minimera boilerplate för databasen. 
-- `db.js` är städad, och innehåller nu bara `query()`.
-- Alla handlers för task är klara och färdiga. 
-
-### Måndag 19/02
+Också:
 *Contractors.js - ännu en router*
+

@@ -9,7 +9,7 @@ app.use(express.urlencoded({
 }));
 
 const db = require("./db");
-
+const email = require("./email")
 (async()=>{
     try {
         if(await db.init()) console.log("Database opened at 3306");
@@ -26,8 +26,23 @@ app.listen(PORT, (err)=>{
     console.log("Server at http://localhost:"+ PORT)
 });
 
-app.get("/", (req,res)=>{
-    res.status(200).send("Hello World")
+app.get("/", async (req,res)=>{
+
+    try {
+        // const info = await email.send(process.env.EMAIL_TEST_RECIPIENT);
+        const info = "hi bro";
+        res.status(200).json({
+
+            content:{
+                info: info
+            }
+        });
+        
+    } catch (err) {
+        return res.status(500).json({
+            error: "email failed"
+        })
+    }
 })
 
 const houseRouter = require("./routers/houses");
