@@ -1,17 +1,20 @@
 //module.exports = router;
 const router = require("express").Router();
-
+const jwt = require("jsonwebtoken");
 const db = require("../db");
 
 //listing tasks for a contractor
 router.get("/task", async(req,res)=>{
 
     try {
-        //Auth token is validated in middleware, therefore this token should exist, with an email field.
-        const auth_token = req.cookies["auth-token"];
-        const email = auth_token.email;
+        //token is verified, mostly to retreive email address.
+        const token = await jwt.verify(req.cookies["auth-token"], process.env.PWL_LONG_TERM_SECRET);
+        const email = token.email;
+        console.log(email);
 
-        const data = await db.query("SELECT taskID FROM task_contractors WHERE email = ?", [email]);
+        //appointed tasks are queried using (double-queries)
+        const sql = "SELECT * FROM tasks where taskID = (SELECT taskID FROM task_contractors WHERE email = ?)"
+        const data = await db.query(sql, [email]);
         if(!data.length) return res.status(404).json({
             error:"no tasks", message: "Phew, seems your work is done..."
         });
