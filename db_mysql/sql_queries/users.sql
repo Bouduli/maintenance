@@ -5,9 +5,9 @@ CREATE TABLE Users (
     email VARCHAR(255) NOT NULL,
     hash CHAR(60) NOT NULL
 );
-INSERT INTO users(name, email, hash) VALUES
-('Oliver', 'oliver@oliver.se', '$2b$12$obZmNDgR09ZmHsoHCBjqretUo4yNAySET7Ugd04GbzOLjFt.0iqyS'),
-('erik', 'erik@erikurry.se', '$2b$12$yWbp7WmGGhSBaSzVrSB.YeGBJwh2pX88nDhZfIJ/AFT66uB79cQoe');
+-- INSERT INTO users(name, email, hash) VALUES
+-- ('Oliver', 'oliver@oliver.se', '$2b$12$obZmNDgR09ZmHsoHCBjqretUo4yNAySET7Ugd04GbzOLjFt.0iqyS'),
+-- ('erik', 'erik@erikurry.se', '$2b$12$yWbp7WmGGhSBaSzVrSB.YeGBJwh2pX88nDhZfIJ/AFT66uB79cQoe');
 
 /* DELIMITER $$
 

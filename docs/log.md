@@ -93,3 +93,24 @@ Generellt gäller följande struktur:
 Också:
 *Contractors.js - ännu en router*
 
+### Torsdag 22/02 
+**Plan: Implementera access control, på något sätt.**
+Steg för att uppnå detta:
+- [x] Lägga till en "Hash" kolumn i användartabellen. 
+- [x] Göra ett sätt att registrera en användare (som endast SuperAdmin har tillgång till.)
+- [x] Göra inloggning
+- [x] Middleware över existerande routers.
+
+### Måndag 26/02
+Simpelt middleware för att kolla om en person är inloggad, samt struggle att hämta in email-branchen till denna branch (förberedelse inför pwl)
+
+### Tisdag 27/02
+**PASSWORDLESS SUPERIORITY**
+
+(obs dock finns ingen router för workers ännu, så det finns inget ställe att använda detta på)
+#### Plan för veckan: BLI KLAR MED API
+Detta omfattar: 
+- [ ] **Göra min worker-specifika router, för att dessa skall kunna lägga till önskemål, och markera uppgifter klara.**
+- [ ] **Göra att Users och Workers får Epost när dessa har blivit registrerade**
+- [ ] **Script, Rutin, eller Route, för att skapa en ny databas, åt ett specifikt företag, med en user åt dem.**
+    - [ ] *Göra att connectionPool i `db.js` använder specifika användarkonton och databaser...*

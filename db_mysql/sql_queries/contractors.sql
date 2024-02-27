@@ -6,9 +6,9 @@ CREATE TABLE Contractors (
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL
 );
-INSERT INTO Contractors (name, occupation, email, phone) VALUES
-('Linus Korvalds', 'Linux', 'linus@torvalds.fi', "070-521 69 69"),
-('Adam Dahlgren', 'Plumber', 'adaahl0431@edu.halmstad.se', "071-241 69 69")
+-- INSERT INTO Contractors (name, occupation, email, phone) VALUES
+-- ('Linus Korvalds', 'Linux', 'linus@torvalds.fi', "070-521 69 69"),
+-- ('Adam Dahlgren', 'Plumber', 'adaahl0431@edu.halmstad.se', "071-241 69 69")
 
 /* DELIMITER $$
 
