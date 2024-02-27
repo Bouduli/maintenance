@@ -4,10 +4,12 @@
 const jwt = require("jsonwebtoken");
 
 /**
- * The function returns a middleware that controls that a user is loggedIn.
- * @returns the middleware
+ * Middleware that takes tokenType as an argument, dictating which JWT-secret is used to verify the JWT.
+ * @param {[string]} tokenType optional string dictates which JWT secret is used, default = "stateful".
+ * @returns A middleware of type async(req,res,next)
+ * @example app.get("/restricted_endpoint", loggedIn("admin"), async (req,res)=> ... )
  */
-function loggedIn(){
+function loggedIn(tokenType = "stateful"){
     return async function(req,res,next){
         
         const cookie = req.cookies["auth-token"];
@@ -16,7 +18,8 @@ function loggedIn(){
             error: "authentication required"
         });
 
-        const isValid = await verify(cookie, process.env.JWT_SECRET);
+        const secret = tokenType == "stateful" ? process.env.JWT_SECRET: process.env.PWL_LONG_TERM_SECRET ;
+        const isValid = await verify(cookie, secret);
 
         if(!isValid) return res.status(401).json({
             error:"Invalid token, please re-authenticate."
