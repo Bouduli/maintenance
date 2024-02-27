@@ -10,6 +10,14 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+
+/**
+ * Sends an regular text email, using the provided address and subject and text. 
+ * @param {string} address Address which the mail will be sent to
+ * @param {string} subject Subject header of the email
+ * @param {string} text The actual text.
+ * @returns {Promise<err|info>} Promise containing information for a successfully sent email, or an error for a incorrectly sent email
+ */
 async function send(address, subject, text){
     return new Promise(async function(resolve, reject){
         
@@ -22,11 +30,11 @@ async function send(address, subject, text){
     
         transporter.sendMail(headers, (err,info)=>{
             if(err){
-                console.log("Err: ", err);
+                console.log("Err @ email.sendMail() : ", err);
                 return reject(err);
             } 
             if(info){
-                console.log("info: ", info)
+                // console.log("info: @ email.sendMail() : ", info)
                 return resolve(info);
             }
         })
@@ -62,11 +70,11 @@ async function sendHtmlMail(address, content){
         
         transporter.sendMail(headers, (err,info)=>{
             if(err) {
-                console.log("Err @email.sendHtmlMail  : ", err);
+                console.log("Err @ email.sendHtmlMail  : ", err);
                 return reject(err);
             }
             if(info) {
-                // console.log("info: ", info)
+                // console.log("info @ email.sendHtmlMail()  : ", info)
                 return resolve(info);
             }
         })
