@@ -18,7 +18,7 @@
 
 ##### Workers
 - [ ] Router med RU för Tasks
-- [ ] Passwordless inloggning
+- [x] Passwordless inloggning
 
 ##### Systemadministratörer
 - [ ] Router med CRUD för användarkonton
