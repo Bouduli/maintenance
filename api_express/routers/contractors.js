@@ -2,7 +2,7 @@
 const router = require("express").Router();
 
 const db = require("../db");
-
+const email_client = require("../email");
 
 //index
 router.get("/", async(req,res)=>{
@@ -78,16 +78,30 @@ router.post("/", async(req,res)=>{
             phone : phone  || null
         });
 
+         //regex to validate if the provided email is a valid email. Source: https://emailregex.com/index.html
+         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+         if(!emailRegex.exec(email)) return res.status(400).json({
+             error:"bad email was provided",
+             email: email
+         });
+
         const sql = "INSERT INTO contractors (name, occupation, email, phone) VALUES (?,?,?,?)";
         const data = await db.query(sql, [name, occupation, email, phone]);
 
         if (!data.insertId) return res.status(400).json({
             //shouldnt't be malformed tho
-            error:"insertion was unsucessful due to a malformed request",
+            error:"invite of contractor was unsucessful due to a malformed request",
             name: name || null,
             occupation : occupation || null,
             email : email || null,
             phone : phone  || null
+        });
+
+        //invite of a contractor is successful, therefore:
+        const email_data = await email_client.sendHtmlMail(email, {
+            Header:"Welcome to the maintenance system!", //--------------------------------------------------------> Do something with this link <----------
+            Body:"<p>You have been invited to the maintenance system by a system administrator!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>",
+            Footer :"If you beleive this was a mistake, I suggest you disregard this email"
         });
 
         return res.status(201).json({ content: {id: data.insertId} })
