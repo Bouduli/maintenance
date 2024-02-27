@@ -48,11 +48,11 @@ router.post("/register", async(req,res)=>{
         const insert_sql = "INSERT INTO users (name, email, hash) VALUES (?,?,?)";
         const insert_data = await db.query(insert_sql, [name, email, hash]);
 
-        console.log(insert_data);
+        // console.log(insert_data);
         
         return res.status(200).json({
             content:{
-                id : insert_data.insertId
+                registered_user: `${name} with email ${email}`
             }
         });
 
@@ -154,11 +154,12 @@ router.post("/login_pwl", async (req,res)=>{
 
         // numeric code of length 6
         const code = generateOTP();
-        // const data = await email_client.sendHtmlMail(email, {
-        //     Header: "One Time Password",
-        //     Body:`OTP: ${code}`,
-        //     Footer:"This code expires in 60 seconds..."
-        // });
+        
+        const data = await email_client.sendHtmlMail(email, {
+            Header: "One Time Password",
+            Body:`OTP: ${code}`,
+            Footer:"This code expires in 60 seconds..."
+        });
         
         console.log(`The OTP is: ${code}`);
 
