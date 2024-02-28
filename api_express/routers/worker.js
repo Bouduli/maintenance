@@ -8,7 +8,8 @@ router.get("/task", async(req,res)=>{
 
     try {
         //token is verified, mostly to retreive email address.
-        const token = await jwt.verify(req.cookies["auth-token"], process.env.PWL_LONG_TERM_SECRET);
+        const {token} = req.user;
+        
         const email = token.email;
         console.log(email);
 
