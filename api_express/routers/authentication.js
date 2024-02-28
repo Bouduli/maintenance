@@ -84,15 +84,16 @@ router.post("/login", async (req,res)=>{
         });
 
         //selecting hash from database, also makes sure that the user exists.
-        const select_sql = "SELECT hash,name FROM users WHERE email = ?";
+        const select_sql = "SELECT hash,name,userID FROM users WHERE email = ?";
         const select_data = await db.query(select_sql, [email]);
 
         if(!select_data.length) return res.status(401).json({
             error:"something went wrong with the login, check email and password"
         });
-        
+
         const user = select_data[0];
         const hash = user.hash;
+
         const successful_login = await bcrypt.compare(password, hash);
 
         //ctrl+c ctrl+v to be consistent (security) with resposne above.
@@ -100,9 +101,11 @@ router.post("/login", async (req,res)=>{
             error:"something went wrong with the login, check email and password"
         });
 
+        //payload for JWT
         const payload ={
             name: user.name,
-            email: user.email
+            email: user.email,
+            id: user.userID
         };
         
         const token = await jwt.sign(payload, process.env.JWT_SECRET, {
@@ -152,22 +155,26 @@ router.post("/login_pwl", async (req,res)=>{
             error:"email not provided"
         });
 
-
-         //making sure that the contractor exists.
-         const select_sql = "SELECT email FROM contractors WHERE email = ?";
-         const select_data = await db.query(select_sql, [email]);
-         if(!select_data.length) return res.status(401).json({
-             error:"something went wrong with the login, check your email"
-         });
+        
+        //making sure that the contractor exists.
+        const select_sql = "SELECT contractorID FROM contractors WHERE email = ?";
+        const select_data = await db.query(select_sql, [email]);
+        if(!select_data.length) return res.status(401).json({
+            error:"something went wrong with the login, check your email"
+        });
+        
+        
+        const {contractorID} = select_data[0];
+        console.log(contractorID);
 
         // numeric code of length 6
         const code = generateOTP();
         
-        const data = await email_client.sendHtmlMail(email, {
-            Header: "One Time Password",
-            Body:`OTP: ${code}`,
-            Footer:"This code expires in 60 seconds..."
-        });
+        // const data = await email_client.sendHtmlMail(email, {
+        //     Header: "One Time Password",
+        //     Body:`OTP: ${code}`,
+        //     Footer:"This code expires in 60 seconds..."
+        // });
         
         console.log(`The OTP is: ${code}`);
 
@@ -211,19 +218,32 @@ router.post("/verify_pwl", async(req,res)=>{
             error:"cookie not provided with request, please login again."
         });
         
-        //will throw an exception for failed jwt verification. returns 401 if this fails.
+        //will throw an exception for failed jwt verification - catch returns 401
         const OTP_token = await jwt.verify(token, process.env.PWL_JWT_SECRET);
         
-        const hash = OTP_token.hash; 
+        //email is retreived to query against DB for contractorID, and hash for comparing against the OTP
+        const {email, hash} = OTP_token;
         
         //early return for invalid code
         if( !(await bcrypt.compare(code, hash)) ) return res.status(401).json({
             error:"verification failed, please try again"
         });
 
+        /*contractorID is retreived from db
+        *
+        * Yes, this looks sketchy, but is secure..
+        * 1. email originates from 'login' step, where proper checks against the DB are performed (that the contractor exists), therefore A USER EXISTS.
+        * 2. Database structure has emails being unique, therefore the array from db.query HAS LENGTH 1
+        * Since A USER EXISTS and the array HAS LENGTH 1, we can safely access contractorID from index 0.
+        * 
+        * This is performed, as opposed to my first idea, because a userID should not be included in the JWT, unless it's hash has been verified against the emailed code.
+        * This is necessary, because the API really shouldn't provide internal IDs, unless the related user is properly authenticated.
+        * 
+        */
+        const {contractorID} = (await db.query("SELECT contractorID FROM contractors WHERE email=?" [email]))[0] 
 
         //longer-term auth token, since the user passed verification and shall be logged in.
-        const long_token = await jwt.sign({email: OTP_token.email}, process.env.PWL_LONG_TERM_SECRET, {
+        const long_token = await jwt.sign({email, id:contractorID}, process.env.PWL_LONG_TERM_SECRET, {
             expiresIn:"1h"
         });
 
@@ -232,7 +252,9 @@ router.post("/verify_pwl", async(req,res)=>{
         });
 
         return res.status(200).json({
-            content:long_token
+            content:{
+                token:long_token
+            }
         });
 
 
