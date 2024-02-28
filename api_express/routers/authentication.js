@@ -163,10 +163,6 @@ router.post("/login_pwl", async (req,res)=>{
             error:"something went wrong with the login, check your email"
         });
         
-        
-        const {contractorID} = select_data[0];
-        console.log(contractorID);
-
         // numeric code of length 6
         const code = generateOTP();
         
@@ -240,7 +236,7 @@ router.post("/verify_pwl", async(req,res)=>{
         * This is necessary, because the API really shouldn't provide internal IDs, unless the related user is properly authenticated.
         * 
         */
-        const {contractorID} = (await db.query("SELECT contractorID FROM contractors WHERE email=?" [email]))[0] 
+        const {contractorID} = (await db.query("SELECT contractorID FROM contractors WHERE email=?",[email]))[0] 
 
         //longer-term auth token, since the user passed verification and shall be logged in.
         const long_token = await jwt.sign({email, id:contractorID}, process.env.PWL_LONG_TERM_SECRET, {
