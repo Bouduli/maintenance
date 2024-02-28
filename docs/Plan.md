@@ -4,6 +4,8 @@
 ### Generella saker
 - [ ] Filuppladdning för diverse olika databasobjekt
 - [x] Middlewares för access control
+- [ ] **req.user i loggedIn middleware**
+- [ ] **SÄKRA UPP CRUD routes med req.user, istället för req.body**
 - [x] Epost-klient för att kuna skicka iväg epost.
     - [x] Testa epost-klienten. 
 - [ ] **(!!!) Script eller något sätt att skapa en databas åt en organisation.**
@@ -17,7 +19,7 @@
 - [x] Stateful inloggning.
 
 ##### Workers
-- [ ] Router med RU för Tasks
+- [x] Router med RU för Tasks
 - [x] Passwordless inloggning
 
 ##### Systemadministratörer
