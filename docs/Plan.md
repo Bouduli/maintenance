@@ -20,6 +20,7 @@
 
 ##### Workers
 - [x] Router med RU för Tasks
+    - [ ] Förslag till tasks
 - [x] Passwordless inloggning
 
 ##### Systemadministratörer
