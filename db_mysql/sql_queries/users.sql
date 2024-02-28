@@ -3,7 +3,9 @@ CREATE TABLE Users (
     userID INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    hash CHAR(60) NOT NULL
+    hash CHAR(60) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 -- INSERT INTO users(name, email, hash) VALUES
 -- ('Oliver', 'oliver@oliver.se', '$2b$12$obZmNDgR09ZmHsoHCBjqretUo4yNAySET7Ugd04GbzOLjFt.0iqyS'),

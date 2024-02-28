@@ -57,16 +57,17 @@ router.get("/:id", async (req,res)=>{
 router.post("/", async (req,res)=>{
     try {
         
-        const {houseID, description} = req.body;
+        const {houseID, description, userID} = req.body;
 
         if(!houseID || !description) return res.status(400).json({
             error:"Either houseID or description was not provided",
             //if it is undefined, then it is written out as null in the response object. claritys sake
-            id: houseID || null,
+            houseId: houseID || null,
+            userID: userID || null,
             description: description|| null
         });
-        const sql = "INSERT INTO tasks (houseID, description) VALUES (?,?)";
-        const data = await db.query(sql, [houseID, description]);
+        const sql = "INSERT INTO tasks (houseID, userID, description) VALUES (?,?,?)";
+        const data = await db.query(sql, [houseID, userID, description]);
 
         return res.status(201).json({content:{id: data.insertId} });
 

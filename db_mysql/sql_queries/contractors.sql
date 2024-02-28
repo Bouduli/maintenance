@@ -3,8 +3,10 @@ CREATE TABLE Contractors (
     contractorID INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     occupation VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_edited TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 CREATE INDEX email_idx ON Contractors (email);
 -- INSERT INTO Contractors (name, occupation, email, phone) VALUES
