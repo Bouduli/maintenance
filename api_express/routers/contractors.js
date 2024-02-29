@@ -85,6 +85,13 @@ router.post("/", async(req,res)=>{
              email: email
          });
 
+        //prevent the same contractor to be invited again.
+        const find_sql = "SELECT email FROM CONTRACTORS where email = ?";
+        const find_data = await db.query(find_sql, [email]);
+        if(find_data.length) return res.status(409).json({
+            error:"A contractor with that email already exists"
+        });
+
         const sql = "INSERT INTO contractors (name, occupation, email, phone) VALUES (?,?,?,?)";
         const data = await db.query(sql, [name, occupation, email, phone]);
 
@@ -103,7 +110,7 @@ router.post("/", async(req,res)=>{
             Body:"<p>You have been invited to the maintenance system as a contractor by a system administrator!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>",
             Footer :"If you beleive this was a mistake, I suggest you disregard this email"
         });
-        console.log("email data: ", email_data);
+        // console.log("email data: ", email_data);
         return res.status(201).json({ content: {id: data.insertId} })
 
     } catch (err) {
