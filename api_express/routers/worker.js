@@ -11,10 +11,10 @@ router.get("/task", async(req,res)=>{
         const {token} = req.user;
         
         const email = token.email;
-        console.log(email);
+        // console.log(email);
 
         //appointed tasks are queried using (double-queries)
-        const sql = "SELECT * FROM tasks where taskID = (SELECT taskID FROM task_contractors WHERE email = ?)";
+        const sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE email = ?)";
         const data = await db.query(sql, [email]);
         if(!data.length) return res.status(404).json({
             error:"no tasks", message: "Phew, seems your work is done..."
@@ -38,13 +38,14 @@ router.get("/task", async(req,res)=>{
 router.put("/task/:id", async (req,res)=>{
     try {
         const {id} = req.params;
+        const {email} = req.user.token;
 
         if(!id) return res.status(400).json({
             error:"no taskID provided"
         });
         
-        //Make sure that the contractor is appointed for the task
-        const find_sql = "SELECT * FROM tasks WHERE taskID = (SELECT taskID FROM task_contractors WHERE taskID = ?)";
+        //Make sure that the task exists in task_contractor table.
+        const find_sql = "SELECT taskID, email FROM task_contractors WHERE taskID = ?";
         const find_data = await db.query(find_sql, [id]);
 
         if(!find_data.length) return res.status(404).json({
@@ -52,19 +53,24 @@ router.put("/task/:id", async (req,res)=>{
         });
 
         //should be the only received task
-        const task = find_data[0];
+        const {taskID, task_email} = find_data[0];
+
+        //make sure that email is consistent with task_contractor entry
+        if(task_email.toLowerCase() != email) return res.status(403).json({
+            error:"you are not allowed to edit this task"
+        });
+
 
         //update only allows a contractor to set completed, true or false.
         const {completed} = req.body || false;
         const sql_completed = completed? 1 : 0;
 
         const update_sql = "UPDATE tasks SET completed=? where taskID = ?";
-        const update_data = await db.query(update_sql, [sql_completed, id]);
+        const update_data = await db.query(update_sql, [sql_completed, taskID]);
 
-        task.completed = completed; 
         console.log(update_data);
 
-        return res.status(200).json({content:task});
+        return res.status(200).json({content:{marked_complete: completed}});
         
     } catch (err) {
         console.log("err @ PUT worker/task/:id  : ", err);
