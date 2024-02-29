@@ -122,6 +122,11 @@ Detta omfattar:
 Saker som har gjorts:
 - Created + Last-updated fält i MySQL databas. 
 
-Saker som skall göras:
+Saker som skall göras framöver:
 - Göra en req.user med ett middleware, som lagrar userID för en användare. 
 - Säkra upp mina routes för alla operationer, så att en användare endast kan läsa de hus som den har tillgång till.
+
+### Torsdag 29/02 (ja det är skottår)
+Saker som har gjorts: 
+- req.user har implementerats för worker-router.
+- buggfixar för diverse routes. 
