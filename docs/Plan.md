@@ -4,7 +4,7 @@
 ### Generella saker
 - [ ] Filuppladdning för diverse olika databasobjekt
 - [x] Middlewares för access control
-- [ ] **req.user i loggedIn middleware**
+- [x] **req.user i loggedIn middleware**
 - [ ] **SÄKRA UPP CRUD routes med req.user, istället för req.body**
 - [x] Epost-klient för att kuna skicka iväg epost.
     - [x] Testa epost-klienten. 
@@ -15,12 +15,13 @@
 
 - [x] Router med CRUD för Fastigheter
 - [x] Router med CRUD för Tasks
+    - [x] Möjligheten att lista tasks
 - [x] Router med CRUD för Workers.
 - [x] Stateful inloggning.
 
 ##### Workers
 - [x] Router med RU för Tasks
-    - [ ] Förslag till tasks
+    - [x] Förslag till tasks
 - [x] Passwordless inloggning
 
 ##### Systemadministratörer

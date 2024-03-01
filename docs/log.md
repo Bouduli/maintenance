@@ -130,3 +130,12 @@ Saker som skall göras framöver:
 Saker som har gjorts: 
 - req.user har implementerats för worker-router.
 - buggfixar för diverse routes. 
+
+### Fredag 01/03
+Saker som har gjorts:
+- **Task suggestion**
+- Task approval
+
+Saker som borde göras:
+- Super-admin router (flytta över User-registrering)
+- Företag specifika databaser (setup script? )
