@@ -139,3 +139,11 @@ Saker som har gjorts:
 Saker som borde göras:
 - Super-admin router (flytta över User-registrering)
 - Företag specifika databaser (setup script? )
+
+### Söndag 03/03
+Saker som har gjorts:
+**Företags-admin router**: CRD för användarkonton, delete är en anonymisering + inaktivering, som gör att kontot inte kan användas för inloggning.
+
+Saker som måste fixas innan API är 'klar':
+- Företag-specifika databaser.
+- Script för att starta databas, med ett sql-användarkonto.

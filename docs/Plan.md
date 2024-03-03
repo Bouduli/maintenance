@@ -26,5 +26,6 @@
 
 ##### Systemadministratörer
 - [ ] Router med CRUD för användarkonton
-- [ ] Stateful inloggning.
+    - [x] CRD för användarkonton
+- [x] Stateful inloggning. (admin bool vid inloggning + middleware)
 
