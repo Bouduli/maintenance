@@ -17,7 +17,7 @@ router.post("/login", async (req,res)=>{
         });
 
         //selecting hash from database, also makes sure that the user exists.
-        const select_sql = "SELECT hash,name,userID FROM users WHERE email = ?";
+        const select_sql = "SELECT hash,name,userID FROM users WHERE email = ? AND active_account=1";
         const select_data = await db.query(select_sql, [email]);
 
         if(!select_data.length) return res.status(401).json({
