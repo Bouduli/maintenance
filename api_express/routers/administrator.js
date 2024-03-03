@@ -4,11 +4,12 @@ const bcrypt = require("bcrypt");
 
 const db = require("../db");
 const email_client = require("../email");
-//show users
+
+//index users
 router.get("/user", async(req,res)=>{
     try {
         
-        const sql = "SELECT userID, email, name FROM Users";
+        const sql = "SELECT userID, email, name, phone, last_login, active_account, admin FROM Users";
         const data = await db.query(sql);
 
         if(!data.length) return res.status(404).json({
@@ -28,6 +29,38 @@ router.get("/user", async(req,res)=>{
         });
     }
 });
+
+//show users
+router.get("/user/:id", async(req,res)=>{
+    try {
+        const {id} = req.params;
+
+        if(!id) return res.status(400).json({
+            error:"id not provided"
+        });
+
+        const sql = "SELECT userID, email, name, phone, last_login, active_account, admin  FROM Users WHERE userID = ?";
+        const data = await db.query(sql, [id]);
+
+        if(!data.length) return res.status(404).json({
+            error:" no user found with the provided userID",
+            id: id
+        });
+
+        return res.status(200).json({
+            content: data[0]
+        });
+        
+    } catch (err) {
+        console.log("err @ GET /user/:id  : ", err);
+
+
+
+        return res.status(500).json({
+            error :"internal server error"
+        })
+    }
+})
 
 //create user;
 router.post("/user", async(req,res)=>{
@@ -67,9 +100,11 @@ router.post("/user", async(req,res)=>{
         //makes a hash of the password
         const hash = await bcrypt.hash(password, 12);
 
-        const insert_sql = "INSERT INTO users (name, email, hash) VALUES (?,?,?)";
-        const insert_data = await db.query(insert_sql, [name, email, hash]);
-
+        const insert_sql = "INSERT INTO users (name, email, hash, phone) VALUES (?,?,?,?)";
+        const insert_data = await db.query(insert_sql, [name, email, hash, phone]);
+        if(!insert_data.insertId) return res.status(400).json({
+            error:"register failed due to malformed request."
+        });
         // console.log(insert_data);
         
         //invite of a contractor is successful, therefore:
@@ -94,5 +129,41 @@ router.post("/user", async(req,res)=>{
     }
 });
 
+//destroy user; (de-activates user and anonymises personal data)
+router.delete("/user/:id", async(req,res)=>{
+    try {
+    
+        const {id} = req.params;
 
+        if(!id) return res.status(400).json({
+            error:"id not provided"
+        });
+
+        const find_sql = "SELECT userID  FROM Users WHERE userID = ?";
+        const find_data = await db.query(find_sql, [id]);
+
+        if(!find_data.length) return res.status(404).json({
+            error:"no user found with the provided userID"
+        });
+
+        const delete_sql = "UPDATE Users SET name ='***', email = '***', phone = '***', active_account=0 WHERE userID = ?";
+        const delete_data = await db.query(delete_sql, [id]);
+        // console.log(delete_data);
+
+        if(!delete_data.changedRows) return res.status(400).json({
+            error:"delete not necessary"
+        })
+        return res.status(200).json({
+            content:{
+                deleted: id
+            }
+        });
+
+    } catch (err) {
+        console.log("err @ DELETE /user/:id  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        })
+    }
+})
 module.exports = router;
