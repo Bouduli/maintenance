@@ -54,3 +54,8 @@ app.use("/contractor", mw.loggedIn(), contractorRouter);
 //worker api router
 const workerRouter = require("./routers/worker");
 app.use("/worker", mw.loggedIn("PWL"), workerRouter)
+
+//administrator api router
+const adminRouter = require("./routers/administrator");
+//MAKE SURE TO LOCK THIS ROUTER WITH MIDDLEWARE
+app.use("/admin", adminRouter)
