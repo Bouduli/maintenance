@@ -56,7 +56,7 @@ async function sendHtmlMail(address, content){
 
         //Kinda hardcoded html content for sending a message. 
         const html = 
-        `<body><header><h1>${content.Header}</h1></header><main><p>${content.Body}</p></main>`
+        `<body><header><h1>${content.Header}</h1></header><main>${content.Body}</main>`
             + (content.Footer? `<footer><i>${content.Footer}</i></footer>` : "" )+ 
         "</body>";
         

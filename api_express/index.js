@@ -50,3 +50,7 @@ app.use("/task", mw.loggedIn(), taskRouter);
 
 const contractorRouter = require("./routers/contractors");
 app.use("/contractor", mw.loggedIn(), contractorRouter);
+
+//worker api router
+const workerRouter = require("./routers/worker");
+app.use("/worker", mw.loggedIn("PWL"), workerRouter)

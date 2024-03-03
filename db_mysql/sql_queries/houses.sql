@@ -5,6 +5,8 @@ CREATE TABLE Houses (
     address VARCHAR(255) NOT NULL,
     name VARCHAR(255),
     description VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_edited TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 -- INSERT INTO Houses (userID, address, name, description) 

@@ -110,7 +110,32 @@ Simpelt middleware för att kolla om en person är inloggad, samt struggle att h
 (obs dock finns ingen router för workers ännu, så det finns inget ställe att använda detta på)
 #### Plan för veckan: BLI KLAR MED API
 Detta omfattar: 
-- [ ] **Göra min worker-specifika router, för att dessa skall kunna lägga till önskemål, och markera uppgifter klara.**
-- [ ] **Göra att Users och Workers får Epost när dessa har blivit registrerade**
+- [ ] **Göra min worker-specifika router**
+    - [x] Lista tasks
+    - [x] Markera tasks klara
+    - [ ] Lägga till önskemål
+- [x] **Göra att Users och Workers får Epost när dessa har blivit registrerade**
 - [ ] **Script, Rutin, eller Route, för att skapa en ny databas, åt ett specifikt företag, med en user åt dem.**
     - [ ] *Göra att connectionPool i `db.js` använder specifika användarkonton och databaser...*
+
+### Onsdag 28/02 
+Saker som har gjorts:
+- Created + Last-updated fält i MySQL databas. 
+
+Saker som skall göras framöver:
+- Göra en req.user med ett middleware, som lagrar userID för en användare. 
+- Säkra upp mina routes för alla operationer, så att en användare endast kan läsa de hus som den har tillgång till.
+
+### Torsdag 29/02 (ja det är skottår)
+Saker som har gjorts: 
+- req.user har implementerats för worker-router.
+- buggfixar för diverse routes. 
+
+### Fredag 01/03
+Saker som har gjorts:
+- **Task suggestion**
+- Task approval
+
+Saker som borde göras:
+- Super-admin router (flytta över User-registrering)
+- Företag specifika databaser (setup script? )
