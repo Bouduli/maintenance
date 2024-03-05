@@ -15,6 +15,10 @@ const mw = require("./middleware");
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
+//templating with pug
+require("pug");
+app.set("view engine", "pug");
+
 (async()=>{
     try {
         if(await db.init()) console.log("Database opened at 3306");
@@ -32,9 +36,7 @@ app.listen(PORT, (err)=>{
 });
 
 app.get("/", async (req,res)=>{
-    res.status(200).json({
-        content: "Maintenance system"
-    })
+    res.render("index", {title:"Maintenance System"})
 });
 
 //Authentication
