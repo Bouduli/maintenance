@@ -1,14 +1,18 @@
 DROP TABLE IF EXISTS Contractors;
 CREATE TABLE Contractors (
-    contractorID INT AUTO_INCREMENT PRIMARY KEY,
+    contractorID INT AUTO_INCREMENT,
     invited_by INT,
     name VARCHAR(255) NOT NULL,
     occupation VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     active_account BOOLEAN DEFAULT 1,
+    invited_by int(11) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_edited TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    last_edited TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (contractorID, invited_by),
+    FOREIGN KEY (invited_by) REFERENCES Users(userID)
+    
 );
 -- INSERT INTO Contractors (name, occupation, email, phone) VALUES
 -- ('Linus Korvalds', 'Linux', 'linus@torvalds.fi', "070-521 69 69"),
