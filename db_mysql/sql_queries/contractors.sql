@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS Contractors;
 CREATE TABLE Contractors (
     contractorID INT AUTO_INCREMENT PRIMARY KEY,
+    invited_by INT,
     name VARCHAR(255) NOT NULL,
     occupation VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,

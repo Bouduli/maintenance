@@ -69,7 +69,9 @@ router.post("/", async(req,res)=>{
     try {
         
         const {name, occupation, email, phone} = req.body;
-        
+        const userID = req.user.token.id;
+
+
         if(!name || !occupation, !email, !phone) return res.status(400).json({
             error:"One or more parameters not provided",
             name: name || null,
@@ -85,15 +87,15 @@ router.post("/", async(req,res)=>{
             email: email
         });
 
-        //prevent the same contractor to be invited again.
-        const find_sql = "SELECT email FROM CONTRACTORS where email = ?";
-        const find_data = await db.query(find_sql, [email]);
+        //prevent the same contractor to be invited by the same user again.
+        const find_sql = "SELECT email FROM CONTRACTORS where email = ? AND invited_by = ?";
+        const find_data = await db.query(find_sql, [email, userID]);
         if(find_data.length) return res.status(409).json({
             error:"A contractor with that email already exists"
         });
 
-        const sql = "INSERT INTO contractors (name, occupation, email, phone) VALUES (?,?,?,?)";
-        const data = await db.query(sql, [name, occupation, email, phone]);
+        const sql = "INSERT INTO contractors (name, occupation, email, phone, invited_by) VALUES (?,?,?,?,?)";
+        const data = await db.query(sql, [name, occupation, email, phone, userID]);
 
         if (!data.insertId) return res.status(400).json({
             //shouldnt't be malformed tho
