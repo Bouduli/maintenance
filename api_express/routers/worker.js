@@ -11,12 +11,11 @@ router.get("/task", async(req,res)=>{
         //token is verified, mostly to retreive email address.
         const {token} = req.user;
         
-        const email = token.email;
-        // console.log(email);
+        const contractorID = token.id;
 
         //appointed tasks are queried using (double-queries)
-        const sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE email = ?)";
-        const data = await db.query(sql, [email]);
+        const sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ?)";
+        const data = await db.query(sql, [contractorID]);
         if(!data.length) return res.status(404).json({
             error:"no tasks", message: "Phew, seems your work is done..."
         });
@@ -39,14 +38,14 @@ router.get("/task", async(req,res)=>{
 router.put("/task/:id", async (req,res)=>{
     try {
         const {id} = req.params;
-        const {email} = req.user.token;
+        const userID = req.user.token.id;
 
         if(!id) return res.status(400).json({
             error:"no taskID provided"
         });
         
         //Make sure that the task exists in task_contractor table.
-        const find_sql = "SELECT taskID, email FROM task_contractors WHERE taskID = ?";
+        const find_sql = "SELECT taskID, contractorID FROM task_contractors WHERE taskID = ?";
         const find_data = await db.query(find_sql, [id]);
 
         if(!find_data.length) return res.status(404).json({
@@ -54,10 +53,10 @@ router.put("/task/:id", async (req,res)=>{
         });
 
         //should be the only received task
-        const {taskID, task_email} = find_data[0];
+        const {taskID, contractorID} = find_data[0];
 
         //make sure that email is consistent with task_contractor entry
-        if(task_email.toLowerCase() != email) return res.status(403).json({
+        if(contractorID != userID) return res.status(403).json({
             error:"you are not allowed to edit this task"
         });
 
@@ -69,7 +68,7 @@ router.put("/task/:id", async (req,res)=>{
         const update_sql = "UPDATE tasks SET completed=? where taskID = ?";
         const update_data = await db.query(update_sql, [sql_completed, taskID]);
 
-        console.log(update_data);
+        // console.log(update_data);
 
         return res.status(200).json({content:{marked_complete: completed}});
         

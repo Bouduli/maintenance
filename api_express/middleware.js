@@ -7,9 +7,9 @@ const jwt = require("jsonwebtoken");
  * Middleware that takes tokenType as an argument, dictating which JWT-secret is used to verify the JWT.
  * @param {[string]} tokenType optional string dictates which JWT secret is used, default = "stateful".
  * @returns A middleware of type async(req,res,next)
- * @example app.get("/restricted_endpoint", loggedIn("admin"), async (req,res)=> ... )
+ * @example app.get("/restricted_endpoint", auth("admin"), async (req,res)=> ... )
  */
-function loggedIn(tokenType = "stateful"){
+function auth(tokenType = "stateful"){
     return async function(req,res,next){
         
         try {
@@ -24,17 +24,37 @@ function loggedIn(tokenType = "stateful"){
             const token = await jwt.verify(cookie, secret);
 
             req.user = {token};
-            // console.log(req.user);
+            if(token.admin) req.user.admin=true;
 
             return next();
             
         } catch (err) {
-            if(!isValid) return res.status(401).json({
+            console.log("err @ mw.auth()  : ", err);
+            return res.status(401).json({
                 error:"Invalid token, please re-authenticate."
             });
             
         }
     }
 }
+function admin(){
+    return async function(req,res,next){
+        try {
+            const {token, admin} = req.user;
+            
+            if(!admin) return res.status(403).json({
+                error:"you are not authorized for this action "
+            });
 
-module.exports = {loggedIn};
+            return next();
+
+        } catch (err) {
+            console.log("err @ mw.admin()  : ", err);
+            return res.status(403).json({
+                error:"you are not authorized for this action"
+            })
+        }
+    }
+}
+
+module.exports = {auth, admin};

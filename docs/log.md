@@ -139,3 +139,24 @@ Saker som har gjorts:
 Saker som borde göras:
 - Super-admin router (flytta över User-registrering)
 - Företag specifika databaser (setup script? )
+
+### Söndag 03/03
+Saker som har gjorts:
+**Företags-admin router**: CRD för användarkonton, delete är en anonymisering + inaktivering, som gör att kontot inte kan användas för inloggning.
+
+Saker som måste fixas innan API är 'klar':
+- Företag-specifika databaser.
+- Script för att starta databas, med ett sql-användarkonto.
+
+### Måndag 04/03
+Saker som har gjorts
+- Password reset.
+- contractorID används i task_contractor tabellen
+
+
+### Tisdag 05/03
+Saker som har gjorts:
+- Anonymisering vid contractor-delete
+- Anonymisering vid house-delete
+- Invited_by fält till contractors_tabellen
+- Droppat databasen (whoops)

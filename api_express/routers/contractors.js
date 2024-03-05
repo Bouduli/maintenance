@@ -69,7 +69,9 @@ router.post("/", async(req,res)=>{
     try {
         
         const {name, occupation, email, phone} = req.body;
-        
+        const userID = req.user.token.id;
+
+
         if(!name || !occupation, !email, !phone) return res.status(400).json({
             error:"One or more parameters not provided",
             name: name || null,
@@ -78,22 +80,22 @@ router.post("/", async(req,res)=>{
             phone : phone  || null
         });
 
-         //regex to validate if the provided email is a valid email. Source: https://emailregex.com/index.html
-         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-         if(!emailRegex.exec(email)) return res.status(400).json({
-             error:"bad email was provided",
-             email: email
-         });
+        //regex to validate if the provided email is a valid email. Source: https://emailregex.com/index.html
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(!emailRegex.exec(email)) return res.status(400).json({
+            error:"bad email was provided",
+            email: email
+        });
 
-        //prevent the same contractor to be invited again.
-        const find_sql = "SELECT email FROM CONTRACTORS where email = ?";
-        const find_data = await db.query(find_sql, [email]);
+        //prevent the same contractor to be invited by the same user again.
+        const find_sql = "SELECT email FROM CONTRACTORS where email = ? AND invited_by = ?";
+        const find_data = await db.query(find_sql, [email, userID]);
         if(find_data.length) return res.status(409).json({
             error:"A contractor with that email already exists"
         });
 
-        const sql = "INSERT INTO contractors (name, occupation, email, phone) VALUES (?,?,?,?)";
-        const data = await db.query(sql, [name, occupation, email, phone]);
+        const sql = "INSERT INTO contractors (name, occupation, email, phone, invited_by) VALUES (?,?,?,?,?)";
+        const data = await db.query(sql, [name, occupation, email, phone, userID]);
 
         if (!data.insertId) return res.status(400).json({
             //shouldnt't be malformed tho
@@ -107,7 +109,7 @@ router.post("/", async(req,res)=>{
         //invite of a contractor is successful, therefore an email is sent.
         const email_data = await email_client.sendHtmlMail(email, {
             Header:"Welcome to the maintenance system!", //--------------------------------------------------------> Do something with this link <----------
-            Body:"<p>You have been invited to the maintenance system as a contractor by a system administrator!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>",
+            Body:"<p>You have been invited to the maintenance system as a contractor by a user!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>",
             Footer :"If you beleive this was a mistake, I suggest you disregard this email"
         });
         // console.log("email data: ", email_data);
@@ -130,7 +132,7 @@ router.delete("/:id", async(req,res)=>{
             error:"id not provided for delete"
         });
     
-        const data = await db.query("DELETE FROM contractors WHERE contractorID = ?", [id]);
+        const data = await db.query("UPDATE contractors SET name ='***', email = '***', occupation='***', phone = '***', active_account=0 WHERE contractorID = ?", [id]);
     
         if(!data.affectedRows) return res.status(404).json({
             error:"resource with specified id could not be found",

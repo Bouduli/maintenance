@@ -21,11 +21,13 @@ router.post("/invite", async(req,res)=>{
         });
 
         //make sure the contractor exists in the contractors table.
-        const find_contractor = "SELECT email FROM contractors WHERE email = ?";
+        const find_contractor = "SELECT contractorID FROM contractors WHERE email = ?";
         const contractor_data = await db.query(find_contractor, [email]);
         if(!contractor_data.length) return res.status(404).json({
             error:"Contractor with the provided email was not found"
         });
+        const {contractorID} = contractor_data[0]
+        // console.log(contractorID);
 
         //make sure that the task exists
         const find_task = "SELECT taskID FROM tasks WHERE taskID = ?";
@@ -43,7 +45,7 @@ router.post("/invite", async(req,res)=>{
         });
 
         const insert_sql = "INSERT INTO task_contractors VALUES (?,?)";
-        const insert_data = await db.query(insert_sql, [taskID, email])
+        const insert_data = await db.query(insert_sql, [taskID, contractorID])
 
         const email_data = await email_client.sendHtmlMail(email, {
             Header:"You have been appointed with another task", //--------------------------------------------------------> Do something with this link <----------

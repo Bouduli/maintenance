@@ -1,10 +1,10 @@
 DROP TABLE IF EXISTS Task_Contractors;
 CREATE TABLE Task_Contractors (
     taskID INT,
-    email VARCHAR(255) NOT NULL,
-    PRIMARY KEY (taskID, email),
+    contractorID INT,
+    PRIMARY KEY (taskID, contractorID),
     FOREIGN KEY (taskID) REFERENCES Tasks(taskID),
-    FOREIGN KEY (email) REFERENCES Contractors(email)
+    FOREIGN KEY (contractorID) REFERENCES Contractors(contractorID)
 );
 
 DROP PROCEDURE IF EXISTS GetTasksByEmail;

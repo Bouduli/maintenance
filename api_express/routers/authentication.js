@@ -5,75 +5,9 @@ const jwt = require("jsonwebtoken");
 
 const email_client = require("../email");
 const db = require("../db");
+const mw = require("../middleware");
 
 //STATEUFL AUTHENTICATION FOR USERS
-router.post("/register", async(req,res)=>{
-
-    try {
-        
-        const {email, password, name} = req.body;
-
-        //sends a 400 response object, indicating what parameters ws missing...
-        if(!email || !password || !name) {
-
-            let required = [];
-
-            if(!email) required.push("email");
-            if(!password) required.push("password");
-            if(!name) required.push("name");
-
-            return res.status(400).json({
-                error:"not all parameters were provided",
-                required
-            });
-        }
-
-        //regex to validate if something is an email. Source: https://emailregex.com/index.html
-        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if(!emailRegex.exec(email)) return res.status(400).json({
-            error:"bad email was provided",
-            email: email
-        });
-
-        //validate that no user has taken that email.
-        const select_sql = "SELECT * FROM USERS WHERE email = ?";
-        const select_result = await db.query(select_sql, [email]);
-        if(select_result.length) return res.status(409).json({
-            error:"a user with that email already exists"
-        });
-
-        //makes a hash of the password
-        const hash = await bcrypt.hash(password, 12);
-
-        const insert_sql = "INSERT INTO users (name, email, hash) VALUES (?,?,?)";
-        const insert_data = await db.query(insert_sql, [name, email, hash]);
-
-        // console.log(insert_data);
-        
-        //invite of a contractor is successful, therefore:
-        const email_data = await email_client.sendHtmlMail(email, {
-            Header:"Welcome to the maintenance system!", //--------------------------------------------------------> Do something with this link <----------
-            Body:"<p>You have been invited to the maintenance system as a User by a system administrator!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>",
-            Footer :"If you beleive this was a mistake, I suggest you disregard this email"
-        });
-        console.log("email_data: ", email_data);
-
-        return res.status(200).json({
-            content:{
-                registered_user: `${name} with email ${email}`
-            }
-        });
-
-
-    } catch (err) {
-        
-        console.log("Err @ POST auth/register")
-        return res.status(500).json({
-            error:"internal server error"
-        })
-    }
-
-});
 router.post("/login", async (req,res)=>{
 
     try {
@@ -84,7 +18,7 @@ router.post("/login", async (req,res)=>{
         });
 
         //selecting hash from database, also makes sure that the user exists.
-        const select_sql = "SELECT hash,name,userID FROM users WHERE email = ?";
+        const select_sql = "SELECT hash,name,userID,admin FROM users WHERE email = ? AND active_account=1";
         const select_data = await db.query(select_sql, [email]);
 
         if(!select_data.length) return res.status(401).json({
@@ -94,7 +28,7 @@ router.post("/login", async (req,res)=>{
         const user = select_data[0];
         const hash = user.hash;
 
-        const successful_login = await bcrypt.compare(password, hash);
+        const successful_login = await bcrypt.compare(password.toString(), hash);
 
         //ctrl+c ctrl+v to be consistent (security) with resposne above.
         if(!successful_login) return res.status(401).json({
@@ -105,6 +39,7 @@ router.post("/login", async (req,res)=>{
         const payload ={
             name: user.name,
             email: user.email,
+            admin: user.admin,
             id: user.userID
         };
         
@@ -131,6 +66,75 @@ router.post("/login", async (req,res)=>{
 
 
 });
+
+router.post("/change_password", mw.auth(), async (req,res)=>{
+    try {
+        const {email, old_password, new_password} = req.body;
+
+        console.log(req.user);
+        const userID = req.user.token.id;
+        if(!email || !old_password || !new_password, !userID) {
+        
+            const requried = [];
+            if(!email) requried.push("email");
+            if(!old_password) requried.push("old_password");
+            if(!new_password) requried.push("new_password");
+            if(!userID) requried.push("userID");
+
+            return res.status(400).json({
+                error:"request is missing some required parameters.",
+                missing: requried
+            });
+        }
+
+        //make sure wether or not the user exists in the database. (descriptive error handling)
+        //if user is administrator, only email is required during this check... hence these disgusting lines.
+        const find_sql = req.user.admin? "SELECT hash, userID FROM Users WHERE email =? AND active_account =1 " :  "SELECT hash, userID from Users WHERE email =? AND userID =? AND active_account=1";
+        const find_data = req.user.admin ? await db.query(find_sql, [email]) : await db.query(find_sql, [email, userID]);
+
+        if(!find_data.length) return res.status(404).json({
+            error:"no user found with that email and userID",
+            userID : userID || null,
+            email : email || null
+        });
+        const user = find_data[0];
+        // console.log(user);
+
+        //verify the users current password
+        const old_password_match = await bcrypt.compare(old_password.toString(), user.hash);
+        if(!old_password_match) return res.status(401).json({
+            error:"old password does not match."
+        });
+
+        const new_hash = await bcrypt.hash(new_password.toString(), 12);
+
+        const update_sql = "UPDATE Users SET hash=? WHERE email =? AND userID =? AND active_account=1";
+        const update_data = await db.query(update_sql, [new_hash, email, user.userID]);
+        // console.log(update_data);
+
+        if(!update_data.changedRows) return res.status(304).json({
+            error:"nothing changed",
+            userID : user.userID
+        });
+
+        return res.status(200).json({
+            content:{
+                message:"changed password of user",
+                email : user.email
+            }
+        })
+
+        
+
+
+    } catch (err) {
+        console.log("err @ POST /auth/change_password  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        })
+    }
+});
+
 
 function generateOTP() {
  
