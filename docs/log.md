@@ -147,3 +147,16 @@ Saker som har gjorts:
 Saker som måste fixas innan API är 'klar':
 - Företag-specifika databaser.
 - Script för att starta databas, med ett sql-användarkonto.
+
+### Måndag 04/03
+Saker som har gjorts
+- Password reset.
+- contractorID används i task_contractor tabellen
+
+
+### Tisdag 05/03
+Saker som har gjorts:
+- Anonymisering vid contractor-delete
+- Anonymisering vid house-delete
+- Invited_by fält till contractors_tabellen
+- Droppat databasen (whoops)
