@@ -130,7 +130,7 @@ router.delete("/:id", async(req,res)=>{
             error:"id not provided for delete"
         });
     
-        const data = await db.query("DELETE FROM contractors WHERE contractorID = ?", [id]);
+        const data = await db.query("UPDATE contractors SET name ='***', email = '***', occupation='***', phone = '***', active_account=0 WHERE contractorID = ?", [id]);
     
         if(!data.affectedRows) return res.status(404).json({
             error:"resource with specified id could not be found",
