@@ -57,7 +57,8 @@ router.get("/:id", async(req,res)=>{
 //create 
 router.post("/", async(req,res)=>{
     try {
-        const {address, userID, description, name} = req.body;
+        const userID = req.user.token.id;
+        const {address, description, name} = req.body;
 
         if(!address || !userID) return res.status(400).json({
             error:"userID and address must be provided",
@@ -87,7 +88,7 @@ try {
         error: "no id provided for delete"
     });
 
-    const sql = "DELETE FROM Houses WHERE houseID = ?";
+    const sql = "UPDATE Houses SET address='***', name='***', description='***' WHERE houseID = ?";
     const data = await db.query(sql, [id]);
 
     if (!data.affectedRows) return res.status(404).json({
