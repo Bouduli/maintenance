@@ -1,0 +1,31 @@
+doctype html 
+
+html 
+    head 
+        meta(charset="utf-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        
+        if title 
+            title= title
+        else 
+            title= "template"
+
+        link(rel="stylesheet", href="style.css")
+        script(src="client.js" defer)
+        script( src="https://unpkg.com/htmx.org@1.9.10")
+    body 
+        header 
+            h1 Maintenance
+            nav
+                a(href="./login") Login
+                a(href="http://localhost:"+ PORT) Index
+                a(  href="//localhost:"+PORT+"/house"
+                    hx-get="//localhost:"+PORT+"/house"
+                    hx-trigger="load"
+                    hx-target="#app"
+                    ) Houses 
+                a(href="//localhost:"+PORT+"/task") Tasks 
+                a(href="//localhost:"+PORT+"/contractor") Contractors
+            
+        main 
+            block content

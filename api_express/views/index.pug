@@ -1,17 +1,4 @@
-doctype html 
+extends template.pug 
 
-html 
-    head 
-        meta(charset="utf-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        
-        if title 
-            title= title
-        else 
-            title= "template"
-
-        link(rel="stylesheet", href="style.css")
-        script(src="client.js" defer)
-    body 
-        header 
-            h1 Maintenance
+block content
+    i App goes here!

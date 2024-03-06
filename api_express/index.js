@@ -36,7 +36,7 @@ app.listen(PORT, (err)=>{
 });
 
 app.get("/", async (req,res)=>{
-    res.render("index", {title:"Maintenance System"})
+    res.render("index", {title:"Maintenance System", PORT});
 });
 
 //Authentication
