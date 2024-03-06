@@ -1,4 +1,7 @@
+//used to signify when to toggle visibility of Verify form
+const pwl_loggedIn_Event = new Event("showVerify");
 
+//used to send a login request using stateful authentication
 async function login(target){
     console.log(target);
 
@@ -22,7 +25,8 @@ async function login(target){
     if(res.ok) window.location.replace("/")
 };
 
-async function pwl_login(target){
+//used to send a login request using passwordless authentication
+async function login_pwl(target){
     // console.log(target)
     const email = target.email.value || null;
     console.log("email : ", email);
@@ -35,6 +39,22 @@ async function pwl_login(target){
     });
 
     console.log(await res.json());
-    if(res.ok);
-    
+    if(res.ok) target.dispatchEvent(pwl_loggedIn_Event);
+
+}
+
+async function verify_pwl(target){
+    const code = target.code.value || null;
+    console.log("code: ", code);
+
+    const res = await fetch("/auth/verify_pwl", {
+        method:"POST",
+        body:JSON.stringify({code}),
+        headers:{
+            "Content-Type" : "application/json"
+        }
+    });
+
+    console.log(await res.json());
+    if(res.ok) window.location.replace("/worker")
 }

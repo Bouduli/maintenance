@@ -18,12 +18,14 @@ block content
             h2 Contractor login
             div(x-show='!verified')
                 h3 login
-                form(action="/auth/login_pwl", method="post")
+                form(action="/auth/login_pwl", method="post",
+                @submit.prevent="await login_pwl($event.target)",
+                @show-verify.camel="console.log('evented'); verified=true")
                     input(type="email", name="email" placeholder="email")
                     input(type="submit" value="login")
             div(x-show='verified')
                 h3 Please enter your one-time-password provided by email
-                form(action="/auth/verify_pwl", method="post")
+                form(action="/auth/verify_pwl", method="post" @submit.prevent="await verify_pwl($event.target)")
                     input(type="code" name="code" placeholder="code")
                     input(type="submit", value="verify")
         script 
