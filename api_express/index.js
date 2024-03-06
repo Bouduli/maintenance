@@ -40,9 +40,8 @@ app.listen(PORT, (err)=>{
     console.log("Server at http://localhost:"+ PORT)
 });
 
-app.get("/", async (req,res)=>{
-    res.render("index", {title:"Maintenance System", PORT});
-});
+const appRouter = require("./routers/app");
+app.use("/", appRouter);
 
 //Authentication
 const authRouter = require("./routers/authentication");
