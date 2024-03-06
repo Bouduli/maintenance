@@ -2,11 +2,16 @@ const express = require("express");
 require("dotenv").config();
 
 const app = express();
+const cors = require("cors");
+app.use(cors({
+    credentials:true
+}));
 
 app.use(express.json())
 app.use(express.urlencoded({
     extended:true
 }));
+app.use(express.static("public"))
 
 const db = require("./db");
 const mw = require("./middleware");
