@@ -1,17 +1,30 @@
 extends template.pug 
 
 block content
-    div(id="stateful")
-        form(action="/auth/login", method="post")
-            input(type="email", name="email", placeholder="email")
-            input(type="password", name="password" placeholder="password") 
-            input(type="submit", value = "login")
-        
-    div(id="pwl")
-        form(action="/auth/login_pwl", method="post")
-            input(type="email", placeholder="email")
-            input(type="submit" value="login")
-
-        form(action="/auth/verify_pwl", method="post")
-            input(type="code" placeholder="code")
-            input(type="submit", value="verify")
+    //- open toggles visibility of user / contractor-login
+    div(x-data='{stateful: true}')
+        #toggler()
+            p Select login:
+            button(@click='stateful=true') User
+            button(@click='stateful=false') Contractor
+        hr
+        div(id="stateful" x-show='stateful')
+            h2 User login
+            form(action="/auth/login", method="post" @submit.prevent="await login($event.target)")
+                input(type="email", name="email", placeholder="email")
+                input(type="password", name="password" placeholder="password") 
+                input(type="submit", value = "login")
+        div(id="pwl" x-show='!stateful' x-data='{verified:false}')
+            h2 Contractor login
+            div(x-show='!verified')
+                h3 login
+                form(action="/auth/login_pwl", method="post")
+                    input(type="email", name="email" placeholder="email")
+                    input(type="submit" value="login")
+            div(x-show='verified')
+                h3 Please enter your one-time-password provided by email
+                form(action="/auth/verify_pwl", method="post")
+                    input(type="code" name="code" placeholder="code")
+                    input(type="submit", value="verify")
+        script 
+            include scripts/login.js
