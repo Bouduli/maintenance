@@ -86,11 +86,9 @@ router.get("/suggestion", async(req,res)=>{
             error:"no task suggestions found", message:"phew?"
         });
 
-        console.log(data);
+        // console.log(data);
         return res.status(200).json({
-            content:{
-                suggestions:data
-            }
+            content:data
         });
 
     } catch (err) {

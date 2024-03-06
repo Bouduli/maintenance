@@ -17,9 +17,7 @@ router.get("/user", async(req,res)=>{
         });
 
         return res.status(200).json({
-            content:{
-                users:data
-            }
+            content:data
         });
 
     } catch (err) {

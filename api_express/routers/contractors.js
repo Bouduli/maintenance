@@ -14,9 +14,7 @@ router.get("/", async(req,res)=>{
             error: "not found"
         })
         return res.status(200).json({
-            content: {
-                data : data
-            }
+            content: data
         });
         
     } catch (err) {
@@ -38,7 +36,7 @@ router.get("/:id", async (req,res)=>{
             error:"no id provided"
         });
     
-        const sql = "SELECT * FROM contractors WHERE contractorID = ?";
+        const sql = "SELECT * FROM contractors WHERE contractorID = ? AND active_account=1";
         const data = await db.query(sql, [id]);
     
         if(!data.length) return res.status(404).json({
@@ -47,9 +45,7 @@ router.get("/:id", async (req,res)=>{
         });
     
         return res.status(200).json({
-            content:{
-                data: data
-            }
+            content:data
         });
     } catch (err) {
         console.log("err @ GET/contractors/:id  : ", err);

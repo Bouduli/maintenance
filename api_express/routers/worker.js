@@ -21,9 +21,8 @@ router.get("/task", async(req,res)=>{
         });
 
         return res.status(200).json({
-            content:{
-                tasks:data
-            }
+            content:data
+            
         });
 
     } catch (err) {
