@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine test</title>
+    <script src="client.js" defer></script>
+
+    <!-- ALPINE MAGIC -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- ALPINE MAGIC -->
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <h1>Alpine test</h1>
+    
+    <form action="http://localhost:12345/auth/login" method="post">
+        <input type="email" name="email" placeholder="email">
+        <input type="password" name="password" placeholder="password">
+        <input type="submit" value="login">
+    </form>
+
+        <div x-data="{tasks : [] }"
+             x-init="tasks = (await (await fetch('http://localhost:12345/task')).json()).content">
+            <h2>Tasks:</h2>
+            <ul>
+                <template x-for="task in tasks" :key="task.taskID">
+                    <li>
+                        <p x-text="task.description"></p>
+                        <div x-show="task.completed">
+                            <h3>COMPLETED!!!</h3>
+                        </div>
+                    </li>
+                </template>
+            </ul>
+
+        </div>
+
+        <div x-data="{contractors: []}"
+             x-init="contractors = (await (await fetch('http://localhost:12345/contractor')).json() ).content">
+        
+             <h2>Contractors:</h2>
+             <ul>
+                <template x-for="contractor in contractors">
+                    <li>
+                        <h3 x-text="contractor.name"></h3>
+                        <i x-text="contractor.occupation"></i>
+                        <p x-text="contractor.phone"></p>
+                        
+                    </li>
+                </template>
+             </ul>
+        </div>
+</body>
+</html>
