@@ -170,7 +170,7 @@ router.post("/login_pwl", async (req,res)=>{
 
         
         //making sure that the contractor exists.
-        const select_sql = "SELECT contractorID FROM contractors WHERE email = ? AND WHERE active_account=1";
+        const select_sql = "SELECT contractorID FROM contractors WHERE email = ? AND active_account=1";
         const select_data = await db.query(select_sql, [email]);
         if(!select_data.length) return res.status(401).json({
             error:"something went wrong with the login, check your email"
