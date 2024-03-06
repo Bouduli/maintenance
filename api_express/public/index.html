@@ -5,22 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alpine test</title>
     <script src="client.js" defer></script>
-
+    
     <!-- ALPINE MAGIC -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- ALPINE MAGIC -->
-
+    
     <link rel="stylesheet" href="style.css">
-
+    
 </head>
 <body>
-    <h1>Alpine test</h1>
+    <header>
+        <h1>Alpine test</h1>
     
-    <form action="http://localhost:12345/auth/login" method="post">
-        <input type="email" name="email" placeholder="email">
-        <input type="password" name="password" placeholder="password">
-        <input type="submit" value="login">
-    </form>
+        <form action="http://localhost:12345/auth/login" method="post">
+            <input type="email" name="email" placeholder="email">
+            <input type="password" name="password" placeholder="password">
+            <input type="submit" value="login">
+        </form>
+    </header>
+
+
+    <div x-data="{houses: []}"
+         x-init="houses = (await (await fetch('http://localhost:12345/house')).json() ).content">
+    
+         <h2>Houses</h2>
+         <ul>
+            <template x-for="house in houses">
+                <li>
+                    <h3 x-text="'houseID: ' + house.houseID + ' ' + house.address"></h3>
+                    <i x-text="house.name"></i>
+                    <p x-text="house.description"></p>
+                </li>
+            </template>
+         </ul>
+    </div>
+    
 
         <div x-data="{tasks : [] }"
              x-init="tasks = (await (await fetch('http://localhost:12345/task')).json()).content">
@@ -53,5 +72,6 @@
                 </template>
              </ul>
         </div>
+
 </body>
 </html>
