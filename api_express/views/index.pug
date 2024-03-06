@@ -1,4 +1,33 @@
 extends template.pug 
 
 block content
-    i App goes here!
+    div(x-data='{houses: []}' x-init = 'houses = (await (await fetch("http://localhost:12345/house")).json() ).content')
+            
+        h2 Houses
+            ul
+                template (x-for="house in houses")
+                    li
+                        h3 (x-text="'houseID: ' + house.houseID + ' ' + house.address")
+                        i (x-text="house.name")
+                        p (x-text="house.description")
+        
+    
+    
+        div(x-data= "{tasks : [] }" x-init='tasks = (await (await fetch("http://localhost:12345/task")).json()).content')
+            h2 Tasks:
+            ul
+                template (x-for="task in tasks" :key="task.taskID")
+                    li
+                        p (x-text="task.description")
+                        div (x-show="task.completed")
+                            h3 COMPLETED!!!
+
+        div(x-data="{contractors: []}", x-init="contractors = (await (await fetch('http://localhost:12345/contractor')).json() ).content" )
+
+            h2 Contractors:
+            ul
+                template (x-for="contractor in contractors")
+                    li
+                        h3 (x-text="contractor.name")
+                        i (x-text="contractor.occupation")
+                        p (x-text="contractor.phone")

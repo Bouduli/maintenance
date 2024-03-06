@@ -24,25 +24,25 @@
         </form>
     </header>
 
-
-    <div x-data="{houses: []}"
-         x-init="houses = (await (await fetch('http://localhost:12345/house')).json() ).content">
+    <main>
+        <div x-data="{houses: []}"
+            x-init="houses = (await (await fetch('http://localhost:12345/house')).json() ).content">
+            
+            <h2>Houses</h2>
+            <ul>
+                <template x-for="house in houses">
+                    <li>
+                        <h3 x-text="'houseID: ' + house.houseID + ' ' + house.address"></h3>
+                        <i x-text="house.name"></i>
+                        <p x-text="house.description"></p>
+                    </li>
+                </template>
+            </ul>
+        </div>
     
-         <h2>Houses</h2>
-         <ul>
-            <template x-for="house in houses">
-                <li>
-                    <h3 x-text="'houseID: ' + house.houseID + ' ' + house.address"></h3>
-                    <i x-text="house.name"></i>
-                    <p x-text="house.description"></p>
-                </li>
-            </template>
-         </ul>
-    </div>
     
-
         <div x-data="{tasks : [] }"
-             x-init="tasks = (await (await fetch('http://localhost:12345/task')).json()).content">
+        x-init="tasks = (await (await fetch('http://localhost:12345/task')).json()).content">
             <h2>Tasks:</h2>
             <ul>
                 <template x-for="task in tasks" :key="task.taskID">
@@ -54,14 +54,14 @@
                     </li>
                 </template>
             </ul>
-
+        
         </div>
 
         <div x-data="{contractors: []}"
-             x-init="contractors = (await (await fetch('http://localhost:12345/contractor')).json() ).content">
-        
-             <h2>Contractors:</h2>
-             <ul>
+        x-init="contractors = (await (await fetch('http://localhost:12345/contractor')).json() ).content">
+
+            <h2>Contractors:</h2>
+            <ul>
                 <template x-for="contractor in contractors">
                     <li>
                         <h3 x-text="contractor.name"></h3>
@@ -70,8 +70,9 @@
                         
                     </li>
                 </template>
-             </ul>
+            </ul>
         </div>
+    </main>
 
 </body>
 </html>

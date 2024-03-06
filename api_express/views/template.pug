@@ -12,18 +12,14 @@ html
 
         link(rel="stylesheet", href="style.css")
         script(src="client.js" defer)
-        script( src="https://unpkg.com/htmx.org@1.9.10")
+        script( src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer)
     body 
         header 
             h1 Maintenance
             nav
                 a(href="./login") Login
                 a(href="http://localhost:"+ PORT) Index
-                a(  href="//localhost:"+PORT+"/house"
-                    hx-get="//localhost:"+PORT+"/house"
-                    hx-trigger="load"
-                    hx-target="#app"
-                    ) Houses 
+                a(href="//localhost:"+PORT+"/house") Houses 
                 a(href="//localhost:"+PORT+"/task") Tasks 
                 a(href="//localhost:"+PORT+"/contractor") Contractors
             
