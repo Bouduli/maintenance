@@ -1,33 +1,35 @@
 extends template.pug 
+//- 
+    This is an index 'view' and could be used as a way to tell users to authenticate
+    providing a link on where to do it.
 
+    As you can see, now it is used to show the "user" view. 
 block content
-    div(x-data='{houses: []}' x-init = 'houses = (await (await fetch("http://localhost:12345/house")).json() ).content')
-            
+    div(x-data='{houses: []}' x-init = 'houses = (await (await fetch("/house")).json() ).content')
         h2 Houses
             ul
-                template (x-for="house in houses")
+                template(x-for="house in houses")
                     li
-                        h3 (x-text="'houseID: ' + house.houseID + ' ' + house.address")
-                        i (x-text="house.name")
-                        p (x-text="house.description")
+                        h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
+                        i(x-text="house.name")
+                        p(x-text="house.description")
         
     
     
-        div(x-data= "{tasks : [] }" x-init='tasks = (await (await fetch("http://localhost:12345/task")).json()).content')
+        div(x-data= "{tasks : [] }" x-init='tasks = (await (await fetch("/task")).json()).content')
             h2 Tasks:
             ul
-                template (x-for="task in tasks" :key="task.taskID")
+                template(x-for="task in tasks" :key="task.taskID")
                     li
-                        p (x-text="task.description")
-                        div (x-show="task.completed")
+                        p(x-text="task.description")
+                        div(x-show="task.completed")
                             h3 COMPLETED!!!
 
-        div(x-data="{contractors: []}", x-init="contractors = (await (await fetch('http://localhost:12345/contractor')).json() ).content" )
-
+        div(x-data="{contractors: []}", x-init="contractors = (await (await fetch('/contractor')).json() ).content" )
             h2 Contractors:
             ul
-                template (x-for="contractor in contractors")
+                template(x-for="contractor in contractors")
                     li
-                        h3 (x-text="contractor.name")
-                        i (x-text="contractor.occupation")
-                        p (x-text="contractor.phone")
+                        h3(x-text="contractor.name")
+                        i(x-text="contractor.occupation")
+                        p(x-text="contractor.phone")
