@@ -39,6 +39,8 @@ router.post("/login", async (req,res)=>{
         const payload ={
             name: user.name,
             email: user.email,
+            //role field added to accomodate view separations. 
+            role : user.admin ? "admin" : "user",
             admin: user.admin,
             id: user.userID
         };
@@ -159,9 +161,16 @@ router.post("/login_pwl", async (req,res)=>{
             error:"email not provided"
         });
 
+        //regex to validate if something is an email. Source: https://emailregex.com/index.html
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(!emailRegex.exec(email)) return res.status(400).json({
+            error:"bad email was provided",
+            email: email
+        });
+
         
         //making sure that the contractor exists.
-        const select_sql = "SELECT contractorID FROM contractors WHERE email = ?";
+        const select_sql = "SELECT contractorID FROM contractors WHERE email = ? AND WHERE active_account=1";
         const select_data = await db.query(select_sql, [email]);
         if(!select_data.length) return res.status(401).json({
             error:"something went wrong with the login, check your email"
@@ -243,7 +252,7 @@ router.post("/verify_pwl", async(req,res)=>{
         const {contractorID} = (await db.query("SELECT contractorID FROM contractors WHERE email=?",[email]))[0] 
 
         //longer-term auth token, since the user passed verification and shall be logged in.
-        const long_token = await jwt.sign({email, id:contractorID}, process.env.PWL_LONG_TERM_SECRET, {
+        const long_token = await jwt.sign({email, id:contractorID, role:"contractor"}, process.env.PWL_LONG_TERM_SECRET, {
             expiresIn:"1h"
         });
 

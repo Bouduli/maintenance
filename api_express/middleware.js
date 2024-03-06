@@ -9,11 +9,27 @@ const jwt = require("jsonwebtoken");
  * @returns A middleware of type async(req,res,next)
  * @example app.get("/restricted_endpoint", auth("admin"), async (req,res)=> ... )
  */
+function identity(){
+    return async function (req,res,next){
+        try {
+            const cookie = req.cookies["auth-token"];
+            if(cookie){
+                const unsafe_token = await jwt.decode(cookie);
+
+            }
+            next()
+        } catch (err) {
+            console.log("err @ mw.identity()  : ", err);
+            next()
+        }
+    }
+}
 function auth(tokenType = "stateful"){
     return async function(req,res,next){
         
         try {
-            
+            if(req.user) return next();
+
             const cookie = req.cookies["auth-token"];
 
             if(!cookie) return res.status(401).json({
@@ -22,9 +38,11 @@ function auth(tokenType = "stateful"){
 
             const secret = tokenType == "stateful" ? process.env.JWT_SECRET: process.env.PWL_LONG_TERM_SECRET ;
             const token = await jwt.verify(cookie, secret);
-
+            
             req.user = {token};
             if(token.admin) req.user.admin=true;
+            //used to control views. 
+            req.user.role = token.role;
 
             return next();
             
