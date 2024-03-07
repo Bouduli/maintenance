@@ -1,7 +1,7 @@
 extends template.pug 
 
 block content 
-    div(x-data="{tab: '#houses'}")
+    div(x-data="view()")
 
         //
             These are links used for tabs
@@ -11,39 +11,52 @@ block content
         a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
 
         // This content is tabbed, right?!
-        div( x-show='tab=="#houses"' x-data='{houses: []}' x-init = 'houses = (await (await fetch("/house")).json() ).content')
+        div( x-show='tab=="#houses"' x-data="{houses: []}" x-init = "await fetchHouses() ; console.log('houses: ', houses)"
+            @insert-house.camel.window="await fetchHouses();")
             h2 Houses
-                div(id="createHouse")
-                    h3 CREATE HOUSE
-                    form(action="/house", method="post" @submit.prevent="await createHouse($event.target)")
-                        input(type="text", name="address", placeholder="Address", required)
-                        input(type="text", name="description" placeholder="Description")
-                        input(type="text", name="name", placeholder="Name")
-                        input(type="submit" value="create")
-                ul
-                    template(x-for="house in houses")
-                        li
-                            h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
-                            i(x-text="house.name")
-                            p(x-text="house.description")
+            div(id="createHouse")
+                h3 CREATE HOUSE
+                form(action="/house", method="post" @submit.prevent="await createHouse($event.target)")
+                    input(type="text", name="address", placeholder="Address", required)
+                    input(type="text", name="description" placeholder="Description")
+                    input(type="text", name="name", placeholder="Name")
+                    input(type="submit" value="create")
+            ul
+                template(x-for="house in houses")
+                    li
+                        h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
+                        i(x-text="house.name")
+                        p(x-text="house.description")
             
-        div(x-show="tab=='#tasks'" x-data= "{tasks : [] }" x-init='tasks = (await (await fetch("/task")).json()).content')
+        div(x-show="tab=='#tasks'" x-data= "{tasks : [] }" x-init="await fetchTasks(); console.log('tasks: ', tasks)"
+            @insert-task.camel.window="await fetchTasks()")
             h2 Tasks:
+            div(id="createTask")
+                h3 create task 
+                form(action="/task", method="post", @submit.prevent="await createTask($event.target)")
+                    input(type="text", name="houseID", placeholder="House ID", required)
+                    input(type="text", name="description" placeholder="Description" required)
+                    input(type="submit" value="create")
             ul
                 template(x-for="task in tasks" :key="task.taskID")
-                    li
-                        p(x-text="task.description")
+                    li 
+                        p description: 
+                            span(x-text="task.description")
                         div(x-show="task.completed")
                             h3 COMPLETED!!!
 
-        div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="contractors = (await (await fetch('/contractor')).json() ).content" )
+        div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
+            @insert-contractors.camel.window="await fetchContractors()")
             h2 Contractors:
             ul
                 template(x-for="contractor in contractors")
                     li
-                        h3(x-text="contractor.name")
-                        i(x-text="contractor.occupation")
-                        p(x-text="contractor.phone")
+                        h3 name: 
+                            span(x-text="contractor.name")
+                        i occupation: 
+                            span(x-text="contractor.occupation")
+                        p phone: 
+                            span(x-text="contractor.phone")
         script
             include scripts/user.js
             
