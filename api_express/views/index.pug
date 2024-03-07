@@ -5,17 +5,18 @@ extends template.pug
 
     As you can see, now it is used to show the "user" view. 
 block content
-    div(x-data='{houses: []}' x-init = 'houses = (await (await fetch("/house")).json() ).content')
-        h2 Houses
-            ul
-                template(x-for="house in houses")
-                    li
-                        h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
-                        i(x-text="house.name")
-                        p(x-text="house.description")
+    div 
+        div(x-data='{houses: []}' x-init = 'houses = (await (await fetch("/house")).json() ).content')
+            h2 Houses
+                ul
+                    template(x-for="house in houses")
+                        li
+                            h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
+                            i(x-text="house.name")
+                            p(x-text="house.description")
+            
         
-    
-    
+        
         div(x-data= "{tasks : [] }" x-init='tasks = (await (await fetch("/task")).json()).content')
             h2 Tasks:
             ul
