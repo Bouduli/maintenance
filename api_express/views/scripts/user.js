@@ -28,12 +28,45 @@ async function createHouse(target){
 
     const json = await res.json();
     if(res.ok) {
-        console.log("Inserted id: ",json.content);
+        console.log("Inserted house with id: ",json.content);
+
+        //This tells Alpine.JS to re-fetch the data.
         window.dispatchEvent(insertHouseEvent);
+
+        //clears form
+        target.reset()
     }
 
     else console.error(json);
     
+
+}
+
+async function createTask(target){
+    const body = {
+        houseID : target.houseID.value || null,
+        description : target.description.value || null,
+        
+    };
+    const res = await fetch("/task", {
+        method:"POST",
+        body:JSON.stringify(body),
+        headers:{
+            "Content-Type" : "application/json"
+        }
+    });
+
+    const json = await res.json();
+    if(res.ok) {
+        console.log("inserted task with id: ", json.content);
+
+        //this tells alpine to re-fetch tasks, allowing our new task to be displayed.
+        window.dispatchEvent(insertTaskEvent);
+
+        target.reset();
+    }
+
+    else console.log(json);
 
 }
 
