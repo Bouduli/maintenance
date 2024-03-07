@@ -1,5 +1,29 @@
 # Plan över arbetet / saker som måste fixas
 
+## FRONTEND
+### Vyer
+#### Användare/kund
+- [ ] Tab som Visar alla hus
+    - [ ] Formulär för att lägga till ett hus
+
+- [ ] Tab som visar alla Tasks
+    - [ ] Formulär för att lägga till tasks
+    - [ ] Knapp för att tilldela task till contractor
+- [ ] Tab som visar förslag till tasks
+    - [ ] Knapp för att approva-task.
+
+- [ ] Tab som visar alla contractors
+    - [ ] Formulär för att skapa en contractor
+
+#### Contractor / Worker
+- [ ] Tab som visar alla tilldelade tasks
+    - [ ] Grupperade efter hus (?)
+- [ ] Formulär för att lägga till ett förslag på tasks.
+
+#### Systemadministratör
+- [ ] Tab som visar alla användare
+    - [ ] Formulär för att lägga till en användare
+
 ## API
 ### Generella saker
 - [ ] Filuppladdning för diverse olika databasobjekt
