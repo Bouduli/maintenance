@@ -1,0 +1,41 @@
+extends template.pug 
+
+block content 
+    div(x-data="{tab: '#houses'}")
+
+        //
+            These are links used for tabs
+            Sauce for this is https://talltips.novate.co.uk/tabbed-content-using-alpine-js 
+        a(href="#" x-on:click.prevent="tab='#houses'") houses 
+        a(href="#" x-on:click.prevent="tab='#tasks'") tasks 
+        a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
+
+        // This content is tabbed, right?!
+        div( x-show='tab=="#houses"' x-data='{houses: []}' x-init = 'houses = (await (await fetch("/house")).json() ).content')
+            h2 Houses
+                ul
+                    template(x-for="house in houses")
+                        li
+                            h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
+                            i(x-text="house.name")
+                            p(x-text="house.description")
+            
+        div(x-show="tab=='#tasks'" x-data= "{tasks : [] }" x-init='tasks = (await (await fetch("/task")).json()).content')
+            h2 Tasks:
+            ul
+                template(x-for="task in tasks" :key="task.taskID")
+                    li
+                        p(x-text="task.description")
+                        div(x-show="task.completed")
+                            h3 COMPLETED!!!
+
+        div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="contractors = (await (await fetch('/contractor')).json() ).content" )
+            h2 Contractors:
+            ul
+                template(x-for="contractor in contractors")
+                    li
+                        h3(x-text="contractor.name")
+                        i(x-text="contractor.occupation")
+                        p(x-text="contractor.phone")
+        script
+            include scripts/user.js
