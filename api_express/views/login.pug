@@ -2,7 +2,7 @@ extends template.pug
 
 block content
     //- open toggles visibility of user / contractor-login
-    div(x-data='{stateful: true}')
+    div(x-data='{stateful: true, verified:false}')
         #toggler()
             p Select login:
             button(@click='stateful=true') User
@@ -14,7 +14,7 @@ block content
                 input(type="email", name="email", placeholder="email")
                 input(type="password", name="password" placeholder="password") 
                 input(type="submit", value = "login")
-        div(id="pwl" x-show='!stateful' x-data='{verified:false}')
+        div(id="pwl" x-show='!stateful')
             h2 Contractor login
             div(x-show='!verified')
                 h3 login
@@ -28,5 +28,7 @@ block content
                 form(action="/auth/verify_pwl", method="post" @submit.prevent="await verify_pwl($event.target)")
                     input(type="code" name="code" placeholder="code")
                     input(type="submit", value="verify")
+        div(id="error" @auth-error.camel.window='console.log("errored"); error=true;' x-data='{error: false}' x-show='error')
+            p there was an error with your request
         script 
             include scripts/login.js

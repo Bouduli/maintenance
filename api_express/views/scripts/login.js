@@ -1,6 +1,9 @@
 //used to signify when to toggle visibility of Verify form
 const pwl_loggedIn_Event = new Event("showVerify");
 
+//used to show error text in body
+const error_Event = new Event("authError")
+
 //used to send a login request using stateful authentication
 async function login(target){
     console.log(target);
@@ -12,7 +15,7 @@ async function login(target){
         password: target.password.value || null,
         email : target.email.value || null
     };
-    console.log(body);
+    // console.log(body);
     const res = await fetch("/auth/login", {
         method: "POST",
         body:JSON.stringify(body),
@@ -22,14 +25,15 @@ async function login(target){
     });
 
     console.log(await res.json());
-    if(res.ok) window.location.replace("/")
+    if(res.ok) window.location.replace("/");
+    else window.dispatchEvent(error_Event);
 };
 
 //used to send a login request using passwordless authentication
 async function login_pwl(target){
     // console.log(target)
     const email = target.email.value || null;
-    console.log("email : ", email);
+    // console.log("email : ", email);
     const res = await fetch("/auth/login_pwl", {
         method:"POST",
         body:JSON.stringify({email}),
@@ -40,6 +44,10 @@ async function login_pwl(target){
 
     console.log(await res.json());
     if(res.ok) target.dispatchEvent(pwl_loggedIn_Event);
+    else {
+        window.dispatchEvent(error_Event);
+        
+    }
 
 }
 
@@ -54,7 +62,12 @@ async function verify_pwl(target){
             "Content-Type" : "application/json"
         }
     });
-
     console.log(await res.json());
-    if(res.ok) window.location.replace("/worker")
+    if(res.ok) {
+        window.location.replace("/worker")
+    }
+    else {
+        window.dispatchEvent(error_Event);
+
+    }
 }
