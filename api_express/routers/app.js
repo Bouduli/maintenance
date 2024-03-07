@@ -12,7 +12,7 @@ router.get("/login", async(req,res)=>{
 router.get("/worker", mw.auth("pwl"), async(req,res)=>{
     res.render("worker", {title: "worker"})
 });
-router.get("/user", mw.auth(), async ()=>{
+router.get("/user", mw.auth(), async (req,res)=>{
     res.render("user", {title:"user"});
 })
 
