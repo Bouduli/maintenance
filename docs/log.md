@@ -160,3 +160,8 @@ Saker som har gjorts:
 - Anonymisering vid house-delete
 - Invited_by fält till contractors_tabellen
 - Droppat databasen (whoops)
+
+### Onsdag 06/03
+Saker som har gjorts:
+*frontend med **alpine.js** har påbörjats*en robust user-vy
+Login vy
