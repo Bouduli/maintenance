@@ -13,6 +13,13 @@ block content
         // This content is tabbed, right?!
         div( x-show='tab=="#houses"' x-data='{houses: []}' x-init = 'houses = (await (await fetch("/house")).json() ).content')
             h2 Houses
+                div(id="createHouse")
+                    h3 CREATE HOUSE
+                    form(action="/house", method="post" @submit.prevent="await createHouse($event.target)")
+                        input(type="text", name="address", placeholder="Address", required)
+                        input(type="text", name="description" placeholder="Description")
+                        input(type="text", name="name", placeholder="Name")
+                        input(type="submit" value="create")
                 ul
                     template(x-for="house in houses")
                         li
@@ -39,3 +46,4 @@ block content
                         p(x-text="contractor.phone")
         script
             include scripts/user.js
+            
