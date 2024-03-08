@@ -25,7 +25,7 @@ async function login(target){
     });
 
     console.log(await res.json());
-    if(res.ok) window.location.replace("/");
+    if(res.ok) window.location.replace("/user");
     else window.dispatchEvent(error_Event);
 };
 
