@@ -8,7 +8,12 @@ const email_client = require("../email");
 router.get("/", async(req,res)=>{
 
     try {
-        const data = await db.query("SELECT * FROM contractors");
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+        const sql = "SELECT * FROM contractors WHERE invited_by=? AND active_account=?";
+        const data = await db.query(sql, [userID, 1]);
         
         if(!data.length) return res.status(404).json({
             error: "not found"
@@ -25,7 +30,7 @@ router.get("/", async(req,res)=>{
             error:"internal server error"
         });
     }
-})
+});
 
 //show
 router.get("/:id", async (req,res)=>{
@@ -35,9 +40,14 @@ router.get("/:id", async (req,res)=>{
         if(!id) return res.status(400).json({
             error:"no id provided"
         });
-    
-        const sql = "SELECT * FROM contractors WHERE contractorID = ? AND active_account=1";
-        const data = await db.query(sql, [id]);
+
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
+        const sql = "SELECT * FROM contractors WHERE contractorID = ? AND active_account=? AND invited_by=?"
+        const data = await db.query(sql, [id, 1, userID]);
     
         if(!data.length) return res.status(404).json({
             error:"resource not found with requested id",
@@ -57,7 +67,7 @@ router.get("/:id", async (req,res)=>{
     }
 
 
-})
+});
 
 //create
 router.post("/", async(req,res)=>{
@@ -66,7 +76,9 @@ router.post("/", async(req,res)=>{
         
         const {name, occupation, email, phone} = req.body;
         const userID = req.user.token.id;
-
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
 
         if(!name || !occupation, !email, !phone) return res.status(400).json({
             error:"One or more parameters not provided",
@@ -124,11 +136,17 @@ router.delete("/:id", async(req,res)=>{
     try {
         const {id} = req.params;
     
-        if(!id) return res.status(400).json({
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
+        if(!id ) return res.status(400).json({
             error:"id not provided for delete"
         });
-    
-        const data = await db.query("UPDATE contractors SET name ='***', email = '***', occupation='***', phone = '***', active_account=0 WHERE contractorID = ?", [id]);
+        
+        const sql = "UPDATE contractors SET name ='***', email = '***', occupation='***', phone = '***', active_account=0 WHERE contractorID = ? AND invited_by=?"
+        const data = await db.query(sql, [id,userID]);
     
         if(!data.affectedRows) return res.status(404).json({
             error:"resource with specified id could not be found",
@@ -153,6 +171,11 @@ router.delete("/:id", async(req,res)=>{
 //update
 router.put("/:id", async(req,res)=>{
     try {
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
         const {id} = req.params;
         const {name, occupation, email, phone} = req.body;
     
@@ -161,8 +184,8 @@ router.put("/:id", async(req,res)=>{
         });
     
         //find old resource, to make sure that an update can take place.
-        const find_sql = "SELECT * FROM contractors WHERE contractorID = ?";
-        const found = await db.query(find_sql, [id]); 
+        const find_sql = "SELECT * FROM contractors WHERE contractorID = ? AND invited_by = ?";
+        const found = await db.query(find_sql, [id, userID]); 
         if (!found.length) return res.status(404).json({
             error: "A resource with the specified id could not be found",
             id
@@ -179,8 +202,8 @@ router.put("/:id", async(req,res)=>{
             phone : phone || old.phone
         }
 
-        const update_sql = "UPDATE contractors SET name=?, occupation=?, email=?, phone=? WHERE contractorID = ?"
-        const data = await db.query(update_sql, [updated.name, updated.occupation, updated.email, updated.phone, id]);
+        const update_sql = "UPDATE contractors SET name=?, occupation=?, email=?, phone=? WHERE contractorID = ? AND invited_by=?"
+        const data = await db.query(update_sql, [updated.name, updated.occupation, updated.email, updated.phone, id, userID]);
         
         if(!data.changedRows) return res.status(304).json({
             error: "nothing changed",
