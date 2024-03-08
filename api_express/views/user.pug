@@ -1,7 +1,7 @@
 extends template.pug 
 
 block content 
-    div(x-data="view()")
+    div(x-data="view();")
 
         //
             These are links used for tabs
@@ -22,8 +22,8 @@ block content
                     input(type="text", name="name", placeholder="Name")
                     input(type="submit" value="create")
             ul
-                template(x-for="house in houses")
-                    li
+                template(x-for="house in houses" :key="house.houseID")
+                    li(:id="$id('contractorID.contractorID')")
                         h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
                         i(x-text="house.name")
                         p(x-text="house.description")
@@ -39,18 +39,26 @@ block content
                     input(type="submit" value="create")
             ul
                 template(x-for="task in tasks" :key="task.taskID")
-                    li 
+                    li(:id="$id('task.taskID')") 
                         p description: 
                             span(x-text="task.description")
                         div(x-show="task.completed")
                             h3 COMPLETED!!!
 
         div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
-            @insert-contractors.camel.window="await fetchContractors()")
+            @insert-contractor.camel.window="await fetchContractors()")
             h2 Contractors:
+            div(id="createContractor")
+                h3 add contractor 
+                form(action="/contractor", method="post", @submit.prevent="await createContractor($event.target)")
+                    input(type="text", name="name", placeholder="Name", required)
+                    input(type="email", name="email", placeholder="Email", required)
+                    input(type="phone", name="phone", placeholder="Phone", required)
+                    input(type="text", name="occupation", placeholder="Occupation", required)
+                    input(type="submit", value="Create contractor")
             ul
-                template(x-for="contractor in contractors")
-                    li
+                template(x-for="contractor in contractors" :key="contractor.contractorID")
+                    li(:id="$id('contractor.contractorId')")
                         h3 name: 
                             span(x-text="contractor.name")
                         i occupation: 

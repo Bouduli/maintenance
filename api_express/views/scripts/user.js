@@ -66,10 +66,36 @@ async function createTask(target){
         target.reset();
     }
 
-    else console.log(json);
+    else console.error(json);
 
 }
 
+async function createContractor(target){
+    const body = {
+        email: target.email.value ||null,
+        name: target.name.value ||null,
+        phone: target.phone.value ||null,
+        occupation: target.occupation.value ||null,
+    };
+
+    const res = await fetch("/contractor",{
+        method:"POST",
+        body:JSON.stringify(body),
+        headers:{
+            "Content-Type" : "application/json"
+        }
+    });
+
+    const json = await res.json();
+
+    if(res.ok){
+        console.log(json);
+        window.dispatchEvent(insertContractorEvent);
+    }
+    else {
+        console.error(json);
+    }
+}
 
 //returns data for the x-data tag of "root" element
 function view(){
