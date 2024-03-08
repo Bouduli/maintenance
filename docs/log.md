@@ -165,3 +165,14 @@ Saker som har gjorts:
 Saker som har gjorts:
 *frontend med **alpine.js** har påbörjats*en robust user-vy
 Login vy
+
+### Torsdag 07/03
+Saker som har gjorts: User Vyn är nästan klar.
+Fetch requests har gjorts för att skapa Houses och Tasks.
+
+### Fredag 08/03
+Saker som har gjorts: User vyn är klar funktionsmässigt..
+
+Saker som skall göras:
+- [ ] Endast visa hus som inloggad användare har skapat.
+- [ ] Endast visa tasks som inloggad användare har skapat.
