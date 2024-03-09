@@ -70,6 +70,35 @@ router.post("/invite", async(req,res)=>{
     }
 })
 
+//find appointed contractors for a task
+router.get("/appointee/:id", async(req,res)=>{
+    try {
+        
+        const taskID = req.params.id;
+        if(!taskID) return res.status(400).json({
+            error:" taskid not provided"
+        });
+
+        const sql  = "SELECT * FROM CONTRACTORS WHERE contractorID IN (SELECT contractorID from task_contractors WHERE taskID = ?)";
+        const data = await db.query(sql, [taskID]);
+        if(!data.length) return res.status(404).json({
+            error:" no contractors appointed for this taskid",
+            taskID
+        });
+
+        return res.status(200).json({
+            content:data
+        });
+
+
+    } catch (err) {
+        console.log("err @ /tasks/contractors  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        })
+    }
+})
+
 //List all task suggestions
 router.get("/suggestion", async(req,res)=>{
 
