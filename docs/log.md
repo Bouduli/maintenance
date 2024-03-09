@@ -175,4 +175,22 @@ Saker som har gjorts: User vyn är klar funktionsmässigt..
 
 Saker som skall göras:
 - [x] Endast visa hus som inloggad användare har skapat.
-- [ ] Endast visa tasks som inloggad användare har skapat.
+- [x] Endast visa tasks som inloggad användare har skapat.
+
+### Lördag 09/03
+User vyn är i stora drag klar (funktionsmässigt) då endast möjligheten att visa förslag saknas.
+
+Ändringar till APIn:
+- En användare kan endast se Hus och Tasks som den har lagt-till / skapat.
+- En ny route GET "/task/appointee/:id" har skapats - den returnerar alla contractors som är tilldelade tasken med id-parametern. Detta används till att visa tilldelade hantverkare för varje task.
+
+Ändringar till Frontend:
+- Formulär för att tilldela contractors till en task
+- Möjligheten att visa contractors tilldelade till varje task.
+- Möjligheten att som användare ta bort* en Contractor*, Task eller Hus* (*: dessa anonymiseras, det borde väl egentligen Tasks göra oxå).
+
+Planer inför framtiden:
+- [ ] Visa, ta bort(det behövs api route), och approva föreslagna tasks (suggestions)
+- [ ] Worker vyn
+- [ ] Admin vyn
+- [ ] **CSS korståg.**

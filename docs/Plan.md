@@ -5,16 +5,19 @@
 #### Användare/kund
 - [x] Tab som Visar alla hus
     - [x] Formulär för att lägga till ett hus
+    - [x] Knapp för att ta bort ett hus
 
 - [x] Tab som visar alla Tasks
     - [x] Formulär för att lägga till tasks
-    - [ ] Knapp för att tilldela task till contractor
+    - [x] Knapp för att tilldela task till contractor
         - [ ] knapp för att ta bort contractor från task ( API endpoint oxå?)
+    - [x] Knapp för att ta bort en task
 - [ ] Tab som visar förslag till tasks
     - [ ] Knapp för att approva-task.
 
 - [x] Tab som visar alla contractors
-    - [ ] Formulär för att skapa en contractor
+    - [x] Formulär för att skapa en contractor
+    - [x] Knapp för att ta bort en contractor
 
 #### Contractor / Worker
 - [ ] Tab som visar alla tilldelade tasks
