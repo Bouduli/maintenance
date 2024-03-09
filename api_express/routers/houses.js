@@ -7,7 +7,14 @@ const db = require("../db");
 //index
 router.get("/", async (req,res)=>{
     try {
-        const data = await db.query("SELECT * FROM HOUSES");
+        //only show houses that a specific user has created.
+
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
+        const data = await db.query("SELECT * FROM HOUSES WHERE userID = ? and active=?", [userID, 1]);
 
         if(!data.length) return res.status(404).json({
             error:"not found"
@@ -28,6 +35,11 @@ router.get("/", async (req,res)=>{
 //show
 router.get("/:id", async(req,res)=>{
     try {
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
         const {id} = req.params;
         if(!id) return res.send(400).json({
             error:"houseID not provided"
@@ -35,7 +47,7 @@ router.get("/:id", async(req,res)=>{
 
 
 
-        const data = await db.query("SELECT * FROM Houses WHERE houseID = ?", [id]);
+        const data = await db.query("SELECT * FROM Houses WHERE houseID = ? and userID = ? and active=?", [id, userID, 1]);
 
         if(!data.length) return res.status(404).json({error: "House not found with the id provided", id});
 
@@ -83,13 +95,20 @@ router.post("/", async(req,res)=>{
 router.delete("/:id", async (req,res)=>{
 
 try {
+    //only delete houses which the user has access to.
+    const userID = req.user.token.id;
+    if(!userID) return res.status(401).json({
+        message:"useriD not provided, please re-authenticate"
+    })
+
+    //HouseID
     const {id} = req.params;
     if(!id) return res.status(400).json({
         error: "no id provided for delete"
     });
 
-    const sql = "UPDATE Houses SET address='***', name='***', description='***' WHERE houseID = ?";
-    const data = await db.query(sql, [id]);
+    const sql = "UPDATE Houses SET address='***', name='***', description='***', active=0 WHERE houseID = ? AND userID =? AND active=?";
+    const data = await db.query(sql, [id, userID, 1]);
 
     if (!data.affectedRows) return res.status(404).json({
         error:"resource with specified id could not be found",
@@ -110,16 +129,21 @@ try {
 //update
 router.put("/:id", async (req,res)=>{
     try {
-        
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
+
         const {id} = req.params;
-        const {userID, address, name, description} = req.body;
+        const {address, name, description} = req.body;
 
         if(!id) return res.status(400).json({
             error: "No id provided for update"
         });
 
-        const find_sql = "SELECT * FROM Houses WHERE houseID = ?";
-        const found = await db.query(find_sql, [id]); 
+        const find_sql = "SELECT * FROM Houses WHERE houseID = ? and userID = ? and active=?";
+        const found = await db.query(find_sql, [id, userID, 1]); 
         //Then we for sure have something to update. 
         if (!found.length) return res.status(404).json({
             error: "A resource with the specified id could not be found",
@@ -137,8 +161,8 @@ router.put("/:id", async (req,res)=>{
             description: description || old.description,
         };
 
-        const update_sql = "UPDATE houses SET userID = ?, address = ?, name = ?, description = ? WHERE houseID = ?";
-        const data = await db.query(update_sql, [updated.userID, updated.address, updated.name, updated.description, updated.houseID]);
+        const update_sql = "UPDATE houses SET userID = ?, address = ?, name = ?, description = ? WHERE houseID = ? AND userID = ? AND active=?";
+        const data = await db.query(update_sql, [updated.userID, updated.address, updated.name, updated.description, updated.houseID, userID, 1]);
         if(!data.changedRows) return res.status(304).json({
             error: "nothing changed",
             id

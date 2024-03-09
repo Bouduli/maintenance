@@ -7,6 +7,7 @@ CREATE TABLE Houses (
     description VARCHAR(255),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_edited TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    active BOOLEAN DEFAULT 1
     FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 -- INSERT INTO Houses (userID, address, name, description) 

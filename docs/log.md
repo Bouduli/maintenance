@@ -174,5 +174,5 @@ Fetch requests har gjorts för att skapa Houses och Tasks.
 Saker som har gjorts: User vyn är klar funktionsmässigt..
 
 Saker som skall göras:
-- [ ] Endast visa hus som inloggad användare har skapat.
+- [x] Endast visa hus som inloggad användare har skapat.
 - [ ] Endast visa tasks som inloggad användare har skapat.
