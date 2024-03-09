@@ -196,8 +196,14 @@ router.post("/suggestion/:id", async(req,res)=>{
 //index
 router.get("/", async ( req,res)=>{
     try {
-    
-        const data = await db.query("SELECT * FROM tasks");
+        //only retreive tasks available to the authenticated user
+        
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
+        const data = await db.query("SELECT * FROM tasks WHERE userID = ?", [userID]);
         if(!data.length) return res.status(404).json({
             error:"no tasks found"
         });
@@ -217,6 +223,12 @@ router.get("/", async ( req,res)=>{
 //show
 router.get("/:id", async (req,res)=>{
     try {
+        //only retreive tasks available to the authenticated user
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
         const {id} = req.params;
 
         //empty id should not be the case, if the endpoint is reached
@@ -224,7 +236,7 @@ router.get("/:id", async (req,res)=>{
             error:"no id provided"
         });
 
-        const data = await db.query("SELECT * FROM tasks WHERE taskID = ?", [id]);
+        const data = await db.query("SELECT * FROM tasks WHERE taskID = ? AND userID = ?", [id, userID]);
 
         if(!data.length) return res.status(404).json({
             error: "no task found with the provided id",
@@ -273,10 +285,16 @@ router.post("/", async (req,res)=>{
 router.delete("/:id", async(req,res)=>{
     try {
         
+        //only delete tasks available to the authenticated user
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
         const {id} = req.params;
 
-        const sql = "DELETE FROM tasks WHERE taskID = ?";
-        const data = await db.query(sql, [id]);
+        const sql = "DELETE FROM tasks WHERE taskID = ? AND userID = ?";
+        const data = await db.query(sql, [id, userID]);
 
         if(!data.affectedRows) return res.status(404).json({
             error:"not found",
@@ -302,6 +320,13 @@ router.delete("/:id", async(req,res)=>{
 router.put("/:id", async (req,res)=>{
 
     try {
+
+        //only update tasks available to the authenticated user
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            message:"useriD not provided, please re-authenticate"
+        })
+
         const {id} = req.params;
         const {houseID, completed, description} = req.body;
 
@@ -309,8 +334,8 @@ router.put("/:id", async (req,res)=>{
             error: "no id provided for delete"
         });
         //retreive existing entry (also used to check that the ID exists)
-        const find_sql = "SELECT * FROM tasks WHERE taskID = ?";
-        const found = await db.query(find_sql, [id]);
+        const find_sql = "SELECT * FROM tasks WHERE taskID = ? and userID = ?";
+        const found = await db.query(find_sql, [id, userID]);
 
         if(!found.length) return res.status(404).json({
             error: "item not found with specified id",
@@ -326,8 +351,8 @@ router.put("/:id", async (req,res)=>{
             description : description || old.description
         }
 
-        const updated_sql = "UPDATE tasks SET houseID = ? , completed = ?, description = ? WHERE taskID = ?"
-        const data = await db.query(updated_sql, [ updated.houseID, updated.completed, updated.description, updated.taskID]);
+        const updated_sql = "UPDATE tasks SET houseID = ? , completed = ?, description = ? WHERE taskID = ? and userID =?"
+        const data = await db.query(updated_sql, [ updated.houseID, updated.completed, updated.description, updated.taskID, userID]);
         
         if(!data.changedRows) return res.status(304).json({
             error:"nothing changed",
@@ -341,7 +366,7 @@ router.put("/:id", async (req,res)=>{
         });
 
     } catch (err) {
-        console.log("Err @DELETE/:id  : ", err);
+        console.log("Err @ PUT /task/:id  : ", err);
         return res.status(500).json({
             error: "something went wrong"
         })
