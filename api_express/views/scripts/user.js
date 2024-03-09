@@ -128,6 +128,33 @@ async function inviteContractor(target){
         console.error(err);
     }
 }
+async function destroy(type , id, target){
+
+    console.log("destroyType: ", type );
+    console.log("destroyId: ", id );
+    console.log("target", target);
+
+    const url = `/${type}/${id}`;
+    console.log("destroy url : ", url);
+
+    
+    const res = await fetch(url, {
+        method:"DELETE"
+    })
+
+    const json = await res.json();
+
+    if(res.ok){
+        console.log(json);
+
+        target.parentElement.remove();
+    }
+    else {
+        console.error(json);
+
+    }
+
+}
 
 //returns data for the x-data tag of "root" element
 function view(){

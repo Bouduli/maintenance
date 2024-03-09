@@ -31,10 +31,11 @@ block content
                     input(type="submit" value="create")
             ul
                 template(x-for="h in houses" :key="h.houseID")
-                    li(:id="$id('h.houseID')")
+                    div(style="border:2px solid black;margin-bottom:10px;" x-bind:id="`house-${h.houseID}`")
                         h3(x-text="'houseID: ' + h.houseID + ' ' + h.address")
                         i(x-text="h.name")
                         p(x-text="h.description")
+                        button(@click="await destroy('house', h.houseID, $event.target)") DELETE HOUSE
                         //- a(href="#" @click.prevent="house=h.houseID; window.dispatchEvent(showHouseEvent)") open
             
         div(x-show="tab=='#tasks'" x-data= "{tasks : [] }" x-init="await fetchTasks(); console.log('tasks: ', tasks)"
@@ -48,7 +49,7 @@ block content
                     input(type="submit" value="create")
             ul
                 template(x-for="task in tasks" :key="task.taskID")
-                    div( style="border:1px solid black;" :id="$id('task.taskID')" x-data="{showCreateForm: false}") 
+                    div( style="border:2px solid black;margin-bottom:10px;" :id="$id('task.taskID')" x-data="{showCreateForm: false}") 
                         p houseid: 
                             span(x-text="task.houseID")
                         p taskID: 
@@ -78,6 +79,8 @@ block content
                         
                         div(x-show="task.completed")
                             h3 COMPLETED!!!
+                        button(@click="await destroy('task', task.taskID, $event.target)") DELETE TASK
+                    
 
         div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
             @insert-contractor.camel.window="await fetchContractors()")
@@ -92,13 +95,16 @@ block content
                     input(type="submit", value="Create contractor")
             ul
                 template(x-for="contractor in contractors" :key="contractor.contractorID")
-                    li(:id="$id('contractor.contractorId')")
+                    div(:id="$id('contractor.contractorId')")
                         h3 name: 
                             span(x-text="contractor.name")
                         i occupation: 
                             span(x-text="contractor.occupation")
                         p phone: 
                             span(x-text="contractor.phone")
+
+                        button(@click="await destroy('contractor', contractor.contractorID, $event.target)") DELETE CONTRACTOR
+
         script
             include scripts/user.js
             
