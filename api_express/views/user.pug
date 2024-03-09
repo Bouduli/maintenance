@@ -10,6 +10,14 @@ block content
         a(href="#" x-on:click.prevent="tab='#tasks'") tasks 
         a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
 
+        //- div(x-show="house", x-init="console.log(house)" x-data="h = []"
+        //-         @show-house.camel.window="h = (await (await fetch(`/house/${house}`)).json()).content; console.log(h)")
+        //-     template(x-for="ho in h")
+        //-         h3(x-text="ho.address")
+        //-         i(x-text="ho.name")
+        //-         p(x-text="ho.description")
+
+            
         // This content is tabbed, right?!
         div( x-show='tab=="#houses"' x-data="{houses: []}" x-init = "await fetchHouses() ; console.log('houses: ', houses)"
             @insert-house.camel.window="await fetchHouses();")
@@ -22,11 +30,12 @@ block content
                     input(type="text", name="name", placeholder="Name")
                     input(type="submit" value="create")
             ul
-                template(x-for="house in houses" :key="house.houseID")
-                    li(:id="$id('contractorID.contractorID')")
-                        h3(x-text="'houseID: ' + house.houseID + ' ' + house.address")
-                        i(x-text="house.name")
-                        p(x-text="house.description")
+                template(x-for="h in houses" :key="h.houseID")
+                    li(:id="$id('h.houseID')")
+                        h3(x-text="'houseID: ' + h.houseID + ' ' + h.address")
+                        i(x-text="h.name")
+                        p(x-text="h.description")
+                        //- a(href="#" @click.prevent="house=h.houseID; window.dispatchEvent(showHouseEvent)") open
             
         div(x-show="tab=='#tasks'" x-data= "{tasks : [] }" x-init="await fetchTasks(); console.log('tasks: ', tasks)"
             @insert-task.camel.window="await fetchTasks()")
@@ -39,9 +48,26 @@ block content
                     input(type="submit" value="create")
             ul
                 template(x-for="task in tasks" :key="task.taskID")
-                    li(:id="$id('task.taskID')") 
-                        p description: 
+                    div( style="border:1px solid black;" :id="$id('task.taskID')") 
+                        p houseid: 
+                            span(x-text="task.houseID")
+                        p taskID: 
+                            span(x-text="task.taskID")
+                        p description:
                             span(x-text="task.description")
+                        b Appointees:
+                        template(x-for="cont in task.contractors")
+                            div(style="border:1px solid black;")
+                                p name: 
+                                    span(x-text="cont.name")
+                                    span (
+                                    span(x-text="cont.occupation")
+                                    span )
+                                p email: 
+                                    span(x-text="cont.email")
+                        i(x-show="!task.contractors") No contractors have been invited for this task, try inviting one
+                        button invite contractors
+                        
                         div(x-show="task.completed")
                             h3 COMPLETED!!!
 

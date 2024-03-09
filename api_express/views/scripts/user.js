@@ -6,6 +6,8 @@ const insertHouseEvent = new Event("insertHouse");
 const insertTaskEvent = new Event("insertTask");
 const insertContractorEvent = new Event("insertContractor");
 
+// const showHouseEvent=new Event("showHouse");
+
 async function createHouse(target){
 
     const body = {
@@ -104,7 +106,7 @@ function view(){
         houses:[],
         tasks:[],
         contractors:[],
-        
+        // house: "",
         //fetch functions
         async fetchHouses(){
             try {
@@ -117,7 +119,16 @@ function view(){
         async fetchTasks(){
 
             try {
-                this.tasks = (await (await fetch("/task")).json()).content
+                this.tasks = (await (await fetch("/task")).json()).content;
+                // uses GET /task/appointee/:taskID to retreive all contractors for a task. 
+                // this makes it possible showing contractors appointed to a task.
+                const task_contractors = await Promise.all(this.tasks.map(async(t)=>{
+                    return (await(await fetch(`/task/appointee/${t.taskID}`)).json()).content;
+                }));
+                this.tasks.forEach((t, index) => t.contractors = task_contractors[index]);
+
+                console.log(console.log(task_contractors));
+                
             } catch (err) {
                 console.error("no tasks");
                 this.tasks = [];
