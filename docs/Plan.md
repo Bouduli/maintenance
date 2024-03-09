@@ -3,16 +3,17 @@
 ## FRONTEND
 ### Vyer
 #### Användare/kund
-- [ ] Tab som Visar alla hus
-    - [ ] Formulär för att lägga till ett hus
+- [x] Tab som Visar alla hus
+    - [x] Formulär för att lägga till ett hus
 
-- [ ] Tab som visar alla Tasks
-    - [ ] Formulär för att lägga till tasks
+- [x] Tab som visar alla Tasks
+    - [x] Formulär för att lägga till tasks
     - [ ] Knapp för att tilldela task till contractor
+        - [ ] knapp för att ta bort contractor från task ( API endpoint oxå?)
 - [ ] Tab som visar förslag till tasks
     - [ ] Knapp för att approva-task.
 
-- [ ] Tab som visar alla contractors
+- [x] Tab som visar alla contractors
     - [ ] Formulär för att skapa en contractor
 
 #### Contractor / Worker
