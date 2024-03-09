@@ -6,7 +6,6 @@ const insertHouseEvent = new Event("insertHouse");
 const insertTaskEvent = new Event("insertTask");
 const insertContractorEvent = new Event("insertContractor");
 
-// const showHouseEvent=new Event("showHouse");
 
 async function createHouse(target){
 
@@ -99,6 +98,37 @@ async function createContractor(target){
     }
 }
 
+async function inviteContractor(target){
+    try {
+        
+        const body = {
+            taskID : target.taskID.value || null,
+            email : target.email.value || null,
+        }
+
+        const res = await fetch("/task/invite", {
+            method:"POST",
+            body: JSON.stringify(body),
+            headers:{
+                "Content-Type": "application/json"
+            }
+            
+        });
+        const json = await res.json();
+        if(res.ok){
+            console.log(json);
+
+            //note this triggers re-fetch of all tasks, however this acheives the correct action
+            // with minimum effort :)
+            window.dispatchEvent(insertTaskEvent);
+
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 //returns data for the x-data tag of "root" element
 function view(){
     return {
@@ -127,7 +157,7 @@ function view(){
                 }));
                 this.tasks.forEach((t, index) => t.contractors = task_contractors[index]);
 
-                console.log(console.log(task_contractors));
+                // console.log(console.log(task_contractors));
                 
             } catch (err) {
                 console.error("no tasks");

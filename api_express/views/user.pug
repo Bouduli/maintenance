@@ -48,7 +48,7 @@ block content
                     input(type="submit" value="create")
             ul
                 template(x-for="task in tasks" :key="task.taskID")
-                    div( style="border:1px solid black;" :id="$id('task.taskID')") 
+                    div( style="border:1px solid black;" :id="$id('task.taskID')" x-data="{showCreateForm: false}") 
                         p houseid: 
                             span(x-text="task.houseID")
                         p taskID: 
@@ -65,8 +65,16 @@ block content
                                     span )
                                 p email: 
                                     span(x-text="cont.email")
-                        i(x-show="!task.contractors") No contractors have been invited for this task, try inviting one
-                        button invite contractors
+                        div(x-show="!task.contractors") 
+                            i No contractors have been invited for this task, try inviting one
+                        
+                        button(@click="showCreateForm= !showCreateForm") Open Invite Form
+                        div(x-show="showCreateForm")
+                            b Invite contractor:
+                            form(action="/task/invite", @submit.prevent="await inviteContractor($event.target)")
+                                input(type="email", name="email", placeholder="Contractor Email")
+                                input(type="hidden", name="taskID" x-bind:value="task.taskID", value="")
+                                input(type="submit", value="Invite")
                         
                         div(x-show="task.completed")
                             h3 COMPLETED!!!
