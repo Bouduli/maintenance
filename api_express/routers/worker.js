@@ -8,9 +8,8 @@ const { restart } = require("nodemon");
 router.get("/task", async(req,res)=>{
 
     try {
-        //token is verified, mostly to retreive email address.
+        //contractorID is retreived to regulate which tasks are shown.
         const {token} = req.user;
-        
         const contractorID = token.id;
 
         //appointed tasks are queried using (double-queries)
@@ -22,6 +21,39 @@ router.get("/task", async(req,res)=>{
 
         return res.status(200).json({
             content:data
+            
+        });
+
+    } catch (err) {
+        console.log("err @ GET /worker/task  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        });
+    }
+});
+//fetching a specific task from the db
+router.get("/task/:id", async(req,res)=>{
+
+    try {
+        
+        const {token} = req.user;
+        const contractorID = token.id;
+        const taskID = req.params.id;
+
+        if(!taskID) return res.status(400).json({
+            error:"id not provided"
+        })
+
+        //appointed task is queried with both contractorID and taskID in the inner query, 
+        //to ensure that the contractor is appointed for the requested task.
+        const sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ? AND taskID = ?)";
+        const data = await db.query(sql, [contractorID, taskID]);
+        if(!data.length) return res.status(404).json({
+            error:"no tasks", message: "Phew, seems your work is done..."
+        });
+
+        return res.status(200).json({
+            content:data[0]
             
         });
 
