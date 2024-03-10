@@ -47,11 +47,11 @@ router.post("/invite", async(req,res)=>{
         const insert_sql = "INSERT INTO task_contractors VALUES (?,?)";
         const insert_data = await db.query(insert_sql, [taskID, contractorID])
 
-        const email_data = await email_client.sendHtmlMail(email, {
-            Header:"You have been appointed with another task", //--------------------------------------------------------> Do something with this link <----------
-            Body:`<p>You have been invited to another task.!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>`,
-            Footer :"If you beleive this was a mistake, I suggest you disregard this email"
-        });
+        // const email_data = await email_client.sendHtmlMail(email, {
+        //     Header:"You have been appointed with another task", //--------------------------------------------------------> Do something with this link <----------
+        //     Body:`<p>You have been invited to another task.!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>`,
+        //     Footer :"If you beleive this was a mistake, I suggest you disregard this email"
+        // });
         console.log(email_data)
 
         return res.status(200).json({
