@@ -210,11 +210,18 @@ router.post("/suggestion/:id", async(req,res)=>{
         const insert_sql = "INSERT INTO tasks (description, houseID, userID) VALUES (?,?,?)"
         const insert_data = await db.query(insert_sql, [suggestion.description, suggestion.houseID, userID])
         console.log(insert_data);
-
         if(!insert_data.insertId) return res.status(400).json({
             error:"unable to approve task-suggestion.",
             suggestionID: id
 
+        });
+
+        // removing suggestion from task_suggestions.
+        const remove_sql = "DELETE FROM suggested_tasks WHERE suggestionID = ?";
+        const remove_data = await db.query(remove_sql, [suggestion.suggestionID]);
+        if(!remove_data.affectedRows) return res.status(400).json({
+            error: "unable to remove task_suggestion, however the suggestion was approved",
+            new_task_id: insert_data.insertId
         });
 
         return res.status(200).json({
@@ -234,6 +241,39 @@ router.post("/suggestion/:id", async(req,res)=>{
     }
 })
 
+router.delete("/suggestion/:id", async(req,res)=>{
+    try {
+        
+        const {id} = req.params;
+        if(!id) return res.status(400).json({
+            error:"id not provided for task-rejection"
+        });
+
+        //userID is retreived
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            error:"No userid provided with request, please login again."
+        });
+
+        const sql = "DELETE FROM suggested_tasks WHERE suggestionID = ?";
+        const data = await db.query(sql, [id]);
+        if(!data.affectedRows) return res.status(404).json({
+            error:"no suggestion found",
+            id: id
+        });
+
+        return res.status(200).json({
+            message:"successfully deleted task-suggestion",
+            id: id
+        });
+
+    } catch (err) {
+        console.log("Err @ DELETE/task/suggestion/:id  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        });
+    }
+})
 
 //---------------- CRUD OPERATIONS ---------------------------
 //index
