@@ -31,25 +31,40 @@ router.post("/invite", async(req,res)=>{
         const {contractorID} = contractor_data[0]
 
         //make sure that the requested task exists
-        const find_task = "SELECT taskID FROM tasks WHERE taskID = ?";
+        const find_task = "SELECT taskID, userID FROM tasks WHERE taskID = ?";
         const task_data = await db.query(find_task, [taskID]);
-        if(!task_data.length) return res.status(403).json({
+        if(!task_data.length) return res.status(404).json({
             error:"task not found with the provided id",
-            id: taskID
+            id: taskID ||null
         });
 
         const task = task_data[0];
-        
+        console.log(task);       
         //make sure that the user is allowed to add contractor to the task
         if(task.userID != id) return res.status(403).json({
             error:"you are not allowed to invite contractor to this task"
         });
 
-        //making the 'connectopn'
-        const insert_sql = "INSERT INTO task_contractors VALUES (?,?)";
-        const insert_data = await db.query(insert_sql, [taskID, contractorID])
+        //make sure that the contractor isn't already added to the task..
+        const check_invited_sql = "SELECT contractorID, taskID from task_contractors where taskID = ? and contractorID = ?";
+        const check_invited_data = await db.query(check_invited_sql, [taskID, contractorID]);
 
-        //optional sending an email that a user have been appointed a task.
+        //if we have entries with this contractorID and taskID -> then we have a duplicate. Hence 409.
+        if(check_invited_data.length) return res.status(409).json({
+            error:"this contractor has already been invited to this task."
+        });
+
+        //making the 'connection'
+        const insert_sql = "INSERT INTO task_contractors VALUES (?,?)";
+        const insert_data = await db.query(insert_sql, [taskID, contractorID]);
+        console.log(insert_data);
+        if(insert_data.insertId!=0 && insert_data.affectedRows!=1) return res.status(400).json({
+            error:"making a connection between task and contractor failed",
+            taskID: taskID,
+            contractor_email: email
+        });
+
+        //optional: sending an email that a user have been appointed a task.
         const email_data = await email_client.sendHtmlMail(email, {
             Header:"You have been appointed with another task", //--------------------------------------------------------> Do something with this link <----------
             Body:`<p>You have been invited to another task.!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>`,
@@ -82,8 +97,11 @@ router.get("/appointee/:id", async(req,res)=>{
             error:" taskid not provided"
         });
 
-        //perhaps add check to make sure that the user has invited the contractor.
-        const sql  = "SELECT * FROM CONTRACTORS WHERE contractorID IN (SELECT contractorID from task_contractors WHERE taskID = ?)";
+        
+        //NOTE: a check should be added so that the db wont return anything, if the task or the contractor, wasn't created by this person. 
+
+        //returns all contractors, where contractorID matches field in task_contractors
+        const sql  = "SELECT * FROM contractors WHERE contractorID IN (SELECT contractorID from task_contractors WHERE taskID = ?)";
         const data = await db.query(sql, [taskID]);
         if(!data.length) return res.status(404).json({
             error:" no contractors appointed for this taskid",
@@ -112,6 +130,7 @@ router.get("/suggestion", async(req,res)=>{
             error:"userID did not follow your request, please re-authenticate."
         });
 
+        //selects all suggested_tasks for houses which the user has created.
         const sql = "SELECT * FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE userID = ?)";
         const data = await db.query(sql, [userID]);
 
@@ -159,7 +178,7 @@ router.post("/suggestion/:id", async(req,res)=>{
         const suggestion = select_suggestion_data[0];
         // console.log(suggestion);
         
-        //make sure that the user is allowed to approve tasks for a house
+        //make sure that the user is allowed to approve tasks for the house (has created it).
         const select_house_sql = "SELECT userID from houses where userID = ? AND houseID = ?"
         const select_house_data = await db.query(select_house_sql, [userID, suggestion.houseID]);
         if(!select_house_data.length) return res.status(403).json({
@@ -168,7 +187,7 @@ router.post("/suggestion/:id", async(req,res)=>{
             suggestionID: id
         });
 
-        //inserting the task into db
+        //inserting the suggested_task into the tasks-table
         const insert_sql = "INSERT INTO tasks (description, houseID, userID) VALUES (?,?,?)"
         const insert_data = await db.query(insert_sql, [suggestion.description, suggestion.houseID, userID])
         console.log(insert_data);
@@ -201,8 +220,8 @@ router.post("/suggestion/:id", async(req,res)=>{
 //index
 router.get("/", async ( req,res)=>{
     try {
-        //only retreive tasks available to the authenticated user
         
+        //only retreive tasks available to the authenticated user
         const userID = req.user.token.id;
         if(!userID) return res.status(401).json({
             message:"useriD not provided, please re-authenticate"
@@ -272,6 +291,15 @@ router.post("/", async (req,res)=>{
             userID: userID || null,
             description: description|| null
         });
+
+        //make sure that the user is the owner of the house, and therefore, allowed to create a task
+        const find_sql = "SELECT userID FROM houses WHERE houseID = ? and userID = ?";
+        const find_data = await db.query(find_sql, [houseID, userID])
+        if(!find_data.length) return res.status(403).json({
+            error:"you are not allowed to create a task on this house"
+        });
+
+        //inserting the task
         const sql = "INSERT INTO tasks (houseID, userID, description) VALUES (?,?,?)";
         const data = await db.query(sql, [houseID, userID, description]);
 
@@ -338,7 +366,8 @@ router.put("/:id", async (req,res)=>{
         if(!id) return res.status(400).json({
             error: "no id provided for delete"
         });
-        //retreive existing entry (also used to check that the ID exists)
+
+        //retreive existing entry (also used to check that the user is authenticated)
         const find_sql = "SELECT * FROM tasks WHERE taskID = ? and userID = ?";
         const found = await db.query(find_sql, [id, userID]);
 
@@ -355,10 +384,12 @@ router.put("/:id", async (req,res)=>{
             completed : completed || old.completed,
             description : description || old.description
         }
-
+        
+        //updates the task using a mix of newly-provided values, and the old values, if no new ones were procided.
         const updated_sql = "UPDATE tasks SET houseID = ? , completed = ?, description = ? WHERE taskID = ? and userID =?"
         const data = await db.query(updated_sql, [ updated.houseID, updated.completed, updated.description, updated.taskID, userID]);
         
+        //if data isn't changed, then it is reflected here.
         if(!data.changedRows) return res.status(304).json({
             error:"nothing changed",
             id

@@ -51,7 +51,7 @@ router.get("/data", async(req,res)=>{
         });
     }
 });
-//fetching a specific task from the db
+//fetching a specific task from the db (unused?)
 router.get("/task/:id", async(req,res)=>{
 
     try {
@@ -88,29 +88,25 @@ router.get("/task/:id", async(req,res)=>{
 //marking task as complete. 
 router.put("/task/:id", async (req,res)=>{
     try {
-        const {id} = req.params;
-        const userID = req.user.token.id;
+        const taskID = req.params.id;
+        //NOTE: id retreived from req.user and NOT Users table in the db.
+        const contractorID = req.user.token.id;
 
-        if(!id) return res.status(400).json({
+        if(!taskID) return res.status(400).json({
             error:"no taskID provided"
         });
+
+        if(!contractorID) return res.status(401).json({
+            error:"contractorID could not be retreived, please re-authenticate.."
+        });
         
-        //Make sure that the task exists in task_contractor table.
-        const find_sql = "SELECT taskID, contractorID FROM task_contractors WHERE taskID = ?";
-        const find_data = await db.query(find_sql, [id]);
+        //Query performs two checks: Make sure that the task exists, AND that the contractor is appointed to the task.
+        const find_sql = "SELECT * FROM task_contractors WHERE taskID = ? AND contractorID = ?";
+        const find_data = await db.query(find_sql, [taskID, contractorID]);
 
         if(!find_data.length) return res.status(404).json({
-            error:"no task found with the provided id", id:id 
+            error:"no task found with the provided id", id:taskID
         });
-
-        //should be the only received task
-        const {taskID, contractorID} = find_data[0];
-
-        //make sure that contractorID from token is consistent with that of task_contractor entry
-        if(contractorID != userID) return res.status(403).json({
-            error:"you are not allowed to edit this task"
-        });
-
 
         //update only allows a contractor to set completed, true or false.
         const {completed} = req.body || false;
@@ -121,7 +117,7 @@ router.put("/task/:id", async (req,res)=>{
 
         // console.log(update_data);
 
-        return res.status(200).json({content:{completed: completed}});
+        return res.status(200).json({content:{completed: completed, id:taskID}});
         
     } catch (err) {
         console.log("err @ PUT worker/task/:id  : ", err);
@@ -130,11 +126,11 @@ router.put("/task/:id", async (req,res)=>{
     }
 });
 
-// Suggesting a task that should be performed.
+// Creating a suggestion for a task, allowing a house-owner to "approve" it, which would insert it into the task-table. 
 router.post("/task", async (req,res)=>{
     try {
         const contractorID = req.user.token.id;
-        //houseID should be present for the client, so that when the request is fired, this is retrieved there. 
+        //houseID should be present for the client, and therefore will be provided by the client when it sends the request. 
         const {description, houseID} = req.body;
 
         if(!contractorID || !description || !houseID) return res.status(400).json({
@@ -143,15 +139,15 @@ router.post("/task", async (req,res)=>{
             houseID : houseID || null
         });
 
+        //suggested_tasks have the same structure as Tasks, therefore it is very similar.
         const insert_sql = "INSERT INTO Suggested_Tasks (houseID, description, contractorID) VALUES (?,?,?)";
         const insert_data = await db.query(insert_sql, [houseID, description, contractorID]);
-
-        console.log(insert_data);
+        //if the query doesn't return a insertID, something has went wrong (duplicate keys) and a simple 404 is sent.
         if(!insert_data.insertId) return res.status(400).json({
             error:"unable to create task",
             houseID,
             contractorID
-        });
+        });        
 
         return res.status(201).json({
             content:{

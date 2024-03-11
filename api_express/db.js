@@ -42,8 +42,8 @@ async function init(){
 
 /**
  * Fires a query to the MySQL database using a pre-written sql request with optional properties.
- * @param {*} sql The query to send, preferably a prepared statement, with a '?'
- * @param {*} props Optional properties to be provided when using prepared statements. 
+ * @param {string} sql The query to send, preferably a prepared statement, with a '?'
+ * @param {any[]} props Optional properties to be provided when using prepared statements. Mostly Strings or numeric values
  * @returns Data when the operation is successful, otherwhise an error.
  * 
  * @example
