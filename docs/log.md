@@ -202,6 +202,7 @@ Planer inför framtiden:
 - Formulär för att lägga till ett task-förslag.
 
 ### Måndag 11/03
+**Contractor vy är klar\***
 Sen söndag kväll, träffas jag av tanken att det är en bra idé att en Worker skall kunna se husen som den har tilldelats task på.
 Lösningen är att göra om GET /worker/task till GET /worker/data , som istället returnerar alla hus innehållande en task-array.
 
