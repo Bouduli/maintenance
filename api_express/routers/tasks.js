@@ -132,15 +132,34 @@ router.get("/suggestion", async(req,res)=>{
 
         //selects all suggested_tasks for houses which the user has created.
         const sql = "SELECT * FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE userID = ?)";
-        const data = await db.query(sql, [userID]);
-
-        if(!data.length) return res.status(404).json({
+        const suggestions = await db.query(sql, [userID]);
+        if(!suggestions.length) return res.status(404).json({
             error:"no task suggestions found", message:"phew?"
         });
 
-        // console.log(data);
+        //selects all contractors which have created a task suggestion.
+        const contractor_sql = "SELECT * FROM contractors WHERE contractorID IN (SELECT contractorID FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE userID = ?))"
+        const contractors = await db.query(contractor_sql, [userID]);
+        if(!contractors.length) {
+            //logging - shouldn't occur, but just like in /worker/data - if this happens, i want to find out!!!
+            console.log(`En användare (${userID}) försöker komma åt suggestions, och har sådanna, dock hittas inte den/de contractors som har skapat suggestionen`);
+
+            return res.status(404).json({
+                error:"no contractors found",
+                message:"you have been sent a task-suggestion, however the related contractors couldn't be found",
+                userID: userID
+            });
+        };
+
+        //adding contractor field (object) to each task_suggestion, to retreive creator-data in application.
+        suggestions.forEach(s=>s.user = {});
+        suggestions.forEach(s=>{
+            s.user = contractors.find(c=> c.contractorID == s.contractorID);
+        });
+
+        // console.log(suggestions);
         return res.status(200).json({
-            content:data
+            content:suggestions
         });
 
     } catch (err) {
