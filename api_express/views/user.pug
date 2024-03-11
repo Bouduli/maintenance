@@ -87,9 +87,15 @@ block content
             h3 Task Suggestions: 
             button(@click="expandSuggestions=!expandSuggestions" x-text="expandSuggestions?'hide':'show'") Hide/Show Suggestions
             div(id="suggestionContainer" x-show="expandSuggestions")
-                i suggestions
                 template(x-for="s in suggestions" :key="s.suggestionID")
-                    p(x-text="s.suggestionID")
+                    div(style="border:2px solid black;margin-bottom:10px;" x-bind:id="`suggestion-${s.suggestionID}`")    
+                        h5(x-text="s.description")
+                        p Submitted by: 
+                        b(x-text="`${s.user.name} (${s.user.occupation})`")
+                        i phone:
+                            span(x-text="s.user.phone")
+                        button(@click="await approveSuggestion(s.suggestionID)") Approve this suggestion
+                        
                 b(x-show="!suggestions.length") No suggestions
         div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
             @insert-contractor.camel.window="await fetchContractors()")

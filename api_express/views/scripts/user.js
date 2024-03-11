@@ -130,9 +130,9 @@ async function inviteContractor(target){
 }
 async function destroy(type , id, target){
 
-    console.log("destroyType: ", type );
-    console.log("destroyId: ", id );
-    console.log("target", target);
+    // console.log("destroyType: ", type );
+    // console.log("destroyId: ", id );
+    // console.log("target", target);
 
     const url = `/${type}/${id}`;
     console.log("destroy url : ", url);
@@ -156,6 +156,21 @@ async function destroy(type , id, target){
 
 }
 
+async function approveSuggestion(id){
+    try {
+        const res = await fetch(`/task/suggestion/${id}`, {
+            method:"POST"
+        });
+        const json = await res.json();
+
+        if(res.ok){
+            console.log(json);
+            window.dispatchEvent(insertTaskEvent);
+        }
+    } catch (err) {
+        console.error(json);
+    }
+}
 //returns data for the x-data tag of "root" element
 function view(){
     return {
