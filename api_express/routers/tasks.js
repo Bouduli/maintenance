@@ -26,10 +26,11 @@ router.post("/invite", async(req,res)=>{
         if(!contractor_data.length) return res.status(404).json({
             error:"Contractor with the provided email was not found"
         });
-        const {contractorID} = contractor_data[0]
-        // console.log(contractorID);
 
-        //make sure that the task exists
+        //contractorID is used to make a connection between the task, and the contractor in Task_Contractors table.
+        const {contractorID} = contractor_data[0]
+
+        //make sure that the requested task exists
         const find_task = "SELECT taskID FROM tasks WHERE taskID = ?";
         const task_data = await db.query(find_task, [taskID]);
         if(!task_data.length) return res.status(403).json({
@@ -38,15 +39,17 @@ router.post("/invite", async(req,res)=>{
         });
 
         const task = task_data[0];
-        //make sure that the user is allowed to add contractor to the task
         
-        if(task.taskID != taskID) return res.status(403).json({
+        //make sure that the user is allowed to add contractor to the task
+        if(task.userID != id) return res.status(403).json({
             error:"you are not allowed to invite contractor to this task"
         });
 
+        //making the 'connectopn'
         const insert_sql = "INSERT INTO task_contractors VALUES (?,?)";
         const insert_data = await db.query(insert_sql, [taskID, contractorID])
 
+        //optional sending an email that a user have been appointed a task.
         const email_data = await email_client.sendHtmlMail(email, {
             Header:"You have been appointed with another task", //--------------------------------------------------------> Do something with this link <----------
             Body:`<p>You have been invited to another task.!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>`,
@@ -70,7 +73,7 @@ router.post("/invite", async(req,res)=>{
     }
 })
 
-//find appointed contractors for a task
+//find appointed contractors for a specific task
 router.get("/appointee/:id", async(req,res)=>{
     try {
         
@@ -79,6 +82,7 @@ router.get("/appointee/:id", async(req,res)=>{
             error:" taskid not provided"
         });
 
+        //perhaps add check to make sure that the user has invited the contractor.
         const sql  = "SELECT * FROM CONTRACTORS WHERE contractorID IN (SELECT contractorID from task_contractors WHERE taskID = ?)";
         const data = await db.query(sql, [taskID]);
         if(!data.length) return res.status(404).json({
@@ -153,7 +157,7 @@ router.post("/suggestion/:id", async(req,res)=>{
         });
 
         const suggestion = select_suggestion_data[0];
-        console.log(suggestion);
+        // console.log(suggestion);
         
         //make sure that the user is allowed to approve tasks for a house
         const select_house_sql = "SELECT userID from houses where userID = ? AND houseID = ?"
@@ -164,6 +168,7 @@ router.post("/suggestion/:id", async(req,res)=>{
             suggestionID: id
         });
 
+        //inserting the task into db
         const insert_sql = "INSERT INTO tasks (description, houseID, userID) VALUES (?,?,?)"
         const insert_data = await db.query(insert_sql, [suggestion.description, suggestion.houseID, userID])
         console.log(insert_data);
