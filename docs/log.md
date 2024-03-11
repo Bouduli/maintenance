@@ -194,3 +194,34 @@ Planer inför framtiden:
 - [ ] Worker vyn
 - [ ] Admin vyn
 - [ ] **CSS korståg.**
+
+### Söndag 10/03
+**Contractor vy påbörjas.**
+- Tasks fetchas med GET /worker/task och skrivs ut på skärmen.
+- Knapp för att Approva, och request för detta "fipplas med". Lösningen är att vid uppdatering av NÅGON task, laddas ALLA om igen.
+- Formulär för att lägga till ett task-förslag.
+
+### Måndag 11/03
+Sen söndag kväll, träffas jag av tanken att det är en bra idé att en Worker skall kunna se husen som den har tilldelats task på.
+Lösningen är att göra om GET /worker/task till GET /worker/data , som istället returnerar alla hus innehållande en task-array.
+
+Alltså istället för: GET /worker/task 
+-> {
+        tasks: [ {taskID:1}, {...}]
+}
+
+returneras get nu : GET /worker/data
+-> {
+    houses:[
+
+        {
+            houseID:1,
+            tasks: [
+                {taskID: 1}, {...}
+            ]
+        },
+        {...}
+    ]
+}
+
+views/worker.pug har byggts om med denna funktionalitet

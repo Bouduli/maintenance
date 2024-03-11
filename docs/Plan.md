@@ -20,9 +20,9 @@
     - [x] Knapp för att ta bort en contractor
 
 #### Contractor / Worker
-- [ ] Tab som visar alla tilldelade tasks
-    - [ ] Grupperade efter hus (?)
-- [ ] Formulär för att lägga till ett förslag på tasks.
+- [x] Tab som visar alla tilldelade tasks
+    - [x] Grupperade efter hus (?)
+- [x] Formulär för att lägga till ett förslag på tasks.
 
 #### Systemadministratör
 - [ ] Tab som visar alla användare
