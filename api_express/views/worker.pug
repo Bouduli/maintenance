@@ -3,3 +3,45 @@ extends template.pug
 block content 
     h1 worker view
 
+
+    div(x-data = "view()")
+
+        h2 You have tasks in the following locations
+        div(id="houses"   x-init="await fetchData()" @update-task.camel.window="await fetchData()" x-data="{showSuggestionForm:false}" )
+            //-Looping over houses
+            template(x-for="h in houses" :key="h.houseID")
+                //-wrapper for each house
+                div(x-bind:id="h.houseID" style="border:2px solid black; margin-bottom:10px;" x-data="{tasks: h.tasks}")
+                    h3(x-text="h.address")
+                    h5 Tasks:
+                    div(class="tasks", x-init="console.log(h)")
+                        template(x-for="t in h.tasks" :key="t.taskID" x-init="console.log(h.tasks)")
+                            div( style="border:2px solid black;margin-bottom:10px;" x-bind:id="t.taskID") 
+                                p taskID: 
+                                    span(x-text="t.taskID")
+                                p description:
+                                    span(x-text="t.description")
+                                div
+                                    p completed?
+                                        bold 
+                                            span(x-text="t.completed? 'YES' : 'NO';")
+                                    button(@click="await markComplete(t.taskID, t.completed, $event.target)") Mark as complete
+                        div(x-show="!tasks.length")
+                            i no tasks to show
+                    button(@click="showSuggestionForm=!showSuggestionForm") Make a suggestion
+                    div(id="createTask" x-show="showSuggestionForm") 
+                        h3 create suggestion 
+                        form(action="/task", method="post", @submit.prevent="await makeSuggestion($event.target)")
+                            input(type="hidden", name="houseID", required, readonly x-bind:value="h.houseID")
+                            input(type="text", name="description" placeholder="Description" required)
+                            input(type="submit" value="create")
+                    div(class="houseInfo")
+                        h5 More house info 
+                        p houseid: 
+                            span(x-text="h.houseID")
+                        i(x-text="h.name")
+                        p(x-text="h.description")
+                    
+
+        script
+            include scripts/worker.js
