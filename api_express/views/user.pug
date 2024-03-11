@@ -94,9 +94,11 @@ block content
                         b(x-text="`${s.user.name} (${s.user.occupation})`")
                         i phone:
                             span(x-text="s.user.phone")
-                        button(@click="await approveSuggestion(s.suggestionID)") Approve this suggestion
+                        div(class="suggestionControls")
+                            button(@click="await handleSuggestion(s.suggestionID, 'POST')") Approve
+                            button(@click="await handleSuggestion(s.suggestionID, 'DELETE')") Reject
                         
-                b(x-show="!suggestions.length") No suggestions
+                b(x-show="!suggestions") No suggestions
         div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
             @insert-contractor.camel.window="await fetchContractors()")
             h2 Contractors:

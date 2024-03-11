@@ -156,10 +156,10 @@ async function destroy(type , id, target){
 
 }
 
-async function approveSuggestion(id){
+async function handleSuggestion(id, handle_method){
     try {
         const res = await fetch(`/task/suggestion/${id}`, {
-            method:"POST"
+            method: handle_method
         });
         const json = await res.json();
 
@@ -171,6 +171,7 @@ async function approveSuggestion(id){
         console.error(json);
     }
 }
+
 //returns data for the x-data tag of "root" element
 function view(){
     return {
@@ -219,7 +220,7 @@ function view(){
         async fetchSuggestions(){
             try {
                 this.suggestions = (await(await fetch("/task/suggestion")).json()).content;
-                console.log(this.suggestions);
+                // console.log(this.suggestions);
             } catch (err) {
                 console.log("no suggestions");
                 this.suggestions=[];
