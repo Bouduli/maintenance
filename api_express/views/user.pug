@@ -38,8 +38,8 @@ block content
                         button(@click="await destroy('house', h.houseID, $event.target)") DELETE HOUSE
                         //- a(href="#" @click.prevent="house=h.houseID; window.dispatchEvent(showHouseEvent)") open
             
-        div(x-show="tab=='#tasks'" x-data= "{tasks : [] }" x-init="await fetchTasks(); console.log('tasks: ', tasks)"
-            @insert-task.camel.window="await fetchTasks()")
+        div(x-show="tab=='#tasks'" x-data= "{tasks : [], expandTasks:true, expandSuggestions:true}" x-init="await fetchTasks(); console.log('tasks: ', tasks); await fetchSuggestions(); console.log('suggestions: ', suggestions)"
+            @insert-task.camel.window="await fetchTasks(); await fetchSuggestions();")
             h2 Tasks:
             div(id="createTask")
                 h3 create task 
@@ -47,7 +47,10 @@ block content
                     input(type="text", name="houseID", placeholder="House ID", required)
                     input(type="text", name="description" placeholder="Description" required)
                     input(type="submit" value="create")
-            ul
+            
+            h3 Your tasks:
+            button(@click="expandTasks = !expandTasks" x-text="expandTasks?'hide':'show' ") Hide/Show Suggestions
+            div(id="taskContainer" x-show="expandTasks")
                 template(x-for="task in tasks" :key="task.taskID")
                     div( style="border:2px solid black;margin-bottom:10px;" :id="$id('task.taskID')" x-data="{showCreateForm: false}") 
                         p houseid: 
@@ -80,8 +83,14 @@ block content
                         div(x-show="task.completed")
                             h3 COMPLETED!!!
                         button(@click="await destroy('task', task.taskID, $event.target)") DELETE TASK
-                    
-
+            
+            h3 Task Suggestions: 
+            button(@click="expandSuggestions=!expandSuggestions" x-text="expandSuggestions?'hide':'show'") Hide/Show Suggestions
+            div(id="suggestionContainer" x-show="expandSuggestions")
+                i suggestions
+                template(x-for="s in suggestions" :key="s.suggestionID")
+                    p(x-text="s.suggestionID")
+                b(x-show="!suggestions.length") No suggestions
         div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
             @insert-contractor.camel.window="await fetchContractors()")
             h2 Contractors:

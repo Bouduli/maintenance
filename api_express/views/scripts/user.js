@@ -159,10 +159,11 @@ async function destroy(type , id, target){
 //returns data for the x-data tag of "root" element
 function view(){
     return {
-        tab: "#houses",
+        tab: "#tasks",
         houses:[],
         tasks:[],
         contractors:[],
+        suggestions:[],
         // house: "",
         //fetch functions
         async fetchHouses(){
@@ -196,7 +197,17 @@ function view(){
                 this.contractors = (await (await fetch("/contractor")).json()).content
                 
             } catch (err) {
-                
+                console.log("no contractors");
+                this.contractors=[];
+            }
+        },
+        async fetchSuggestions(){
+            try {
+                this.suggestions = (await(await fetch("/task/suggestion")).json()).content;
+                console.log(this.suggestions);
+            } catch (err) {
+                console.log("no suggestions");
+                this.suggestions=[];
             }
         }
 
