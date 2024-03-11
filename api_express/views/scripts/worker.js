@@ -17,7 +17,7 @@ async function makeSuggestion(target){
             }
         });
 
-        const json = res.json();
+        const json = await res.json();
 
         if(res.ok){
             console.log("task_suggested: ", json.content.id);
