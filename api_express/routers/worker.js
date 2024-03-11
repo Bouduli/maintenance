@@ -27,7 +27,7 @@ router.get("/data", async(req,res)=>{
             //this should never be the case, but IF it occurs, i want to know it happened. 
             console.error(`Fel: en användare ${contractorID} är tilldelad ett antal tasks, men det går inte att hus från tasksen.`);
             return res.status(409).json({
-                error:"no houses found", message:"you have been appointed a task, which doesn't exist in the database..."
+                error:"no houses found", message:"you have been appointed a task, which house doesn't exist in the database..."
             });
     
         }
