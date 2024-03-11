@@ -12,8 +12,8 @@
     - [x] Knapp för att tilldela task till contractor
         - [ ] knapp för att ta bort contractor från task ( API endpoint oxå?)
     - [x] Knapp för att ta bort en task
-- [ ] Tab som visar förslag till tasks
-    - [ ] Knapp för att approva-task.
+- [x] Tab som visar förslag till tasks
+    - [x] Knapp för att approva/rejecta task.
 
 - [x] Tab som visar alla contractors
     - [x] Formulär för att skapa en contractor

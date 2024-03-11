@@ -226,3 +226,11 @@ returneras get nu : GET /worker/data
 }
 
 views/worker.pug har byggts om med denna funktionalitet
+
+En contractor kan även lägga till task_suggestions via ett formulär.
+Dessa kan nu en User också se, samt approva/rejecta så som den anser vara nyttigt.
+Möjligtvis, borde användaren ha en knapp/checkbox för att lägga till contractorn på tasken direkt,
+men det är bara en QOL funktionalité.
+
+Nästa steg:
+**ADMIN VYN**
