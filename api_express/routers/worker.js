@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 const { restart } = require("nodemon");
 
-//listing tasks for a contractor
-router.get("/task", async(req,res)=>{
+//Returns all houses where the contractor have been assigned tasks, which contains an array of every task.
+router.get("/data", async(req,res)=>{
 
     try {
         //contractorID is retreived to regulate which tasks are shown.
@@ -13,14 +13,36 @@ router.get("/task", async(req,res)=>{
         const contractorID = token.id;
 
         //appointed tasks are queried using (double-queries)
-        const sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ?)";
-        const data = await db.query(sql, [contractorID]);
-        if(!data.length) return res.status(404).json({
+        const task_sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ?)";
+        const tasks = await db.query(task_sql, [contractorID]);
+        if(!tasks.length) return res.status(404).json({
             error:"no tasks", message: "Phew, seems your work is done..."
         });
 
+        //Houses for all tasks are retreived
+        const house_sql = "SELECT * FROM houses where houseID IN (SELECT houseID FROM tasks WHERE taskID IN (SELECT taskID FROM task_contractors WHERE contractorID =?))";
+        const houses = await db.query(house_sql, [contractorID]);
+        if(!houses.length) return res.status(404).json({
+            error:"no houses found", message:"no houses to perform work on ..."
+        });
+
+        //a "task" field is added to all houses.
+        houses.forEach(h=>h.tasks=[]);
+        
+        // "task" field is populated with entries from tasks array
+        houses.forEach(h=>{
+            h.tasks.push(...tasks.filter(t=>t.houseID == h.houseID));
+        })
+
         return res.status(200).json({
-            content:data
+            content:houses
+            
+        });
+
+
+
+        return res.status(200).json({
+            content:tasks
             
         });
 
@@ -86,7 +108,7 @@ router.put("/task/:id", async (req,res)=>{
         //should be the only received task
         const {taskID, contractorID} = find_data[0];
 
-        //make sure that email is consistent with task_contractor entry
+        //make sure that contractorID from token is consistent with that of task_contractor entry
         if(contractorID != userID) return res.status(403).json({
             error:"you are not allowed to edit this task"
         });
@@ -101,7 +123,7 @@ router.put("/task/:id", async (req,res)=>{
 
         // console.log(update_data);
 
-        return res.status(200).json({content:{marked_complete: completed}});
+        return res.status(200).json({content:{completed: completed}});
         
     } catch (err) {
         console.log("err @ PUT worker/task/:id  : ", err);
