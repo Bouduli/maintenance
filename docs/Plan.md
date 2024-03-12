@@ -1,6 +1,33 @@
 # Plan över arbetet / saker som måste fixas
 
 ## FRONTEND
+### CSS
+#### User-view
+- [ ] HouseView
+    - [ ] CreateForm
+    - [ ] houseCards
+    - [ ] taskCards
+- [ ] ContractorView
+    - [ ] ContractorCard
+
+#### Contractor-view
+- [ ] TaskView
+    - [ ] TaskGroup (hus/location)
+        - [ ] GroupInfo (husinfo)
+        - [ ] SuggestionForm
+        - [ ] TaskCards
+
+#### Administrator-view
+- [ ] UserView
+    - [ ] UserForm
+    - [ ] UserCards
+
+#### Login-View
+- [ ] Stateful-Login
+- [ ] PWL login
+    - [ ] "login" step
+    - [ ] "verify" step
+
 ### Vyer
 #### Användare/kund
 - [x] Tab som Visar alla hus
@@ -25,8 +52,8 @@
 - [x] Formulär för att lägga till ett förslag på tasks.
 
 #### Systemadministratör
-- [ ] Tab som visar alla användare
-    - [ ] Formulär för att lägga till en användare
+- [x] Tab som visar alla användare
+    - [x] Formulär för att lägga till en användare
 
 ## API
 ### Generella saker
