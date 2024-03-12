@@ -175,7 +175,8 @@ async function handleSuggestion(id, handle_method){
 //returns data for the x-data tag of "root" element
 function view(){
     return {
-        tab: "#tasks",
+        tab: "#houses",
+        house:{ tasks:[]},
         houses:[],
         tasks:[],
         contractors:[],

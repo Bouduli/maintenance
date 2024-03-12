@@ -1,0 +1,80 @@
+extends template.pug 
+
+block content 
+    div(x-data="view();")
+
+        //
+            These are links used for tabs
+            Sauce for this is https://talltips.novate.co.uk/tabbed-content-using-alpine-js 
+        a(href="#" x-on:click.prevent="tab='#houses'") houses 
+        a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
+        
+        div(id="houseModal"
+            x-data="{expandTasks:false}"
+            x-show="house.houseID"
+            style="border: 3px dashed red;")
+
+            h2(x-text="house.address")
+            p(x-text="house.name")
+            p(x-text="house.description")
+            h3 Tasks:  
+                span(@click="expandTasks = !expandTasks;") show
+            div(id="taskWrapper"
+                x-show="expandTasks")
+                template(x-for="t in house.tasks" )
+                    div(x-bind:id="`task${t.taskID}`"
+                        class="taskItem"
+                        style="border: 2px solid blueviolet;")
+                        p TaskID: 
+                            span(x-text="t.taskID")
+                        p Description: 
+                            span(x-text ="t.description")
+                        p Created at:
+                            span(x-text="new Date(t.created_at).toLocaleString()")
+
+
+        div( x-show='tab=="#houses"'  x-init = "await fetchHouses(); await fetchTasks(); console.log('houses: ', houses); console.log('tasks: ', tasks);"
+            @insert-house.camel.window="await fetchHouses();")
+            h2 Houses
+            div(id="createHouse")
+                h3 CREATE HOUSE
+                form(action="/house", method="post" @submit.prevent="await createHouse($event.target)")
+                    input(type="text", name="address", placeholder="Address", required)
+                    input(type="text", name="description" placeholder="Description")
+                    input(type="text", name="name", placeholder="Name")
+                    input(type="submit" value="create")
+            div(id="housesWrapper")
+                template(x-for="h in houses" :key="h.houseID")
+                    div(style="border:2px solid black;margin-bottom:10px;" 
+                        x-bind:id="`house-${h.houseID}`"
+                        @click="house = h; house.tasks = tasks.filter(t=>t.houseID == h.houseID); console.log('selected house: ', house)")
+                        h2(x-text="h.address")
+                        p(x-text="h.name")
+                        //- a(href="#" @click.prevent="house=h.houseID; window.dispatchEvent(showHouseEvent)") open
+            
+        div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
+            @insert-contractor.camel.window="await fetchContractors()")
+            h2 Contractors:
+            div(id="createContractor")
+                h3 add contractor 
+                form(action="/contractor", method="post", @submit.prevent="await createContractor($event.target)")
+                    input(type="text", name="name", placeholder="Name", required)
+                    input(type="email", name="email", placeholder="Email", required)
+                    input(type="phone", name="phone", placeholder="Phone", required)
+                    input(type="text", name="occupation", placeholder="Occupation", required)
+                    input(type="submit", value="Create contractor")
+            ul
+                template(x-for="contractor in contractors" :key="contractor.contractorID")
+                    div(:id="$id('contractor.contractorId')")
+                        h3 name: 
+                            span(x-text="contractor.name")
+                        i occupation: 
+                            span(x-text="contractor.occupation")
+                        p phone: 
+                            span(x-text="contractor.phone")
+
+                        button(@click="await destroy('contractor', contractor.contractorID, $event.target)") DELETE CONTRACTOR
+
+        script
+            include scripts/user.js
+            
