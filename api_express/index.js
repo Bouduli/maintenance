@@ -64,4 +64,4 @@ app.use("/worker", mw.auth("PWL"), workerRouter)
 //administrator api router
 const adminRouter = require("./routers/administrator");
 //MAKE SURE TO LOCK THIS ROUTER WITH MIDDLEWARE
-app.use("/admin", mw.auth(), mw.admin(), adminRouter)
+app.use("/administrator", mw.auth(), mw.admin(), adminRouter)
