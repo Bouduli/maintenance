@@ -21,8 +21,8 @@ router.post("/invite", async(req,res)=>{
         });
 
         //make sure the contractor exists in the contractors table.
-        const find_contractor = "SELECT contractorID FROM contractors WHERE email = ?";
-        const contractor_data = await db.query(find_contractor, [email]);
+        const find_contractor = "SELECT contractorID FROM contractors WHERE email = ? and invited_by=?";
+        const contractor_data = await db.query(find_contractor, [email, id]);
         if(!contractor_data.length) return res.status(404).json({
             error:"Contractor with the provided email was not found"
         });
