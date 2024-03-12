@@ -1,0 +1,45 @@
+:root{
+    --header-font: 'Comfortaa', sans-serif;
+    --primary-font: 'Open Sans', sans-serif;
+}
+
+*{
+    margin: 0;padding: 0;
+    box-sizing: border-box;
+    text-decoration:none;
+}
+body{
+    background:#303030;
+}
+#contentWrapper{
+    
+    width: 90%;
+    margin:auto;
+    background:#404040;
+    min-height: 100vh;
+    display: grid;
+    place-items:center;
+    gap:5px;
+}
+.card{
+    width:90%;
+    background:#909090;
+    min-height: 30vh;
+    border-radius: 5px;
+    display:grid;
+    grid-template-areas: 
+        "a a a"
+        "a a a"
+        "a a a"
+        "b b b";
+}
+.cardInfo {
+    padding:1%;
+    grid-area:b;
+    background: #eeeeee;
+    font-family: var(--primary-font)
+}
+.cardInfo h2{
+    /* font-family: var(--header-font); */
+}
+
