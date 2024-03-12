@@ -14,6 +14,9 @@ router.get("/worker", mw.auth("pwl"), async(req,res)=>{
 });
 router.get("/user", mw.auth(), async (req,res)=>{
     res.render("user", {title:"user"});
-})
+});
+router.get("/admin", mw.auth(), mw.admin(), async(req,res)=>{
+    res.render("administrator", {title:"admin"});
+});
 
 module.exports=router;
