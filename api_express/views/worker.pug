@@ -7,11 +7,11 @@ block content
     div(x-data = "view()")
 
         h2 You have tasks in the following locations
-        div(id="houses"   x-init="await fetchData()" @update-task.camel.window="await fetchData()" x-data="{showSuggestionForm:false}" )
+        div(id="houses"   x-init="await fetchData()" @update-task.camel.window="await fetchData()")
             //-Looping over houses
             template(x-for="h in houses" :key="h.houseID")
                 //-wrapper for each house
-                div(x-bind:id="h.houseID" style="border:2px solid black; margin-bottom:10px;" x-data="{tasks: h.tasks}")
+                div(x-bind:id="h.houseID" style="border:2px solid black; margin-bottom:10px;" x-data="{tasks: h.tasks, showSuggestionForm:false}")
                     h3(x-text="h.address")
                     h5 Tasks:
                     div(class="tasks", x-init="console.log(h)")
