@@ -1,0 +1,74 @@
+extends template.pug 
+
+block content
+    div(x-data="view();")
+        h2 adminstrator view
+        //- Single user (modal / floating card)
+        div(x-show="user.userID" style="border:2px solid black; margin-bottom:10px;" x-data="{expandHouses:false, expandContractors:false}")
+            h3 Showing user: 
+                span(x-text="`${user.name} (UserID:${user.userID})`")
+            h4 UserID: 
+                span(x-text="user.userID")
+            i email: 
+                span(x-text="user.email")
+            i phone: 
+                span(x-text="user.phone")
+            
+            button(@click="user = {houses:[], contractors:[]}") HIDE USER
+            h4 statistics
+            b houses: 
+                span(x-text="user.houses.length")
+            b invited contractors:
+                span(x-text="user.contractors.length")
+            //-----------------------> SHOWING INDIVIDUAL HOUSES AND THEIR TASKS <--------------------
+            //- h3 Houses: 
+            //-     span(x-text="`[${user.houses.length}]`")
+            //- button(@click="expandHouses=!expandHouses") show houses
+            //- div(x-show="expandHouses")
+            //-     i houses
+            //-     template(x-for="h in user.houses" :key="h.houseID")
+            //-         div(x-bind:id="`house${h.houseID}`" style="border:2px solid black; margin-bottom:10px;" x-data="{expandTasks: false}")
+            //-             bold(x-text="h.address")
+            //-             b Tasks: 
+            //-                 span(x-text='`[${h.tasks.length}]`') 
+            //-             button(@click="expandTasks=!expandTasks") show tasks
+            //-             div(x-show="expandTasks")
+            //-                 i tasks
+
+            //---------------------------> SHOWING CONTRACTORS <-------------------------------
+            //- button(@click="expandContractors=!expandContractors" x-show="user.contractors.length") show contractors
+            //- div(x-show="expandContractors")
+            //-     i contractors
+            //-     template(x-for="c in user.contractors" :key="c.contractorID")
+            //-         div(x-bind:id="`contractor${c.contractorID}`" style="border:2px solid black; margin-bottom:10px;")
+            //-             p(x-text="`${c.name} (${c.occupation}) - id:${c.contractorID}`")
+            
+            button(@click="await deleteUser(user.userID);") Delete user
+
+        //- Create form
+        div(id="createUser", @user-changed.camel.window="await fetchUsers();")
+            form(@submit.prevent="await createUser($event.target);")
+                input(type="text", name="name", placeholder="name")
+                input(type="phone", name="phone", placeholder="telephone")
+                input(type="email", name="email", placeholder="email")
+                input(type="password", name="password", placeholder="password")
+                input(type="checkbox", id="adminCheck"  name="admin" checked=false)
+                label(for="adminCheck" value="admin?") admin?
+                input(type="submit", value="create user")
+                
+
+        //- Card-view with all users
+        div(x-init="await fetchUsers(); console.log('users: ', users)")
+            template(x-for="u in users" :key="u.userID")
+                div(class="userCard" style="border:2px solid black; margin-bottom:10px;"
+                    @click="await fetchUserDetails(u.userID);")
+                    h3 Name:
+                        span(x-text="u.name")
+                    h4 userID:
+                        span(x-text="u.userID")
+                    
+
+
+
+        script
+            include scripts/administrator.js
