@@ -234,3 +234,14 @@ men det är bara en QOL funktionalité.
 
 Nästa steg:
 **ADMIN VYN**
+
+
+### Tisdag 12/03
+**Administrator-View är klar**
+
+User-View house-tab håller på att skrivas om med CSS och slutgiltiga designen i åtanke,
+samtidigt som contractor-tab kanske behöver lite TLC (Thought Love and Care).
+
+Card-Views har utforskats i mini-projektet/testet som finns i `/ui_test`, vilket kommer användas som grund / stöd under CSS:andet.
+
+En plan över CSS arbetet har också upprätttats, den finns i Plan.md.
