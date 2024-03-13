@@ -1,12 +1,13 @@
 extends template.pug 
 
 block content 
-    div(x-data="view();")
+    div(x-data="view();" @data-change.camel.window="await data()")
 
         //
             These are links used for tabs
             Sauce for this is https://talltips.novate.co.uk/tabbed-content-using-alpine-js 
         a(href="#" x-on:click.prevent="tab='#houses'") houses 
+        //- a(href="#" x-on:click.prevent="tab='#tasks'") tasks 
         a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
         
         div(id="houseModal"
@@ -18,23 +19,69 @@ block content
             p(x-text="house.name")
             p(x-text="house.description")
             h3 Tasks:  
-                span(@click="expandTasks = !expandTasks;") show
+                span(x-show="house.tasks.length" 
+                     @click="expandTasks = !expandTasks;") show
+                span(x-show="!house.tasks.length") No tasks
             div(id="taskWrapper"
                 x-show="expandTasks")
-                template(x-for="t in house.tasks" )
+                template(x-for="t in house.tasks" :key="t.taskID")
                     div(x-bind:id="`task${t.taskID}`"
-                        class="taskItem"
+                        class="taskItem" x-data="{showTaskDetails:false}"
                         style="border: 2px solid blueviolet;")
                         p TaskID: 
                             span(x-text="t.taskID")
                         p Description: 
                             span(x-text ="t.description")
-                        p Created at:
-                            span(x-text="new Date(t.created_at).toLocaleString()")
+                        p Completed: 
+                            span(x-text="t.completed?'YES': 'NO'")
+                        button(@click="await destroy('task', t.taskID, $event.target)") delete task
+                        button(@click="showTaskDetails = !showTaskDetails") show details
+                        div(x-show="showTaskDetails" class="taskDetails" x-data="{showAppointees:false}")
+                            p Created at:
+                                span(x-text="new Date(t.created_at).toLocaleString()")
+                            h4 Appointees: 
+                                span(x-text="`[${t.contractors.length}] `")
+                                span(x-show="t.contractors.length" @click="showAppointees=!showAppointees") show
+                            div(class="appointeeWrapper" x-show="showAppointees")
+                                template(x-for="c in t.contractors" :key="c.contractorID")
+                                    div(class="appointeeItem")
+                                        p
+                                            span(x-text="c.name")
+                                            span  
+                                            span(x-text="`(${c.occupation})`")
+                                        p phone: 
+                                            span(x-text="c.phone")
+                                        p email: 
+                                            span(x-text="c.email")
+                            //------------> THIS CODE SOMEHOW BROKE <--------------
+                            //- div(class="inviteAppointee")
+                            //-     h4 Invite:
+                            //-     label(for="contractorMail") contractor: 
+                            //-     select(name="email" id="contractorMail" form="inviteform")
+                            //-         template(x-for="c in contractors" :key="c.contractorID")
+                            //-             option(x-bind:value="c.email" x-text="`${c.name} (${c.occupation})`")
+                            //-     form(id="inviteform" @submit.prevent="await inviteContractor($event.target)")
+                            //-         input(type="hidden", name="taskID" x-bind:value="t.taskID", value="")
+                            //-         input(type="submit", value="Invite")
+                            
+                            //- -----------> CHAT GPT HALLUCINATED SOLUTION <---------------
+                            div(class="inviteAppointee" x-data="{selectedEmail:'', derivedtaskID:''}")
+                                h4 Invite:
+                                label(for="contractorMail") contractor: 
+                                select(name="email" id="contractorMail" form="inviteform" x-model="selectedEmail")
+                                    template(x-for="c in contractors" :key="c.contractorID")
+                                        option(x-bind:value="c.email" x-text="`${c.name} (${c.occupation})`")
+                                form(id="inviteform" @submit.prevent="await inviteContractor(selectedEmail,$event.target.taskID.value)")
+                                    input(type="hidden", name="taskID" x-bind:value="t.taskID")
+                                    input(type="submit", value="Invite")
+            
+            //- if a user is in the house-view, button that opens the create-form is visible
+            h4(x-show="tab=='#houses'") Create another task: 
+                span(@click="tab='#tasks'") show form
+            //- Otherwise there's a back-button
+            h4(x-show="tab=='#tasks'" @click="tab='#houses'") Go back
 
-
-        div( x-show='tab=="#houses"'  x-init = "await fetchHouses(); await fetchTasks(); console.log('houses: ', houses); console.log('tasks: ', tasks);"
-            @insert-house.camel.window="await fetchHouses();")
+        div( x-show='tab=="#houses"'  x-init = "await fetchHouses(); await fetchTasks(); await fetchContractors(); console.log('houses: ', houses); console.log('tasks: ', tasks); console.log('contractors:', contractors)")
             h2 Houses
             div(id="createHouse")
                 h3 CREATE HOUSE
@@ -47,13 +94,23 @@ block content
                 template(x-for="h in houses" :key="h.houseID")
                     div(style="border:2px solid black;margin-bottom:10px;" 
                         x-bind:id="`house-${h.houseID}`"
-                        @click="house = h; house.tasks = tasks.filter(t=>t.houseID == h.houseID); console.log('selected house: ', house)")
+                        @click="h.tasks = tasks.filter(t=>t.houseID == h.houseID); house = h; console.log('selected house: ', house)")
                         h2(x-text="h.address")
                         p(x-text="h.name")
                         //- a(href="#" @click.prevent="house=h.houseID; window.dispatchEvent(showHouseEvent)") open
             
-        div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
-            @insert-contractor.camel.window="await fetchContractors()")
+        div(x-show="tab=='#tasks'")
+            label(for="houseID") House: 
+            select(name="houseID" id="houseID" form="taskform"
+                   @change="house = houses.find(h=>h.houseID == $event.target.value) || {tasks:[]}")
+                template(x-for="h in houses")
+                    option(x-bind:value="h.houseID" x-text="h.address" x-bind:selected="h.houseID == house.houseID")  
+            form(id="taskform", @submit.prevent="await createTask($event.target)")
+                input(type="text", name="description" placeholder="Description" required)
+                input(type="submit" value="create")
+                
+
+        div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()")
             h2 Contractors:
             div(id="createContractor")
                 h3 add contractor 

@@ -5,7 +5,7 @@ console.log("User scripts loaded");
 const insertHouseEvent = new Event("insertHouse");
 const insertTaskEvent = new Event("insertTask");
 const insertContractorEvent = new Event("insertContractor");
-
+const dataChangeEvent = new Event("dataChange");
 
 async function createHouse(target){
 
@@ -32,7 +32,7 @@ async function createHouse(target){
         console.log("Inserted house with id: ",json.content);
 
         //This tells Alpine.JS to re-fetch the data.
-        window.dispatchEvent(insertHouseEvent);
+        window.dispatchEvent(dataChangeEvent);
 
         //clears form
         target.reset()
@@ -62,7 +62,7 @@ async function createTask(target){
         console.log("inserted task with id: ", json.content);
 
         //this tells alpine to re-fetch tasks, allowing our new task to be displayed.
-        window.dispatchEvent(insertTaskEvent);
+        window.dispatchEvent(dataChangeEvent);
 
         target.reset();
     }
@@ -91,21 +91,25 @@ async function createContractor(target){
 
     if(res.ok){
         console.log(json);
-        window.dispatchEvent(insertContractorEvent);
+        window.dispatchEvent(dataChangeEvent);
+        target.reset();
     }
     else {
         console.error(json);
     }
 }
 
-async function inviteContractor(target){
+// async function inviteContractor(target){
+async function inviteContractor(email, taskID){
     try {
-        
         const body = {
-            taskID : target.taskID.value || null,
-            email : target.email.value || null,
+            // taskID : target.taskID.value || null,
+            // email : target.email.value || null,
+            email: email,
+            taskID: taskID
         }
 
+        console.log(body);
         const res = await fetch("/task/invite", {
             method:"POST",
             body: JSON.stringify(body),
@@ -120,7 +124,7 @@ async function inviteContractor(target){
 
             //note this triggers re-fetch of all tasks, however this acheives the correct action
             // with minimum effort :)
-            window.dispatchEvent(insertTaskEvent);
+            window.dispatchEvent(dataChangeEvent);
 
         }
 
@@ -165,7 +169,7 @@ async function handleSuggestion(id, handle_method){
 
         if(res.ok){
             console.log(json);
-            window.dispatchEvent(insertTaskEvent);
+            window.dispatchEvent(dataChangeEvent);
         }
     } catch (err) {
         console.error(json);
@@ -181,6 +185,14 @@ function view(){
         tasks:[],
         contractors:[],
         suggestions:[],
+        async data(){
+            await this.fetchHouses();
+            await this.fetchTasks();
+            await this.fetchContractors();
+            await this.fetchSuggestions();
+            //make house-modal update itself.
+            if(this.house.houseID) this.house.tasks = this.tasks.filter(t=>t.houseID == this.house.houseID);
+        },
         // house: "",
         //fetch functions
         async fetchHouses(){
@@ -198,8 +210,13 @@ function view(){
                 // uses GET /task/appointee/:taskID to retreive all contractors for a task. 
                 // this makes it possible showing contractors appointed to a task.
                 const task_contractors = await Promise.all(this.tasks.map(async(t)=>{
-                    return (await(await fetch(`/task/appointee/${t.taskID}`)).json()).content;
+                    try {
+                        return (await(await fetch(`/task/appointee/${t.taskID}`)).json()).content || [];
+                    } catch {
+                        return [];
+                    }
                 }));
+                console.log("task_contractors: ", task_contractors);
                 this.tasks.forEach((t, index) => t.contractors = task_contractors[index]);
 
                 // console.log(console.log(task_contractors));
