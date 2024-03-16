@@ -245,3 +245,10 @@ samtidigt som contractor-tab kanske behöver lite TLC (Thought Love and Care).
 Card-Views har utforskats i mini-projektet/testet som finns i `/ui_test`, vilket kommer användas som grund / stöd under CSS:andet.
 
 En plan över CSS arbetet har också upprätttats, den finns i Plan.md.
+
+### Onsdag 13/03
+
+**???**
+
+### Lördag 16/03
+Början av css:ande av houseModal, den kan nu visas över annat innehåll, med opacity bakgrund som har en click-event som togglar houseModal.
