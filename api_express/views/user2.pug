@@ -10,76 +10,84 @@ block content
         //- a(href="#" x-on:click.prevent="tab='#tasks'") tasks 
         a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
         
-        div(id="houseModal"
-            x-data="{expandTasks:false}"
+        div(id="houseModalContainer"
             x-show="house.houseID"
-            style="border: 3px dashed red;")
-
-            h2(x-text="house.address")
-            p(x-text="house.name")
-            p(x-text="house.description")
-            h3 Tasks:  
-                span(x-show="house.tasks.length" 
-                     @click="expandTasks = !expandTasks;") show
-                span(x-show="!house.tasks.length") No tasks
-            div(id="taskWrapper"
-                x-show="expandTasks")
-                template(x-for="t in house.tasks" :key="t.taskID")
-                    div(x-bind:id="`task${t.taskID}`"
-                        class="taskItem" x-data="{showTaskDetails:false}"
-                        style="border: 2px solid blueviolet;")
-                        p TaskID: 
-                            span(x-text="t.taskID")
-                        p Description: 
-                            span(x-text ="t.description")
-                        p Completed: 
-                            span(x-text="t.completed?'YES': 'NO'")
-                        button(@click="await destroy('task', t.taskID, $event.target)") delete task
-                        button(@click="showTaskDetails = !showTaskDetails") show details
-                        div(x-show="showTaskDetails" class="taskDetails" x-data="{showAppointees:false}")
-                            p Created at:
-                                span(x-text="new Date(t.created_at).toLocaleString()")
-                            h4 Appointees: 
-                                span(x-text="`[${t.contractors.length}] `")
-                                span(x-show="t.contractors.length" @click="showAppointees=!showAppointees") show
-                            div(class="appointeeWrapper" x-show="showAppointees")
-                                template(x-for="c in t.contractors" :key="c.contractorID")
-                                    div(class="appointeeItem")
-                                        p
-                                            span(x-text="c.name")
-                                            span  
-                                            span(x-text="`(${c.occupation})`")
-                                        p phone: 
-                                            span(x-text="c.phone")
-                                        p email: 
-                                            span(x-text="c.email")
-                            //------------> THIS CODE SOMEHOW BROKE <--------------
-                            //- div(class="inviteAppointee")
-                            //-     h4 Invite:
-                            //-     label(for="contractorMail") contractor: 
-                            //-     select(name="email" id="contractorMail" form="inviteform")
-                            //-         template(x-for="c in contractors" :key="c.contractorID")
-                            //-             option(x-bind:value="c.email" x-text="`${c.name} (${c.occupation})`")
-                            //-     form(id="inviteform" @submit.prevent="await inviteContractor($event.target)")
-                            //-         input(type="hidden", name="taskID" x-bind:value="t.taskID", value="")
-                            //-         input(type="submit", value="Invite")
-                            
-                            //- -----------> CHAT GPT HALLUCINATED SOLUTION <---------------
-                            div(class="inviteAppointee" x-data="{selectedEmail:'', derivedtaskID:''}")
-                                h4 Invite:
-                                label(for="contractorMail") contractor: 
-                                select(name="email" id="contractorMail" form="inviteform" x-model="selectedEmail")
-                                    template(x-for="c in contractors" :key="c.contractorID")
-                                        option(x-bind:value="c.email" x-text="`${c.name} (${c.occupation})`")
-                                form(id="inviteform" @submit.prevent="await inviteContractor(selectedEmail,$event.target.taskID.value)")
-                                    input(type="hidden", name="taskID" x-bind:value="t.taskID")
-                                    input(type="submit", value="Invite")
-            
-            //- if a user is in the house-view, button that opens the create-form is visible
-            h4(x-show="tab=='#houses'") Create another task: 
-                span(@click="tab='#tasks'") show form
-            //- Otherwise there's a back-button
-            h4(x-show="tab=='#tasks'" @click="tab='#houses'") Go back
+            @click="house = {tasks:[]}")
+            div(id="houseModal"
+                x-data="{expandTasks:false, shownTasks:1}"
+                x-show="house.houseID"
+                style="border: 3px dashed red;"
+                @click.stop="" )
+                //- click.stop prevents the click event of outer div, from firing inside this one.
+                    hence, the modal can be clicked, withot immediately closing the modal.
+                button#closeModal(@click="house = {tasks:[]}") X
+                h2(x-text="house.address")
+                p(x-text="house.name")
+                p(x-text="house.description")
+                h3 Tasks:  
+                    span(x-show="!house.tasks.length") No tasks
+                div(id="taskWrapper")
+                    template(x-for="t in (house.tasks).slice(0,shownTasks)" :key="t.taskID")
+                        div(x-bind:id="`task${t.taskID}`"
+                            class="taskItem" x-data="{showTaskDetails:false}"
+                            style="border: 2px solid blueviolet;")
+                            p TaskID: 
+                                span(x-text="t.taskID")
+                            p Description: 
+                                span(x-text ="t.description")
+                            p Completed: 
+                                span(x-text="t.completed?'YES': 'NO'")
+                            button(@click="await destroy('task', t.taskID, $event.target)") delete task
+                            button(@click="showTaskDetails = !showTaskDetails") show details
+                            div(x-show="showTaskDetails" class="taskDetails" x-data="{showAppointees:false}")
+                                p Created at:
+                                    span(x-text="new Date(t.created_at).toLocaleString()")
+                                h4 Appointees: 
+                                    span(x-text="`[${t.contractors.length}] `")
+                                    span(x-show="t.contractors.length" @click="showAppointees=!showAppointees") show
+                                div(class="appointeeWrapper" x-show="showAppointees")
+                                    template(x-for="c in t.contractors" :key="c.contractorID")
+                                        div(class="appointeeItem")
+                                            p
+                                                span(x-text="c.name")
+                                                span  
+                                                span(x-text="`(${c.occupation})`")
+                                            p phone: 
+                                                span(x-text="c.phone")
+                                            p email: 
+                                                span(x-text="c.email")
+                                //------------> THIS CODE SOMEHOW BROKE <--------------
+                                //- div(class="inviteAppointee")
+                                //-     h4 Invite:
+                                //-     label(for="contractorMail") contractor: 
+                                //-     select(name="email" id="contractorMail" form="inviteform")
+                                //-         template(x-for="c in contractors" :key="c.contractorID")
+                                //-             option(x-bind:value="c.email" x-text="`${c.name} (${c.occupation})`")
+                                //-     form(id="inviteform" @submit.prevent="await inviteContractor($event.target)")
+                                //-         input(type="hidden", name="taskID" x-bind:value="t.taskID", value="")
+                                //-         input(type="submit", value="Invite")
+                                
+                                //- -----------> CHAT GPT HALLUCINATED SOLUTION <---------------
+                                div(class="inviteAppointee" x-data="{selectedEmail:'', derivedtaskID:''}")
+                                    h4 Invite:
+                                    label(for="contractorMail") contractor: 
+                                    select(name="email" id="contractorMail" form="inviteform" x-model="selectedEmail")
+                                        template(x-for="c in contractors" :key="c.contractorID")
+                                            option(x-bind:value="c.email" x-text="`${c.name} (${c.occupation})`")
+                                    form(id="inviteform" @submit.prevent="await inviteContractor(selectedEmail,$event.target.taskID.value)")
+                                        input(type="hidden", name="taskID" x-bind:value="t.taskID")
+                                        input(type="submit", value="Invite")
+                //- if shownTasks has a value, it means click should change it to the length of arrays, 
+                    so that the entire array is displayed (slice(0, arr.length) returns whole array), otherwise set it to 1
+                button(x-show="house.tasks.length" @click="shownTasks = (shownTasks==1)? house.tasks.length : 1;")
+                    //- Button texts depending on length of shownTasks.
+                    span(x-show="shownTasks==1") Show All
+                    span(x-show="shownTasks==house.tasks.length") Show less
+                //- if a user is in the house-view, button that opens the create-form is visible
+                h4(x-show="tab=='#houses'") Create another task: 
+                    span(@click="tab='#tasks'") show form
+                //- Otherwise there's a back-button
+                h4(x-show="tab=='#tasks'" @click="tab='#houses'") Go back
 
         div( x-show='tab=="#houses"'  x-init = "await fetchHouses(); await fetchTasks(); await fetchContractors(); console.log('houses: ', houses); console.log('tasks: ', tasks); console.log('contractors:', contractors)")
             h2 Houses
@@ -101,8 +109,9 @@ block content
             
         div(x-show="tab=='#tasks'")
             label(for="houseID") House: 
+            //- When a house is selected, it's tasks must be assigned by filtering tasks for matching houseIDs
             select(name="houseID" id="houseID" form="taskform"
-                   @change="house = houses.find(h=>h.houseID == $event.target.value) || {tasks:[]}")
+                   @change="house = houses.find(h=>h.houseID == $event.target.value) || {tasks:[]}; house.tasks = tasks.filter(t=>t.houseID == house.houseID);")
                 template(x-for="h in houses")
                     option(x-bind:value="h.houseID" x-text="h.address" x-bind:selected="h.houseID == house.houseID")  
             form(id="taskform", @submit.prevent="await createTask($event.target)")
