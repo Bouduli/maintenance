@@ -248,7 +248,13 @@ En plan över CSS arbetet har också upprätttats, den finns i Plan.md.
 
 ### Onsdag 13/03
 
-**???**
+Omskrivning av user-view. Ganska irriterande.
 
 ### Lördag 16/03
 Början av css:ande av houseModal, den kan nu visas över annat innehåll, med opacity bakgrund som har en click-event som togglar houseModal.
+
+### Söndag 17/03
+Saker som har gjorts:
+- HouseModal kan visa husinfo information snyggt i en collapsable vy
+- En "confirm-modal" har gjorts, för att skapa ett "confirm" fönster för viktiga saker (destroy)
+- Påbörjar Task-Cards för varje hus.
