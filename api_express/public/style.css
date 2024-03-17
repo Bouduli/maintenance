@@ -1,10 +1,27 @@
+:root{
+    --header-font: 'Comfortaa', sans-serif;
+    --primary-font: 'Open Sans', sans-serif;
+
+    --card-background: #ccc;
+    --card-text-background: #fff;
+    --modal-bg: #eee;
+
+    /*Semantic colors*/
+    --destroy-color:#ff5050;
+    --confirm-color:#27a154;
+}
+
 *{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: var(--primary-font);
 }
-
-#houseModalContainer{
+.linkIcon{
+    color:#777;
+}
+/*container, clickable event to remove modal, semi-transparent bg*/
+.modalContainer{
 
     background-color: rgba(0,0,0,0.2);
     position:fixed;
@@ -15,13 +32,146 @@
     display:grid;
     place-items: center;    
 }
-#houseModal{
-    
+/*container for content*/
+.modal{
+    position: relative;
     width: 100%;
     height:100%;
-    background-color:#fff;
-    border-radius: 10px;
+    background-color:var(--modal-bg);
+    /*Button for closing a modal*/
+    #closeModal{
+        background-color: #505050;
+        border: 2px solid #202020;
+        color:#fff;
+        border-radius: 100%;
+        width:1.5rem;
+        height:1.5rem;
+        position: absolute;
+        top: 4%;
+        right:4%;
+    }
 }
+.confirmModal{
+    width: 90%;
+    height: 50%;
+    background-color:var(--modal-bg);
+    border-radius: 15px;
+    display:grid;
+    grid-template-areas:
+        "header header"
+        "text text"
+        "yes no";
+    button{
+        border: 2px solid #202020;
+        height: 70px;
+        width: 70%;
+        place-self: center;
+        border-radius: 15px;
+
+
+    }
+    .contentHeader{
+        grid-area:header;
+    }
+    .confirmContent{
+        display:block;
+        grid-area:text;
+        text-align: center;
+    }
+    .destroyButton{
+        background-color:var(--destroy-color);
+        grid-area: yes;
+    }
+    .confirmButton{
+        background-color:var(--confirm-color);
+    }
+    .cancelButton{
+        background-color: #ccc;
+        grid-area:no;
+    }
+}
+
+/*house info, used in houseCards*/
+.houseInfo{
+    background-color: #fff;
+    padding:2%;
+    border-radius: 0 0 5px 5px;
+    grid-area: b;
+
+    /* Text settings*/
+    h2{
+        font-size: 1.5em;
+        font-family: var(--primary-font)
+    }
+
+    p{
+        font-size: 1em;
+        font-family: var(--primary-font)
+    
+    }
+    #expandInfoButton{
+        width: 50%;
+        margin:auto;
+        background:inherit;
+        border:none;
+        border-top:1px solid black;
+    }
+}
+/*header used for each content-page, generally used to tell a user where they are
+  ie. if I'm browing my houses, contentHeader is 'HOUSES', or if im creating a house, 
+  contentHeader is 'CREATE HOUSE'*/
+.contentHeader{
+    text-align:center;
+    font-weight: 400;
+    letter-spacing: 1.5;
+}
+
+/*^
+    Wrapper used for houses, it should perhaps be turned into a class, since this code
+    will be re-used by every card-wrapper div, across all views not only houses.
+*/
+#houseWrapper{
+    display:grid;
+    place-items:center;
+    /* background:greenyellow; */
+}
+
+/*
+    Card-view. grid-template-areas make a "blank" portion above the data, that
+    maybe can be swapped out with a color for different card-types 
+    (i.e. contractors are yellow, houses are blue etc.)
+*/
+.card{
+    width:90%;
+    background:var(--card-background);
+    min-height: 30vh;
+    border-radius: 5px;
+    display:grid;
+    grid-template-areas: 
+        "a a a"
+        "a a a"
+        "a a a"
+        "b b b";
+}
+
+form{
+    display:grid;
+    place-items:center;
+
+    input{
+        width: 90%;
+    }
+    
+    
+}
+
+select{
+    width: 90%;
+    place-self: center;
+
+
+}
+
 
 @media only screen and (min-width: 768px) {
     

@@ -150,8 +150,7 @@ async function destroy(type , id, target){
 
     if(res.ok){
         console.log(json);
-
-        target.parentElement.remove();
+        window.dispatchEvent(dataChangeEvent);
     }
     else {
         console.error(json);
