@@ -13,17 +13,15 @@ block content
         
         div(id="houseTab" x-show='tab=="#houses"' x-data="{showCreateModal:false}"
             x-init = "await fetchHouses(); await fetchTasks(); await fetchContractors(); console.log('houses: ', houses); console.log('tasks: ', tasks); console.log('contractors:', contractors)")
-            div(class="modalContainer"
-                x-show="house.houseID"
-                @click="house = {tasks:[]}")
-                div(class="modal"
-                    x-data="{expandTasks:true}"
+            div.modalContainer( x-show="house.houseID"
+                    @click="house = {tasks:[]}")
+                div.modal(x-data="{expandTasks:true}"
                     x-show="house.houseID"
                     style="border: 3px dashed red;"
                     @click.stop="" )
                     //- click.stop prevents the click event of outer div, from firing inside this one.
                         hence, the modal can be clicked, withot immediately closing the modal.
-                    button#closeModal(@click="house = {tasks:[]}") X
+                    button.closeButton(@click="house = {tasks:[]}") X
                     .houseInfo(x-data="{expandInfo:false, showDestroyModal:false}")
                         h2(x-text="house.address")
                         p(x-text="house.name")
@@ -49,17 +47,18 @@ block content
                         span(x-show="!house.tasks.length") No tasks
                     div(id="taskWrapper" x-show="expandTasks" x-collapse="")
                         template(x-for="t in house.tasks" :key="t.taskID")
-                            div(x-bind:id="`task${t.taskID}`"
-                                class="taskItem" x-data="{showTaskDetails:false, showDestroyTask:false}"
-                                style="border: 2px solid blueviolet;")
+                            div.card(x-bind:id="`task${t.taskID}`"
+                                     x-data="{showTaskDetails:false, showDestroyTask:false}")
                                 p TaskID: 
                                     span(x-text="t.taskID")
                                 p Description: 
                                     span(x-text ="t.description")
                                 p Completed: 
                                     span(x-text="t.completed?'YES': 'NO'")
-                                button(@click="showDestroyTask=!showDestroyTask")
-                                    span.material-icons delete
+                                .buttonBox
+                                    button(@click="showDestroyTask=!showDestroyTask")
+                                        span.material-icons delete
+                                    button(@click="showTaskDetails = !showTaskDetails") show details
                                 .modalContainer(x-show="showDestroyTask")
                                     .confirmModal
                                         h2.contentHeader Delete Task?
@@ -68,8 +67,7 @@ block content
                                         button.destroyButton(@click="await destroy('task', t.taskID, $event.target); showDestroyTask=false;") Yes
                                         button.cancelButton(@click="showDestroyTask=false;") No
 
-                                button(@click="showTaskDetails = !showTaskDetails") show details
-                                div(x-show="showTaskDetails" x-collapse="" class="taskDetails" x-data="{showAppointees:false}")
+                                div.extendedInfo(x-show="showTaskDetails" x-collapse="" class="taskDetails" x-data="{showAppointees:false}")
                                     p Created at:
                                         span(x-text="new Date(t.created_at).toLocaleString()")
                                     h4 Appointees: 
@@ -121,7 +119,7 @@ block content
                     span.material-icons(class="linkIcon") launch
             .modalContainer(x-show="showCreateModal")
                 .modal 
-                    button#closeModal(@click="showCreateModal = false;") X
+                    button.closeButton(@click="showCreateModal = false;") X
                     h3.contentHeader CREATE HOUSE
                     form(action="/house", method="post" @submit.prevent="await createHouse($event.target); showCreateModal = false;")
                         input(type="text", name="address", placeholder="Address", required)
@@ -131,9 +129,8 @@ block content
             h2 Your houses
             div(id="houseWrapper")
                 template(x-for="h in houses" :key="h.houseID")
-                    div(style="border:2px solid black;margin-bottom:10px;" class="card" 
-                        x-bind:id="`house-${h.houseID}`"
-                        @click="h.tasks = tasks.filter(t=>t.houseID == h.houseID); house = h; console.log('selected house: ', house)")
+                    div.houseCard(x-bind:id="`house-${h.houseID}`"
+                                  @click="h.tasks = tasks.filter(t=>t.houseID == h.houseID); house = h; console.log('selected house: ', house)")
                         .houseInfo
                             h2(x-text="h.address")
                             p(x-text="h.name")

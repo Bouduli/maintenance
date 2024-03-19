@@ -39,7 +39,7 @@
     height:100%;
     background-color:var(--modal-bg);
     /*Button for closing a modal*/
-    #closeModal{
+    .closeButton{
         background-color: #505050;
         border: 2px solid #202020;
         color:#fff;
@@ -91,13 +91,9 @@
     }
 }
 
-/*house info, used in houseCards*/
-.houseInfo{
-    background-color: #fff;
+.extendedInfo, .houseInfo{
+    background-color: var(--card-text-background);
     padding:2%;
-    border-radius: 0 0 5px 5px;
-    grid-area: b;
-
     /* Text settings*/
     h2{
         font-size: 1.5em;
@@ -109,6 +105,14 @@
         font-family: var(--primary-font)
     
     }
+}
+/*house info, used in houseCards*/
+.houseInfo{
+    
+    border-radius: 0 0 5px 5px;
+    grid-area: b;
+
+    
     #expandInfoButton{
         width: 50%;
         margin:auto;
@@ -117,6 +121,7 @@
         border-top:1px solid black;
     }
 }
+
 /*header used for each content-page, generally used to tell a user where they are
   ie. if I'm browing my houses, contentHeader is 'HOUSES', or if im creating a house, 
   contentHeader is 'CREATE HOUSE'*/
@@ -130,9 +135,11 @@
     Wrapper used for houses, it should perhaps be turned into a class, since this code
     will be re-used by every card-wrapper div, across all views not only houses.
 */
-#houseWrapper{
+#houseWrapper, #taskWrapper{
     display:grid;
     place-items:center;
+    overflow-y: scroll;
+
     /* background:greenyellow; */
 }
 
@@ -141,12 +148,25 @@
     maybe can be swapped out with a color for different card-types 
     (i.e. contractors are yellow, houses are blue etc.)
 */
-.card{
-    width:90%;
-    background:var(--card-background);
-    min-height: 30vh;
-    border-radius: 5px;
+.card, .houseCard{
     display:grid;
+    min-height: 30vh;
+    width:90%;
+    margin-bottom:10px;
+    background:var(--card-text-background);
+    padding:2%;
+    border-radius: 5px;
+    border:2px solid black;
+
+
+    .buttonBox{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+.houseCard{
+    padding:0;
+    background:var(--card-background);
     grid-template-areas: 
         "a a a"
         "a a a"
