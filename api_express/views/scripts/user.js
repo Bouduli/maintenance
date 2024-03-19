@@ -7,38 +7,47 @@ const insertTaskEvent = new Event("insertTask");
 const insertContractorEvent = new Event("insertContractor");
 const dataChangeEvent = new Event("dataChange");
 
-async function createHouse(target){
+async function alterHouse(target, editing=false){
 
-    const body = {
-        address : target.address.value || null,
-        description : target.description.value || null,
-        name : target.name.value || null
-        
-    };
-
-    console.log(body);
-
-    const res = await fetch("/house", {
-        method:"POST",
-        body: JSON.stringify(body),
-        headers:{
-            "Content-Type" : "application/json"
-    
-        }
-    });
-
+   try {
+     const houseID = target.houseID.value;
+     if(editing & !houseID) return alert("houseID not provided in edit.");
+ 
+     const body = {
+         address : target.address.value || null,
+         description : target.description.value || null,
+         name : target.name.value || null
+         
+     };
+ 
+     console.log(body);
+ 
+     const res = await fetch(`/house/${houseID}`, {
+         method: editing? "PUT":"POST",
+         body: JSON.stringify(body),
+         headers:{
+             "Content-Type" : "application/json"
+     
+         }
+     });
+    console.log(res);
     const json = await res.json();
-    if(res.ok) {
-        console.log("Inserted house with id: ",json.content);
+     if(res.ok) {
+         console.log("Inserted house with id: ",json.content);
+ 
+         //This tells Alpine.JS to re-fetch the data.
+         window.dispatchEvent(dataChangeEvent);
+ 
+         //clears form
+         target.reset()
+     }
+ 
+     else console.error(json);
+   } catch (err) {
+    
+        console.error(err);
 
-        //This tells Alpine.JS to re-fetch the data.
-        window.dispatchEvent(dataChangeEvent);
-
-        //clears form
-        target.reset()
-    }
-
-    else console.error(json);
+   }
     
 
 }
