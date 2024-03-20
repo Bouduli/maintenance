@@ -1,43 +1,65 @@
 extends template.pug 
 
 block content 
-    div(x-data="view();")
+    div(x-data="view();" x-init="await data(); modal=false;" @data-change.camel.window="await data()")
 
         //
             These are links used for tabs
             Sauce for this is https://talltips.novate.co.uk/tabbed-content-using-alpine-js 
-        a(href="#" x-on:click.prevent="tab='#houses'") houses 
+        a(href="#" x-on:click.prevent="tab='#houses'; subtab=houseWrapper") houses 
         a(href="#" x-on:click.prevent="tab='#tasks'") tasks 
         a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
 
-        //- div(x-show="house", x-init="console.log(house)" x-data="h = []"
-        //-         @show-house.camel.window="h = (await (await fetch(`/house/${house}`)).json()).content; console.log(h)")
-        //-     template(x-for="ho in h")
-        //-         h3(x-text="ho.address")
-        //-         i(x-text="ho.name")
-        //-         p(x-text="ho.description")
+        
 
             
         // This content is tabbed, right?!
-        div( x-show='tab=="#houses"' x-data="{houses: []}" x-init = "await fetchHouses() ; console.log('houses: ', houses)"
-            @insert-house.camel.window="await fetchHouses();")
-            h2 Houses
-            div(id="createHouse")
-                h3 CREATE HOUSE
-                form(action="/house", method="post" @submit.prevent="await createHouse($event.target)")
-                    input(type="text", name="address", placeholder="Address", required)
-                    input(type="text", name="description" placeholder="Description")
-                    input(type="text", name="name", placeholder="Name")
-                    input(type="submit" value="create")
-            ul
+        div( x-show='tab=="#houses"' x-data="{editHouse:false}")
+            .tabBox
+                a(href="#" @click.prevent="subtab='houseWrapper'") All houses
+                a(href="#" x-show="house.houseID" @click.prevent="subtab='houseDetails'") Show one
+                a(href="#" @click.prevent="subtab='form'; editHouse=false;") Form
+            #houseWrapper(x-show="subtab=='houseWrapper'")
+                h2.contentHeader Houses
                 template(x-for="h in houses" :key="h.houseID")
-                    div(style="border:2px solid black;margin-bottom:10px;" x-bind:id="`house-${h.houseID}`")
-                        h3(x-text="'houseID: ' + h.houseID + ' ' + h.address")
-                        i(x-text="h.name")
-                        p(x-text="h.description")
-                        button(@click="await destroy('house', h.houseID, $event.target)") DELETE HOUSE
-                        //- a(href="#" @click.prevent="house=h.houseID; window.dispatchEvent(showHouseEvent)") open
-            
+                    div.houseCard(x-bind:id="`house-${h.houseID}`"
+                                  @click="h.tasks = tasks.filter(t=>t.houseID == h.houseID); house = h; subtab='houseDetails'")
+                        .houseInfo
+                            h2(x-text="h.address")
+                            p(x-text="h.name")
+            #houseForm(x-show="subtab=='form'" )
+                h2.contentHeader(x-text="editHouse? 'UPDATE HOUSE' : 'CREATE HOUSE'")
+                form(action="/house", id="houseForm" method="post" 
+                @submit.prevent=" await alterHouse($event.target, editHouse); subtab='houseDetails';")
+                    input(type="text", name="address", placeholder="Address", x-bind:value="editHouse? house.address : ''")
+                    input(type="text", name="description" placeholder="Description" x-bind:value="editHouse? house.description :''")
+                    input(type="text", name="name", placeholder="Name" x-bind:value="editHouse? house.name : ''")
+                    input(type="hidden", name="houseID", x-bind:value="editHouse? house.houseID : ''")
+                    input(type="submit" value="create")
+            #houseDetails(x-show="subtab=='houseDetails'")
+                .houseInfo(style="width:90%; margin:auto;")
+                    h2(x-text="house.address")
+                    p
+                        b Name: 
+                        span(x-text="house.name")
+                    p
+                        b Description: 
+                        span(x-text="house.description")
+                    p 
+                        b ID: #
+                        span(x-text="house.houseID")
+                    p
+                        b Created at: 
+                        span(x-text="new Date(house.created_at).toLocaleString()")
+                    p 
+                        b Last updated: 
+                        span(x-text="new Date(house.last_edited).toLocaleString()")
+                    .buttonBox(style="width:100%;")
+                        button(@click="modal='deleteHouse'")
+                            span.material-icons delete
+                        button(@click="subtab='form'; editHouse=true;")
+                            span.material-icons edit
+       
         div(x-show="tab=='#tasks'" x-data= "{tasks : [], expandTasks:true, expandSuggestions:true}" x-init="await fetchTasks(); console.log('tasks: ', tasks); await fetchSuggestions(); console.log('suggestions: ', suggestions)"
             @insert-task.camel.window="await fetchTasks(); await fetchSuggestions();")
             h2 Tasks:
@@ -121,7 +143,16 @@ block content
                             span(x-text="contractor.phone")
 
                         button(@click="await destroy('contractor', contractor.contractorID, $event.target)") DELETE CONTRACTOR
-
+        
+        .modalContainer(x-show="modal")
+            .confirmModal(x-show="modal=='deleteHouse'")
+                h2.contentHeader Delete house
+                    span(x-text="house.houseID")
+                p.confirmContent Are you sure you want to delete this house
+                .buttonBox(style="width:90%; margin:auto;")
+                    button.destroyButton(@click="await destroy('house', house.houseID); modal=false; subtab='houseWrapper';") Yes
+                    button.cancelButton(@click="modal=false;") No
+                
         script
             include scripts/user.js
             

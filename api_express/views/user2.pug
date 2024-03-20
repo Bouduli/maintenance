@@ -1,7 +1,7 @@
 extends template.pug 
 
 block content 
-    div(x-data="view();" @data-change.camel.window="await data()")
+    div(x-data="view();" @data-change.camel.window="await data();")
 
         //
             These are links used for tabs
@@ -64,6 +64,7 @@ block content
                                 .buttonBox
                                     button(@click="showDestroyTask=!showDestroyTask")
                                         span.material-icons delete
+                                    button(@click="alterTaskModal=true; editTask=true")
                                     button(@click="showTaskDetails = !showTaskDetails") show details
                                 .modalContainer(x-show="showDestroyTask")
                                     .confirmModal

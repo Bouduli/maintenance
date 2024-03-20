@@ -20,6 +20,77 @@
 .linkIcon{
     color:#777;
 }
+.tabBox{
+    margin: auto;
+    display:flex;
+    width: 50%;
+    text-align: center;
+    background: #777;
+    border-radius: 10px;
+    border:1px solid #777;
+    a{
+        width: 100%;
+        border-radius: inherit;
+    }
+    a:hover{
+        background-color: #eee;
+    }
+}
+
+#houseDetails{
+    min-height: 100vh;
+}
+.buttonBox{
+    width: 100%;
+    display:flex;
+    margin-top: 20px;
+    button{
+        width: 100%;
+        text-align:center
+    }
+
+    .destroyButton{
+        background-color:var(--destroy-color);
+    }
+    .confirmButton{
+        background-color:var(--confirm-color);
+    }
+    .cancelButton{
+        background-color: #ccc;
+    }
+}
+
+.extendedInfo, .houseInfo{
+    background-color: var(--card-text-background);
+    padding:2%;
+    /* Text settings*/
+    h2{
+        font-size: 1.5em;
+        font-family: var(--primary-font)
+    }
+
+    p{
+        font-size: 1em;
+        font-family: var(--primary-font)
+    
+    }
+}
+/*house info, used in house-cards to acheive current "segmented" look*/
+.houseInfo{
+    
+    border-radius: 0 0 5px 5px;
+    grid-area: b;
+
+    
+    #expandInfoButton{
+        width: 50%;
+        margin:auto;
+        background:inherit;
+        border:none;
+        border-top:1px solid black;
+    }
+}
+
 /*container, clickable event to remove modal, semi-transparent bg*/
 .modalContainer{
 
@@ -30,7 +101,8 @@
     width:100vw;
     height:100vh;
     display:grid;
-    place-items: center;    
+    place-items: center;
+    overflow-y:auto;
 }
 /*container for content*/
 .modal{
@@ -54,7 +126,7 @@
 .confirmModal{
     position: relative;
     width: 90%;
-    height: 50%;
+    height: 40%;
     background-color:var(--modal-bg);
     border-radius: 15px;
     display:flex;
@@ -98,36 +170,7 @@
     }
 }
 
-.extendedInfo, .houseInfo{
-    background-color: var(--card-text-background);
-    padding:2%;
-    /* Text settings*/
-    h2{
-        font-size: 1.5em;
-        font-family: var(--primary-font)
-    }
 
-    p{
-        font-size: 1em;
-        font-family: var(--primary-font)
-    
-    }
-}
-/*house info, used in houseCards*/
-.houseInfo{
-    
-    border-radius: 0 0 5px 5px;
-    grid-area: b;
-
-    
-    #expandInfoButton{
-        width: 50%;
-        margin:auto;
-        background:inherit;
-        border:none;
-        border-top:1px solid black;
-    }
-}
 
 /*header used for each content-page, generally used to tell a user where they are
   ie. if I'm browing my houses, contentHeader is 'HOUSES', or if im creating a house, 
@@ -167,8 +210,11 @@
 
 
     .buttonBox{
-        display:grid;
-        grid-template-columns: 1fr 1fr;
+        display:flex;
+        
+        button{
+            width: 100%;
+        }
     }
 }
 .houseCard{

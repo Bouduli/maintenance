@@ -32,14 +32,14 @@ async function alterHouse(target, editing=false){
      });
     console.log(res);
     const json = await res.json();
-     if(res.ok) {
-         console.log("Inserted house with id: ",json.content);
- 
-         //This tells Alpine.JS to re-fetch the data.
-         window.dispatchEvent(dataChangeEvent);
- 
-         //clears form
-         target.reset()
+    if(res.ok) {
+        console.log("Inserted house with id: ",json.content);
+
+        //This tells Alpine.JS to re-fetch the data.
+        window.dispatchEvent(dataChangeEvent);
+
+        //clears form
+        target.reset();
      }
  
      else console.error(json);
@@ -188,6 +188,8 @@ async function handleSuggestion(id, handle_method){
 function view(){
     return {
         tab: "#houses",
+        subtab:'houseWrapper',
+        modal:false,
         house:{ tasks:[]},
         houses:[],
         tasks:[],

@@ -13,6 +13,9 @@ router.get("/worker", mw.auth("pwl"), async(req,res)=>{
     res.render("worker", {title: "worker"})
 });
 router.get("/user", mw.auth(), async (req,res)=>{
+    res.render("user", {title:"user"});
+});
+router.get("/user2", mw.auth(), async (req,res)=>{
     res.render("user2", {title:"user"});
 });
 router.get("/admin", mw.auth(), mw.admin(), async(req,res)=>{
