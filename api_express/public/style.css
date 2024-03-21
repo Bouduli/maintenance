@@ -23,7 +23,7 @@
 .tabBox{
     margin: auto;
     display:flex;
-    width: 50%;
+    width: 100%;
     text-align: center;
     background: #777;
     border-radius: 10px;
@@ -59,7 +59,41 @@
         background-color: #ccc;
     }
 }
+.detailsView{
 
+    min-height: 100vh;
+    background-color: var(--card-text-background);
+    padding:2%;
+    /* Text settings*/
+    
+
+    .detailsBody{
+        .detailsHeader{
+            font-size: 1.5em;
+            font-family: var(--primary-font)
+        }
+    
+        .detailsInfo1{
+            font-size: 1em;
+            font-family: var(--primary-font)
+        
+        }
+    }
+}
+
+.selectContainer{
+    width: 90%;
+    display:grid;
+    margin:auto;
+    margin-bottom: 20px;
+    
+    label{
+        font-weight: 600;
+    }
+    select{
+        font-size: 1.25em;
+    }
+}
 .extendedInfo, .houseInfo{
     background-color: var(--card-text-background);
     padding:2%;

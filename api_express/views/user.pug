@@ -6,8 +6,8 @@ block content
         //
             These are links used for tabs
             Sauce for this is https://talltips.novate.co.uk/tabbed-content-using-alpine-js 
-        a(href="#" x-on:click.prevent="tab='#houses'; subtab=houseWrapper") houses 
-        a(href="#" x-on:click.prevent="tab='#tasks'") tasks 
+        a(href="#" x-on:click.prevent="tab='#houses'; subtab='houseWrapper'") houses 
+        a(href="#" x-on:click.prevent="tab='#tasks'; subtab='taskWrapper'") tasks 
         a(href="#" x-on:click.prevent="tab='#contractors'") contractors 
 
         
@@ -17,7 +17,7 @@ block content
         div( x-show='tab=="#houses"' x-data="{editHouse:false}")
             .tabBox
                 a(href="#" @click.prevent="subtab='houseWrapper'") All houses
-                a(href="#" x-show="house.houseID" @click.prevent="subtab='houseDetails'") Show one
+                a(href="#" x-show="house.houseID" @click.prevent="subtab='houseDetails'") House details
                 a(href="#" @click.prevent="subtab='form'; editHouse=false;") Form
             #houseWrapper(x-show="subtab=='houseWrapper'")
                 h2.contentHeader Houses
@@ -36,8 +36,13 @@ block content
                     input(type="text", name="name", placeholder="Name" x-bind:value="editHouse? house.name : ''")
                     input(type="hidden", name="houseID", x-bind:value="editHouse? house.houseID : ''")
                     input(type="submit" value="create")
-            #houseDetails(x-show="subtab=='houseDetails'")
-                .houseInfo(style="width:90%; margin:auto;")
+            #houseDetails(x-show="subtab=='houseDetails'" class="detailsView")
+                .selectContainer
+                    label(for="houseID") Viewing House:
+                    select#houseID(@change="house = getHouse($event.target.value); console.log(house);")
+                        template(x-for="h in houses")
+                            option(x-bind:value="h.houseID" x-text="h.address") 
+                .detailsBody(style="width:90%; margin:auto;")
                     h2(x-text="house.address")
                     p
                         b Name: 
@@ -54,73 +59,77 @@ block content
                     p 
                         b Last updated: 
                         span(x-text="new Date(house.last_edited).toLocaleString()")
+
+                    p
+                        b Tasks: 
+                            span(x-text="`(${house.tasks.length})`")
+                            span(x-show="house.tasks.length") Show
                     .buttonBox(style="width:100%;")
                         button(@click="modal='deleteHouse'")
                             span.material-icons delete
                         button(@click="subtab='form'; editHouse=true;")
                             span.material-icons edit
        
-        div(x-show="tab=='#tasks'" x-data= "{tasks : [], expandTasks:true, expandSuggestions:true}" x-init="await fetchTasks(); console.log('tasks: ', tasks); await fetchSuggestions(); console.log('suggestions: ', suggestions)"
-            @insert-task.camel.window="await fetchTasks(); await fetchSuggestions();")
-            h2 Tasks:
-            div(id="createTask")
-                h3 create task 
-                form(action="/task", method="post", @submit.prevent="await createTask($event.target)")
-                    input(type="text", name="houseID", placeholder="House ID", required)
-                    input(type="text", name="description" placeholder="Description" required)
-                    input(type="submit" value="create")
+        
+            //- h2 Tasks:
+            //- div(id="createTask")
+            //-     h3 create task 
+            //-     form(action="/task", method="post", @submit.prevent="await createTask($event.target)")
+            //-         input(type="text", name="houseID", placeholder="House ID", required)
+            //-         input(type="text", name="description" placeholder="Description" required)
+            //-         input(type="submit" value="create")
             
-            h3 Your tasks:
-            button(@click="expandTasks = !expandTasks" x-text="expandTasks?'hide':'show' ") Hide/Show Suggestions
-            div(id="taskContainer" x-show="expandTasks")
-                template(x-for="task in tasks" :key="task.taskID")
-                    div( style="border:2px solid black;margin-bottom:10px;" :id="$id('task.taskID')" x-data="{showCreateForm: false}") 
-                        p houseid: 
-                            span(x-text="task.houseID")
-                        p taskID: 
-                            span(x-text="task.taskID")
-                        p description:
-                            span(x-text="task.description")
-                        b Appointees:
-                        template(x-for="cont in task.contractors")
-                            div(style="border:1px solid black;")
-                                p name: 
-                                    span(x-text="cont.name")
-                                    span (
-                                    span(x-text="cont.occupation")
-                                    span )
-                                p email: 
-                                    span(x-text="cont.email")
-                        div(x-show="!task.contractors") 
-                            i No contractors have been invited for this task, try inviting one
+            //- h3 Your tasks:
+            //- button(@click="expandTasks = !expandTasks" x-text="expandTasks?'hide':'show' ") Hide/Show Suggestions
+            //- div(id="taskContainer" x-show="expandTasks")
+            //-     template(x-for="task in tasks" :key="task.taskID")
+            //-         div( style="border:2px solid black;margin-bottom:10px;" :id="$id('task.taskID')" x-data="{showCreateForm: false}") 
+            //-             p houseid: 
+            //-                 span(x-text="task.houseID")
+            //-             p taskID: 
+            //-                 span(x-text="task.taskID")
+            //-             p description:
+            //-                 span(x-text="task.description")
+            //-             b Appointees:
+            //-             template(x-for="cont in task.contractors")
+            //-                 div(style="border:1px solid black;")
+            //-                     p name: 
+            //-                         span(x-text="cont.name")
+            //-                         span (
+            //-                         span(x-text="cont.occupation")
+            //-                         span )
+            //-                     p email: 
+            //-                         span(x-text="cont.email")
+            //-             div(x-show="!task.contractors") 
+            //-                 i No contractors have been invited for this task, try inviting one
                         
-                        button(@click="showCreateForm= !showCreateForm") Open Invite Form
-                        div(x-show="showCreateForm")
-                            b Invite contractor:
-                            form(action="/task/invite", @submit.prevent="await inviteContractor($event.target)")
-                                input(type="email", name="email", placeholder="Contractor Email")
-                                input(type="hidden", name="taskID" x-bind:value="task.taskID", value="")
-                                input(type="submit", value="Invite")
+            //-             button(@click="showCreateForm= !showCreateForm") Open Invite Form
+            //-             div(x-show="showCreateForm")
+            //-                 b Invite contractor:
+            //-                 form(action="/task/invite", @submit.prevent="await inviteContractor($event.target)")
+            //-                     input(type="email", name="email", placeholder="Contractor Email")
+            //-                     input(type="hidden", name="taskID" x-bind:value="task.taskID", value="")
+            //-                     input(type="submit", value="Invite")
                         
-                        div(x-show="task.completed")
-                            h3 COMPLETED!!!
-                        button(@click="await destroy('task', task.taskID, $event.target)") DELETE TASK
+            //-             div(x-show="task.completed")
+            //-                 h3 COMPLETED!!!
+            //-             button(@click="await destroy('task', task.taskID, $event.target)") DELETE TASK
             
-            h3 Task Suggestions: 
-            button(@click="expandSuggestions=!expandSuggestions" x-text="expandSuggestions?'hide':'show'") Hide/Show Suggestions
-            div(id="suggestionContainer" x-show="expandSuggestions")
-                template(x-for="s in suggestions" :key="s.suggestionID")
-                    div(style="border:2px solid black;margin-bottom:10px;" x-bind:id="`suggestion-${s.suggestionID}`")    
-                        h5(x-text="s.description")
-                        p Submitted by: 
-                        b(x-text="`${s.user.name} (${s.user.occupation})`")
-                        i phone:
-                            span(x-text="s.user.phone")
-                        div(class="suggestionControls")
-                            button(@click="await handleSuggestion(s.suggestionID, 'POST')") Approve
-                            button(@click="await handleSuggestion(s.suggestionID, 'DELETE')") Reject
+            //- h3 Task Suggestions: 
+            //- button(@click="expandSuggestions=!expandSuggestions" x-text="expandSuggestions?'hide':'show'") Hide/Show Suggestions
+            //- div(id="suggestionContainer" x-show="expandSuggestions")
+            //-     template(x-for="s in suggestions" :key="s.suggestionID")
+            //-         div(style="border:2px solid black;margin-bottom:10px;" x-bind:id="`suggestion-${s.suggestionID}`")    
+            //-             h5(x-text="s.description")
+            //-             p Submitted by: 
+            //-             b(x-text="`${s.user.name} (${s.user.occupation})`")
+            //-             i phone:
+            //-                 span(x-text="s.user.phone")
+            //-             div(class="suggestionControls")
+            //-                 button(@click="await handleSuggestion(s.suggestionID, 'POST')") Approve
+            //-                 button(@click="await handleSuggestion(s.suggestionID, 'DELETE')") Reject
                         
-                b(x-show="!suggestions") No suggestions
+            //-     b(x-show="!suggestions") No suggestions
         div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
             @insert-contractor.camel.window="await fetchContractors()")
             h2 Contractors:

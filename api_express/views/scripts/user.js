@@ -203,8 +203,6 @@ function view(){
             //make house-modal update itself.
             if(this.house.houseID) this.house.tasks = this.tasks.filter(t=>t.houseID == this.house.houseID);
         },
-        // house: "",
-        //fetch functions
         async fetchHouses(){
             try {
                 this.houses = (await (await fetch("/house")).json()).content 
@@ -253,6 +251,18 @@ function view(){
                 console.log("no suggestions");
                 this.suggestions=[];
             }
+        },
+        /**
+         * Retreives the house from houses-array, with tasks mapped to it.
+         * @param {string} house houseID
+         */
+        getHouse(house){
+            const h = this.houses.find(h=>h.houseID == house);
+            //if no house was found with the id, then "empty house" is returned
+            if(!h) return {tasks:[]};
+
+            h.tasks = this.tasks.filter(t=>t.houseID == house);
+            return h;
         }
 
     }
