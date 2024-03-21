@@ -14,21 +14,21 @@ async function alterHouse(target, editing=false){
      if(editing & !houseID) return alert("houseID not provided in edit.");
  
      const body = {
-         address : target.address.value || null,
-         description : target.description.value || null,
-         name : target.name.value || null
+        address : target.address.value || null,
+        description : target.description.value || null,
+        name : target.name.value || null
          
      };
  
      console.log(body);
  
      const res = await fetch(`/house/${houseID}`, {
-         method: editing? "PUT":"POST",
-         body: JSON.stringify(body),
-         headers:{
-             "Content-Type" : "application/json"
-     
-         }
+        method: editing? "PUT":"POST",
+        body: JSON.stringify(body),
+        headers:{
+            "Content-Type" : "application/json"
+    
+        }
      });
     console.log(res);
     const json = await res.json();
@@ -40,18 +40,57 @@ async function alterHouse(target, editing=false){
 
         //clears form
         target.reset();
-     }
- 
-     else console.error(json);
-   } catch (err) {
+    }
+    else console.error(json);
+    } catch (err) {
     
         console.error(err);
 
-   }
+    }
     
 
 }
+async function alterTask(target,editing=false){
+    try {
+        const taskID = target.taskID.value;
+        if(editing & !taskID) return alert("taskID not provided in edit.");
 
+        const body = {
+            description : target.description.value || null,
+            houseID : target.houseID.value || null
+            
+        };
+
+        const res = await fetch(`/task/${taskID}`, {
+            method: editing? "PUT":"POST",
+            body: JSON.stringify(body),
+            headers:{
+                "Content-Type" : "application/json"
+        
+            }
+        });
+        
+        const json = await res.json();
+
+        if(res.ok){
+            console.log("altered task with id: ", json.content);
+            //This tells Alpine.JS to re-fetch the data.
+            window.dispatchEvent(dataChangeEvent);
+
+            //clears form
+            target.reset();
+
+            //could maybe be used to set taskDetails to the new task, however I wont focus this now.
+            return json.content.id;
+
+        }
+        else console.error("res not ok: ", json);
+        
+
+    } catch (err) {
+        console.error("unable to alter task: ", err);
+    }
+}
 async function createTask(target){
     const body = {
         houseID : target.houseID.value || null,
@@ -190,10 +229,19 @@ function view(){
         tab: "#houses",
         subtab:'houseWrapper',
         modal:false,
+
         house:{ tasks:[]},
         houses:[],
+
         tasks:[],
+        filteredTasks:[],
+        // used to accurately display task_filter when going from houseDetails to Tasks with the "show tasks" button. 
+        task_filter_id:"",
+        task:{contractors:[]},
+
         contractors:[],
+        contractor:{},
+
         suggestions:[],
         async data(){
             await this.fetchHouses();
@@ -214,24 +262,26 @@ function view(){
         async fetchTasks(){
 
             try {
-                this.tasks = (await (await fetch("/task")).json()).content;
-                // uses GET /task/appointee/:taskID to retreive all contractors for a task. 
-                // this makes it possible showing contractors appointed to a task.
-                const task_contractors = await Promise.all(this.tasks.map(async(t)=>{
-                    try {
-                        return (await(await fetch(`/task/appointee/${t.taskID}`)).json()).content || [];
-                    } catch {
-                        return [];
-                    }
-                }));
-                console.log("task_contractors: ", task_contractors);
-                this.tasks.forEach((t, index) => t.contractors = task_contractors[index]);
+                const initial_length = this.tasks.length;
 
-                // console.log(console.log(task_contractors));
+                this.tasks = (await (await fetch("/task")).json()).content;
+                
+                //if there is a selected house for filtering (filteredTasks have a length, not equal to the initial length of tasks.)
+                if(this.filteredTasks.length != initial_length) {
+                    /**
+                     * @type {string} houseID used to filter tasks in taskWrapper
+                     */
+                    const id_for_filter = this.filteredTasks[0].houseID;
+                    if(!id_for_filter) this.filteredTasks = this.tasks;
+
+                    this.filteredTasks = this.tasks.filter(t=>t.houseID == id_for_filter);
+                }
+                else this.filteredTasks = this.tasks;
                 
             } catch (err) {
                 console.error("no tasks");
                 this.tasks = [];
+                this.filteredTasks = [];
             }
         },
         async fetchContractors(){
@@ -255,6 +305,7 @@ function view(){
         /**
          * Retreives the house from houses-array, with tasks mapped to it.
          * @param {string} house houseID
+         * @returns {house} hosue
          */
         getHouse(house){
             const h = this.houses.find(h=>h.houseID == house);
@@ -263,6 +314,29 @@ function view(){
 
             h.tasks = this.tasks.filter(t=>t.houseID == house);
             return h;
+        },
+
+        /**
+         * Retreives the task from taks-array, with it's contractors fetched (hence async)
+         * @param {string} task taskID 
+         * @returns {Promise<contractor>} contractor
+         */
+        async getTask(task){
+            const t = this.tasks.find(t=>t.taskID == task);
+            if(!t) return {contractors:[]}
+
+            
+            const appointees = await (async ()=>{
+                try {
+                    return (await(await fetch(`/task/appointee/${task}`)).json()).content || [];
+                } catch {
+                    return []
+                }
+            })();
+            console.log(`appointees for task ${task} : `, appointees);
+            t.contractors = appointees;
+
+            return t
         }
 
     }

@@ -3,6 +3,7 @@
     --primary-font: 'Open Sans', sans-serif;
 
     --card-background: #ccc;
+    --card-accent:#707070;
     --card-text-background: #fff;
     --modal-bg: #eee;
 
@@ -68,6 +69,8 @@
     
 
     .detailsBody{
+        width:90%; 
+        margin:auto;
         .detailsHeader{
             font-size: 1.5em;
             font-family: var(--primary-font)
@@ -109,21 +112,8 @@
     
     }
 }
-/*house info, used in house-cards to acheive current "segmented" look*/
-.houseInfo{
-    
-    border-radius: 0 0 5px 5px;
-    grid-area: b;
 
-    
-    #expandInfoButton{
-        width: 50%;
-        margin:auto;
-        background:inherit;
-        border:none;
-        border-top:1px solid black;
-    }
-}
+
 
 /*container, clickable event to remove modal, semi-transparent bg*/
 .modalContainer{
@@ -219,7 +209,7 @@
     Wrapper used for houses, it should perhaps be turned into a class, since this code
     will be re-used by every card-wrapper div, across all views not only houses.
 */
-#houseWrapper, #taskWrapper{
+#houseWrapper, #taskWrapper, #contractorWrapper{
     display:grid;
     place-items:center;
     overflow-y: scroll;
@@ -232,16 +222,19 @@
     maybe can be swapped out with a color for different card-types 
     (i.e. contractors are yellow, houses are blue etc.)
 */
-.card, .houseCard{
+.card{
     display:grid;
     min-height: 30vh;
     width:90%;
     margin-bottom:10px;
-    background:var(--card-text-background);
-    padding:2%;
+    background:var(--card-accent);
     border-radius: 5px;
     border:2px solid black;
-
+    grid-template-areas: 
+        "a a a"
+        "a a a"
+        "a a a"
+        "b b b";
 
     .buttonBox{
         display:flex;
@@ -251,14 +244,26 @@
         }
     }
 }
-.houseCard{
-    padding:0;
-    background:var(--card-background);
-    grid-template-areas: 
-        "a a a"
-        "a a a"
-        "a a a"
-        "b b b";
+.cardInfo{
+    
+    border-radius: 0 0 5px 5px;
+    grid-area: b;
+
+    background-color: var(--card-text-background);
+    padding:2%;
+    /* Text settings*/
+    h2{
+        font-size: 1.5em;
+        font-family: var(--primary-font)
+    }
+
+    p{
+        font-size: 1em;
+        font-family: var(--primary-font)
+    
+    }
+    
+    
 }
 
 form{
