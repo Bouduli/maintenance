@@ -163,11 +163,6 @@ router.put("/:id", async (req,res)=>{
 
         const update_sql = "UPDATE houses SET userID = ?, address = ?, name = ?, description = ? WHERE houseID = ? AND userID = ? AND active=?";
         const data = await db.query(update_sql, [updated.userID, updated.address, updated.name, updated.description, updated.houseID, userID, 1]);
-        if(!data.changedRows) return res.status(304).json({
-            error: "nothing changed",
-            id
-        });
-        // console.log(data);
 
         return res.status(200).json({content: {id: id} });
 

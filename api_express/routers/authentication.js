@@ -114,15 +114,11 @@ router.post("/change_password", mw.auth(), async (req,res)=>{
         const update_data = await db.query(update_sql, [new_hash, email, user.userID]);
         // console.log(update_data);
 
-        if(!update_data.changedRows) return res.status(304).json({
-            error:"nothing changed",
-            userID : user.userID
-        });
-
         return res.status(200).json({
             content:{
                 message:"changed password of user",
-                email : user.email
+                email : user.email,
+                id:userID
             }
         })
 
