@@ -258,3 +258,44 @@ Saker som har gjorts:
 - HouseModal kan visa husinfo information snyggt i en collapsable vy
 - En "confirm-modal" har gjorts, för att skapa ett "confirm" fönster för viktiga saker (destroy)
 - Påbörjar Task-Cards för varje hus.
+
+### Tisdag 19/03 
+Saker som har gjorts:
+- Forsatt effort på User2 re-writen.
+
+### Onsdag 20/03
+**Gett upp på User2 re-writen.** - en ny plan har tagits fram för en **SISTA RE-WRITE**
+
+Planen är som följer (tillämpas just nu bara på User)
+
+**En User har 3 stycken primär-vyer:** 
+- Houses
+- Tasks
+- Contractors
+
+**Varje primärvy innehåller sub-tabbar, som består av:**
+- cardView - *En vy som listar innehållet av primärgruppen i clickbara Cards*
+- `<tab>`-Details - *En vy som listar detaljerat innehåll för en sak, denna nås från ett av korten*
+- `<tab>`-Form - *En vy som innehåller ett formulär, som både används för att skapa nya saker, samt uppdatera existerande.*
+
+**Exempel: houseView**
+- cardWrapper innehåller en Header, samt en div med massa house-cards.
+    - Varje house-card innehåller husets address, och ett custom hus-namn. 
+    - Varje hus är klickbart, vilket tar användaren till houseDetails
+- houseDetails innehåller:
+    - husets information: samma som kortet, men med ID, description, antal tasks.
+    - en knapp för att navigera vidare till taskView, med ett inställt filter på det hus man precis har lämnat.
+    - Den innehåller också knappar för att ta-bort, som öppnar en modal; och en edit-knapp, som öppnar husFormuläret i "edit-läge".
+- houseForm innehåller
+    - ett formulär för att skapa nya hus, samt editera existerande (titeln förändras så det framgår tydligt vad man håller på att göra)
+
+### Torsdag 21/03
+Saker som har gjorts: **Planen har följts, och framsteg finns...**
+- houseViewen **är klar**
+- taskView är nästan klar, cards, details, och formuläret finns och funkar. **Task-invite har inte fixats än... Möjligtvis blir detta en separat sub-tab**
+
+Planen fortskrider bra, och det finns hopp i projektet!
+
+dock krävs refactoring och mer styling med CSS för att jag skall känna mig nöjd.
+
+Samtidigt behöver också Login, samt Worker och Administrator vyerna få en re-write dem med, så att gränssnittet blir mer konsekvent.
