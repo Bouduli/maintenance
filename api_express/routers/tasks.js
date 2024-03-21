@@ -286,7 +286,16 @@ router.get("/", async ( req,res)=>{
             message:"useriD not provided, please re-authenticate"
         })
 
-        const data = await db.query("SELECT * FROM tasks WHERE userID = ?", [userID]);
+        /*
+          Query returns '*' of each Task, where:
+            1. tasks.userID matches the requests userID, 
+            2. tasks.houseID matches a house with active=1.
+            
+          Therefore, all tasks, that are set on a active house, will be returned.
+        */
+        const data = await db.query("SELECT tasks.* FROM tasks INNER JOIN houses on tasks.houseID = houses.houseID WHERE tasks.userID = ? AND houses.active=?", [userID, 1]);
+
+
         if(!data.length) return res.status(404).json({
             error:"no tasks found"
         });
