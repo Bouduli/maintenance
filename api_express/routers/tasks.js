@@ -12,38 +12,37 @@ router.post("/invite", async(req,res)=>{
     try {
         
         const {id, name} = req.user.token;
-        const {email, taskID} = req.body;
+        const {contractorID, taskID} = req.body;
 
-        if(!email || !id) return res.status(400).json({
-            error:"email of contractor, or taskID not provided",
-            email:email || null,
+        if(!contractorID || !taskID) return res.status(400).json({
+            error:"contractorID, or taskID not provided",
+            contractorID:contractorID || null,
             taskID: taskID || null
         });
 
+        console.log("userID: ", id);
+        console.log("contractorID: ", contractorID);
+        
         //make sure the contractor exists in the contractors table.
-        const find_contractor = "SELECT contractorID FROM contractors WHERE email = ? and invited_by=?";
-        const contractor_data = await db.query(find_contractor, [email, id]);
+        const find_contractor = "SELECT contractorID, email FROM contractors WHERE contractorID = ? and invited_by=? and active_account=?";
+        const contractor_data = await db.query(find_contractor, [contractorID, id, 1]);
         if(!contractor_data.length) return res.status(404).json({
-            error:"Contractor with the provided email was not found"
+            error:"Contractor with the provided id was not found"
         });
 
-        //contractorID is used to make a connection between the task, and the contractor in Task_Contractors table.
-        const {contractorID} = contractor_data[0]
+        //contractorEmail for sending a confirmation email;
+        const email = contractor_data[0].email;
 
         //make sure that the requested task exists
-        const find_task = "SELECT taskID, userID FROM tasks WHERE taskID = ?";
-        const task_data = await db.query(find_task, [taskID]);
+        const find_task = "SELECT taskID FROM tasks WHERE taskID = ? and userID=?";
+        const task_data = await db.query(find_task, [taskID, id]);
         if(!task_data.length) return res.status(404).json({
             error:"task not found with the provided id",
             id: taskID ||null
         });
 
         const task = task_data[0];
-        console.log(task);       
-        //make sure that the user is allowed to add contractor to the task
-        if(task.userID != id) return res.status(403).json({
-            error:"you are not allowed to invite contractor to this task"
-        });
+        console.log(task);
 
         //make sure that the contractor isn't already added to the task..
         const check_invited_sql = "SELECT contractorID, taskID from task_contractors where taskID = ? and contractorID = ?";
@@ -54,7 +53,7 @@ router.post("/invite", async(req,res)=>{
             error:"this contractor has already been invited to this task."
         });
 
-        //making the 'connection'
+        //making the 'connection' between task and contractor
         const insert_sql = "INSERT INTO task_contractors VALUES (?,?)";
         const insert_data = await db.query(insert_sql, [taskID, contractorID]);
         console.log(insert_data);
