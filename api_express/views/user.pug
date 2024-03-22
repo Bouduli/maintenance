@@ -17,7 +17,7 @@ block content
         div( x-show='tab=="#houses"' x-data="{editHouse:false}")
             .tabBox
                 a(href="#" @click.prevent="subtab='houseWrapper'") All houses
-                a(href="#" x-show="house.houseID" @click.prevent="subtab='houseDetails'") House details
+                a(href="#" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House details
                 a(href="#" @click.prevent="subtab='form'; editHouse=false;") Form
             #houseWrapper(x-show="subtab=='houseWrapper'")
                 h2.contentHeader Houses
@@ -54,7 +54,7 @@ block content
                     p
                         b Tasks: 
                             span(x-text="`(${house.tasks.length}) `")
-                            span(x-show="house.tasks.length" @click="tab='#tasks'; subtab='taskWrapper'; task_filter_id=house.houseID; filteredTasks = tasks.filter(t=>t.houseID==task_filter_id);") Show
+                            span(x-show="house.tasks.length" @click="tab='#tasks'; subtab='taskWrapper'; selected_house_id=house.houseID; filteredTasks = tasks.filter(t=>t.houseID==selected_house_id);") Show
                     .buttonBox(style="width:100%;")
                         button(@click="modal='deleteHouse'")
                             span.material-icons delete
@@ -63,34 +63,47 @@ block content
             #houseForm(x-show="subtab=='form'" )
                 h2.contentHeader(x-text="editHouse? 'UPDATE HOUSE' : 'CREATE HOUSE'")
                 form(action="/house", id="houseForm" method="post" 
-                @submit.prevent=" await alterHouse($event.target, editHouse); subtab='houseDetails';")
+                @submit.prevent="selected_house_id = await alterHouse($event.target, editHouse); subtab='houseDetails'; house=getHouse(selected_house_id);")
                     input(type="text", name="address", placeholder="Address", x-bind:value="editHouse? house.address : ''")
                     input(type="text", name="description" placeholder="Description" x-bind:value="editHouse? house.description :''")
                     input(type="text", name="name", placeholder="Name" x-bind:value="editHouse? house.name : ''")
                     input(type="hidden", name="houseID", x-bind:value="editHouse? house.houseID : ''")
                     input(type="submit" value="create")
         
-        div(x-show="tab=='#tasks'" x-data= "{editTask:false}")
+        div(x-show="tab=='#tasks'" x-data= "{editTask:false, filterGroup:'tasks', filterID:''}")
             .tabBox 
                 a(href="#" @click.prevent="subtab='taskWrapper'") All tasks
-                a(href="#" @click.prevent="subtab='taskDetails'") Task Details
+                a(href="#" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
                 a(href="#" @click.prevent="subtab='form'; editTask=false;") Form
 
             #taskWrapper(x-show="subtab=='taskWrapper'")
                 h2.contentHeader Tasks
                 .selectContainer
-                    label(for="taskFilter") Filter by house:
-                    select#taskFilter(name="filterID"
-                    @change="console.log('filter?: ', Boolean($event.target.value)); filteredTasks = $event.target.value? tasks.filter(t=>t.houseID == $event.target.value) : tasks; console.log('post-filter: ', filteredTasks); console.log('tasks: ', tasks)")
-                        option(value="") Any
-                        template(x-for="h in houses")
-                            option(x-bind:value="h.houseID" x-text="h.address" x-bind:selected="h.houseID == task_filter_id")
+                    label(for="showSelection") Showing:
+                    select#showSelection(name="filteringType" x-model="filterGroup" @change="filteredTasks = filterTasksBy(filterGroup, filterID)")
+                        option(value="tasks" selected="") Tasks
+                        option(value="suggestions") Suggestions
+                    .selectContainer
+                        label(for="taskFilter") Filter by house:
+                        select#taskFilter(name="filterID" x-model="filterID" @change="filteredTasks=filterTasksBy(filterGroup, filterID)")
+                            option(value="") Any
+                            template(x-for="h in houses")
+                                option(x-bind:value="h.houseID" x-text="h.address" x-bind:selected="h.houseID == selected_house_id")
+                    
+                             
 
                 template(x-for="t in filteredTasks;" :key="t.taskID")
                     .card(x-bind:id="`task-${t.taskID}`" @click="task= await getTask(t.taskID);subtab='taskDetails'; console.log(task)")
                         .cardInfo
-                            h2(x-text="`Task #${t.taskID}`")
+                            h2
+                                span(x-show="filterGroup=='tasks';") Task #
+                                span(x-show="filterGroup=='suggestions';") Suggestion #
+                                span(x-text="t.taskID")
                             p(x-text="t.description")
+
+
+                
+
                 .card(x-show="!filteredTasks.length" @click="subtab='form'; editTask=false;")
                     .cardInfo
                         h2 No tasks!
@@ -98,12 +111,19 @@ block content
 
             #taskDetails(x-show="subtab=='taskDetails'" class="detailsView")
                 .selectContainer
-                    label(for="taskID") Viewing Task:
-                    select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
-                        template(x-for="t in tasks;")
-                            option(x-bind:value="t.taskID" x-text="t.description")
+                    label(for="groupFilter") Showing:
+                    select#groupFilter(name="" x-model="filterGroup" @change="filteredTasks=filterTasksBy(filterGroup, '')")
+                        option(value="tasks" selected="") Tasks
+                        option(value="suggestions") Suggestions
+                    .selectContainer
+                        label(for="taskID") Viewing Task:
+                        select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
+                            template(x-for="t in filteredTasks;" :key="t.taskID")
+                                option(x-bind:value="t.taskID" x-text="`Task #${t.taskID}`")
                 .detailsBody()
-                    h2 Task: #
+                    h2 
+                        span(x-show="filterGroup=='tasks'") Task: #
+                        span(x-show="filterGroup=='suggestions'") Suggestion: #
                         span(x-text="task.taskID")
                     p 
                         b Description: 
@@ -125,12 +145,17 @@ block content
                         span(x-text="`(${task.contractors.length}) `")
                         span(x-show="task.contractors.length" @click="tab='#contractors'; alert('implement contractor task-filter');") Show
                     .buttonBox(style="width:100%;")
-                        button(@click="modal='deleteTask'")
+                        button(@click="modal='deleteTask'" x-show="filterGroup=='tasks'")
                             span.material-icons delete
-                        button(@click="subtab='form'; editTask=true; task_filter_id=task.houseID;")
+                        button(@click="modal='rejectSuggestion'" x-show="filterGroup=='suggestions'")
+                            span.material-icons close
+                        button(@click="subtab='form'; editTask=true; selected_house_id=task.houseID;" x-show="filterGroup=='tasks'")
                             span.material-icons edit
-                        button(@click="alert('fixa invite form');")
+                        button(@click="modal='taskInvite'" x-show="filterGroup=='tasks'")
                             span.material-icons person_add
+                        button(@click="modal='approveSuggestion'" x-show="filterGroup=='suggestions'")
+                            span.material-icons check 
+
                     
             #taskForm(x-show="subtab=='form'" x-data="{selectedHouse:''}")
                 h2.contentHeader(x-text="editTask? `UPDATE TASK (#${task.taskID})` : 'CREATE task'")
@@ -139,73 +164,15 @@ block content
                     select#houseID_task(name="houseID" form="taskForm" @change="console.log($event.target.value)"
                     x-model="selectedHouse")
                         template(x-for="h in houses")
-                            option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == task_filter_id")
+                            option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == selected_house_id")
                         option(value=false selected="") ---    
                 form(action="/task", id="taskForm" method="post" 
-                @submit.prevent="await alterTask($event.target, editTask); subtab='taskWrapper'; ")
+                @submit.prevent="await alterTask($event.target, editTask); subtab='taskDetails'; ")
                     input(type="text", name="description" placeholder="Description" x-bind:value="editTask? task.description :''")
                     input(type="hidden", name="taskID", x-bind:value="editTask? task.taskID : ''")
                     input(type="hidden" name="houseID" x-bind:value="selectedHouse")
                     input(type="submit" value="create")
-            //- h2 Tasks:
-            //- div(id="createTask")
-            //-     h3 create task 
-            //-     form(action="/task", method="post", @submit.prevent="await createTask($event.target)")
-            //-         input(type="text", name="houseID", placeholder="House ID", required)
-            //-         input(type="text", name="description" placeholder="Description" required)
-            //-         input(type="submit" value="create")
-            
-            //- h3 Your tasks:
-            //- button(@click="expandTasks = !expandTasks" x-text="expandTasks?'hide':'show' ") Hide/Show Suggestions
-            //- div(id="taskContainer" x-show="expandTasks")
-            //-     template(x-for="task in tasks" :key="task.taskID")
-            //-         div( style="border:2px solid black;margin-bottom:10px;" :id="$id('task.taskID')" x-data="{showCreateForm: false}") 
-            //-             p houseid: 
-            //-                 span(x-text="task.houseID")
-            //-             p taskID: 
-            //-                 span(x-text="task.taskID")
-            //-             p description:
-            //-                 span(x-text="task.description")
-            //-             b Appointees:
-            //-             template(x-for="cont in task.contractors")
-            //-                 div(style="border:1px solid black;")
-            //-                     p name: 
-            //-                         span(x-text="cont.name")
-            //-                         span (
-            //-                         span(x-text="cont.occupation")
-            //-                         span )
-            //-                     p email: 
-            //-                         span(x-text="cont.email")
-            //-             div(x-show="!task.contractors") 
-            //-                 i No contractors have been invited for this task, try inviting one
-                        
-            //-             button(@click="showCreateForm= !showCreateForm") Open Invite Form
-            //-             div(x-show="showCreateForm")
-            //-                 b Invite contractor:
-            //-                 form(action="/task/invite", @submit.prevent="await inviteContractor($event.target)")
-            //-                     input(type="email", name="email", placeholder="Contractor Email")
-            //-                     input(type="hidden", name="taskID" x-bind:value="task.taskID", value="")
-            //-                     input(type="submit", value="Invite")
-                        
-            //-             div(x-show="task.completed")
-            //-                 h3 COMPLETED!!!
-            //-             button(@click="await destroy('task', task.taskID, $event.target)") DELETE TASK
-            
-            //- h3 Task Suggestions: 
-            //- button(@click="expandSuggestions=!expandSuggestions" x-text="expandSuggestions?'hide':'show'") Hide/Show Suggestions
-            //- div(id="suggestionContainer" x-show="expandSuggestions")
-            //-     template(x-for="s in suggestions" :key="s.suggestionID")
-            //-         div(style="border:2px solid black;margin-bottom:10px;" x-bind:id="`suggestion-${s.suggestionID}`")    
-            //-             h5(x-text="s.description")
-            //-             p Submitted by: 
-            //-             b(x-text="`${s.user.name} (${s.user.occupation})`")
-            //-             i phone:
-            //-                 span(x-text="s.user.phone")
-            //-             div(class="suggestionControls")
-            //-                 button(@click="await handleSuggestion(s.suggestionID, 'POST')") Approve
-            //-                 button(@click="await handleSuggestion(s.suggestionID, 'DELETE')") Reject
-                        
-            //-     b(x-show="!suggestions") No suggestions
+
         div(x-show="tab=='#contractors'" x-data="{contractors: []}", x-init="await fetchContractors()"
             @insert-contractor.camel.window="await fetchContractors()")
             h2 Contractors:
@@ -245,6 +212,33 @@ block content
                 .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
                     button.destroyButton(@click="await destroy('task', task.taskID); modal=false; subtab='taskWrapper';") Yes
                     button.cancelButton(@click="modal=false;") No
+
+            .modal(x-show="modal=='taskInvite'" x-data="{appointee:''}")
+                h2.contentHeader Invite To Task
+                .selectContainer
+                    label(for="contractorInvite") Contractor
+                    select#contractorInvite(name="contractorId" form="inviteForm" x-model="appointee")
+                        template(x-for="c in contractors")
+                            option(x-bind:value="c.contractorID" x-text="c.name")
+                    .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
+                        button.confirmButton(@click="await inviteContractor(appointee,task.taskID); modal=false;") Invite
+                        button.cancelButton(@click="modal=false;") Cancel
+
+            .confirmModal(x-show="modal=='rejectSuggestion'")
+                h2.contentHeader Reject Suggestion
+                    span(x-text="`(#${task.taskID})`")
+                p.confirmContent Are you sure you want to reject this task
+                .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
+                    button.destroyButton(@click="await destroy('task/suggestion', task.taskID); modal=false; subtab='taskWrapper';") Yes
+                    button.cancelButton(@click="modal=false;") No
+            .confirmModal(x-show="modal=='approveSuggestion'")
+                h2.contentHeader Approve Suggestion
+                    span(x-text="`(#${task.taskID})`")
+                p.confirmContent Are you sure you want to approve this task, elevating it to a regular task?
+                .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
+                    button.confirmButton(@click="await destroy('task/suggestion', task.taskID); modal=false; subtab='taskWrapper';") Yes
+                    button.cancelButton(@click="modal=false;") No
+
                 
         script
             include scripts/user.js
