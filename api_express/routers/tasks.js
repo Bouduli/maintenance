@@ -130,15 +130,15 @@ router.get("/suggestion", async(req,res)=>{
         });
 
         //selects all suggested_tasks for houses which the user has created.
-        const sql = "SELECT * FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE userID = ?)";
-        const suggestions = await db.query(sql, [userID]);
+        const sql = "SELECT * FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE userID = ? AND active=?)";
+        const suggestions = await db.query(sql, [userID, 1]);
         if(!suggestions.length) return res.status(404).json({
             error:"no task suggestions found", message:"phew?"
         });
 
         //selects all contractors which have created a task suggestion.
-        const contractor_sql = "SELECT * FROM contractors WHERE contractorID IN (SELECT contractorID FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE userID = ?))"
-        const contractors = await db.query(contractor_sql, [userID]);
+        const contractor_sql = "SELECT * FROM contractors WHERE contractorID IN (SELECT contractorID FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE userID = ? AND active=?))"
+        const contractors = await db.query(contractor_sql, [userID, 1]);
         if(!contractors.length) {
             //logging - shouldn't occur, but just like in /worker/data - if this happens, i want to find out!!!
             console.log(`En användare (${userID}) försöker komma åt suggestions, och har sådanna, dock hittas inte den/de contractors som har skapat suggestionen`);
@@ -186,8 +186,8 @@ router.post("/suggestion/:id", async(req,res)=>{
         });
         
         //find the suggestion with provided id
-        const select_suggestion_sql = "SELECT * FROM suggested_tasks where suggestionID = ?";
-        const select_suggestion_data = await db.query(select_suggestion_sql, [id]);
+        const select_suggestion_sql = "SELECT * FROM suggested_tasks where suggestionID = ? and houseID in (SELECT houseID FROM houses WHERE active=?)";
+        const select_suggestion_data = await db.query(select_suggestion_sql, [id, 1]);
         if(!select_suggestion_data.length) return res.status(404).json({
             error:"task-suggestion with the provided ID was not found",
             id
@@ -240,6 +240,7 @@ router.post("/suggestion/:id", async(req,res)=>{
     }
 })
 
+//reject a task with povided id
 router.delete("/suggestion/:id", async(req,res)=>{
     try {
         
@@ -254,8 +255,8 @@ router.delete("/suggestion/:id", async(req,res)=>{
             error:"No userid provided with request, please login again."
         });
 
-        const sql = "DELETE FROM suggested_tasks WHERE suggestionID = ?";
-        const data = await db.query(sql, [id]);
+        const sql = "DELETE FROM suggested_tasks WHERE houseID IN (SELECT houseID FROM houses WHERE active=?) AND suggestionID = ?";
+        const data = await db.query(sql, [1,id]);
         if(!data.affectedRows) return res.status(404).json({
             error:"no suggestion found",
             id: id
