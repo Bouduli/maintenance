@@ -40,6 +40,7 @@ async function alterHouse(target, editing = false) {
 
             //clears form
             target.reset();
+            
             return json.content.id;
         }
         else console.error(json);
@@ -92,59 +93,46 @@ async function alterTask(target, editing = false) {
         console.error("unable to alter task: ", err);
     }
 }
-async function createTask(target) {
-    const body = {
-        houseID: target.houseID.value || null,
-        description: target.description.value || null,
 
-    };
-    const res = await fetch("/task", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": "application/json"
+async function alterContractor(target, editing=false){
+    try {
+        const contractorID = target.contractorID.value;
+
+        if(editing & !contractorID) return alert("contractorID not provided in edit");
+
+        const body = {
+            email: target.email.value || null,
+            name: target.name.value || null,
+            phone: target.phone.value || null,
+            occupation: target.occupation.value || null,
+            contractorID: contractorID || null
+        };
+
+        const res = await fetch(`/contractor/${contractorID}`,{
+            method: editing ? "PUT" :"POST",
+            body:JSON.stringify(body),
+            headers:{
+                "Content-Type": "application/json"
+            }
+        });
+        
+        const json = await res.json();
+
+        if(res.ok){
+            console.log("altered contractor: ", json);
+
+            window.dispatchEvent(dataChangeEvent);
+
+            //clears-form
+            target.reset();
+
+            //can maybe be used to swap view into contractorDetails.
+            return json.content.id;
         }
-    });
+        else console.error(json);
 
-    const json = await res.json();
-    if (res.ok) {
-        console.log("inserted task with id: ", json.content);
-
-        //this tells alpine to re-fetch tasks, allowing our new task to be displayed.
-        window.dispatchEvent(dataChangeEvent);
-
-        target.reset();
-    }
-
-    else console.error(json);
-
-}
-
-async function createContractor(target) {
-    const body = {
-        email: target.email.value || null,
-        name: target.name.value || null,
-        phone: target.phone.value || null,
-        occupation: target.occupation.value || null,
-    };
-
-    const res = await fetch("/contractor", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    });
-
-    const json = await res.json();
-
-    if (res.ok) {
-        console.log(json);
-        window.dispatchEvent(dataChangeEvent);
-        target.reset();
-    }
-    else {
-        console.error(json);
+    } catch (err) {
+        console.log(err);
     }
 }
 
@@ -239,7 +227,7 @@ function view() {
         task: { contractors: [] },
 
         contractors: [],
-        contractor: {},
+        contractor: { suggestions:[] },
 
         suggestions: [],
         async data() {
@@ -249,13 +237,16 @@ function view() {
             await this.fetchSuggestions();
             //make house-modal update itself.
             if (this.house.houseID) {
-                this.hosue = this.houses.find(h => h.houseID == this.house.houseID) || { tasks: [] };
-                if (this.hosue.houseID) this.house = this.getHouse(this.house.houseID)
+                //re-assigning house allows showing updated information in houseDetails - after update.
+                this.house = this.getHouse(this.house.houseID) || { tasks: [] };
             }
             if (this.task.taskID) {
                 //re-assigning task, allows for updated information to be fetched.
-                this.task = this.tasks.find(t => t.taskID == this.task.taskID) || { contractors: [] };
-                if (this.task.taskID) this.task = await this.getTask(this.task.taskID);
+                this.task = await this.getTask(this.task.taskID) || this.tasks.find(t => t.taskID == this.task.taskID) || { contractors: [] } ;
+            }
+            if(this.contractor.contractorID){
+                this.contractor = this.contractors.find(c=>c.contractorID == this.contractor.contractorID) || {};
+                if(this.contractor.contractorID) this.contractor = await this.getContractor(this.contractor.contractorID);
             }
 
         },
@@ -347,7 +338,7 @@ function view() {
         /**
          * Retreives the task from taks-array, with it's contractors fetched (hence async)
          * @param {string} task taskID 
-         * @returns {Promise<contractor>} contractor
+         * @returns {Promise<task>} the task
          */
         async getTask(task) {
             const t = this.filteredTasks.find(t => t.taskID == task);
@@ -365,7 +356,18 @@ function view() {
             t.contractors = appointees;
 
             return t
+        },
+        /**
+         * retreives the contractor from the contractors-array, with suggestions mapped to it.
+         * @param {string} contractor contractor id 
+         * @returns {contractor} the contractor
+         */
+        getContractor(contractor){
+            const c = this.contractors.find(ct=>ct.contractorID == contractor)
+            if(!c) return {suggestions: []};
+            //select all suggestions this user has created. (unsure if i will display them...)
+            c.suggestions = this.suggestions.filter(s=>s.contractorID == contractor);
+            return c;
         }
-
     }
 }
