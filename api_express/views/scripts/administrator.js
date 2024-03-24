@@ -1,20 +1,30 @@
 //event used to re-trigger fetching users. used after delete and insert
-const userChangedEvent = new Event("userChanged");
+const dataChangeEvent = new Event("dataChange");
 
-async function deleteUser(id){
-    try {
-        const res = await fetch(`/administrator/user/${id}`, {
-            method:"DELETE"
-        });
-        const json = await res.json();
 
-        if(res.ok){
-            window.dispatchEvent(userChangedEvent);
-            console.log(json.content);
-        }
-    } catch (err) {
-        console.error(`unable to delete user ${id}: `, err);
+async function destroy(type, id) {
+
+    console.log("destroyType: ", type );
+    console.log("destroyId: ", id );
+
+    const url = `/${type}/${id}`;
+    console.log("destroy url : ", url);
+
+    const res = await fetch(url, {
+        method: "DELETE"
+    })
+
+    const json = await res.json();
+
+    if (res.ok) {
+        console.log(json);
+        window.dispatchEvent(dataChangeEvent);
     }
+    else {
+        console.error(json);
+
+    }
+
 }
 
 async function createUser(target){
@@ -38,7 +48,7 @@ async function createUser(target){
         const json = await res.json();
 
         if(res.ok){
-            window.dispatchEvent(userChangedEvent);
+            window.dispatchEvent(dataChangeEvent);
             console.log("created user: ", json.content);
             target.reset();
         }
@@ -52,28 +62,56 @@ async function createUser(target){
 
 function view(){
     return {
+        modal:"false",
+        subtab:"userWrapper",
+
         users : [],
         user:{houses:[], contractors:[]},
-        async fetchUsers(){
+
+        async data(){
             try {
-                const res = await fetch("/administrator/user");
-                const users = (await res.json()).content
-                this.users = users;
-                this.user = {houses:[], contractors:[]};
-            } catch (err) {
-                console.log("unable to fetch users: ", err)
-            }
-        },
-        async fetchUserDetails(id){
-            try {
-                const res = await fetch(`/administrator/user/${id}`);
-                const json = await res.json();
-                console.log("json @ userDetails()  : ", json);
-                this.user=json.content;
+                await this.fetchUsers();
+
+                if(this.user.userID) this.user = await this.getUser(this.user.userID);
 
             } catch (err) {
-                console.log(`unable to fetch user details of id=${id} :`, err)
                 
+                console.log("unable to fetch data: ", err);
+            }
+        },
+        async fetchUsers(){
+
+            try {
+                const res = await fetch("administrator/user");
+                const json = await res.json();
+
+                if(res.ok){
+                    this.users = json.content;
+                    
+                }
+
+            } catch (err) {
+                
+                console.log("unable to fetch users");
+                this.users=[];
+            }
+            
+        },
+        async getUser(id){
+            try {
+                
+                const res = await fetch(`/administrator/user/${id}`);
+                const json = await res.json();
+                if(res.ok){
+                    return json.content;
+                } else {
+                    return {houses:[], contractors:[]};
+                }
+
+            } catch (err) {
+                console.log("unable to get user details");
+                return {houses:[], contractors:[]};
+
             }
         }
     }

@@ -1,74 +1,87 @@
 extends template.pug 
 
 block content
-    div(x-data="view();")
-        h2 adminstrator view
-        //- Single user (modal / floating card)
-        div(x-show="user.userID" style="border:2px solid black; margin-bottom:10px;" x-data="{expandHouses:false, expandContractors:false}")
-            h3 Showing user: 
-                span(x-text="`${user.name} (UserID:${user.userID})`")
-            h4 UserID: 
-                span(x-text="user.userID")
-            i email: 
-                span(x-text="user.email")
-            i phone: 
-                span(x-text="user.phone")
-            
-            button(@click="user = {houses:[], contractors:[]}") HIDE USER
-            h4 statistics
-            b houses: 
-                span(x-text="user.houses.length")
-            b invited contractors:
-                span(x-text="user.contractors.length")
-            //-----------------------> SHOWING INDIVIDUAL HOUSES AND THEIR TASKS <--------------------
-            //- h3 Houses: 
-            //-     span(x-text="`[${user.houses.length}]`")
-            //- button(@click="expandHouses=!expandHouses") show houses
-            //- div(x-show="expandHouses")
-            //-     i houses
-            //-     template(x-for="h in user.houses" :key="h.houseID")
-            //-         div(x-bind:id="`house${h.houseID}`" style="border:2px solid black; margin-bottom:10px;" x-data="{expandTasks: false}")
-            //-             bold(x-text="h.address")
-            //-             b Tasks: 
-            //-                 span(x-text='`[${h.tasks.length}]`') 
-            //-             button(@click="expandTasks=!expandTasks") show tasks
-            //-             div(x-show="expandTasks")
-            //-                 i tasks
+    div(x-data="view();" x-init="await data(); modal=false;" @data-change.camel.window="await data()")
 
-            //---------------------------> SHOWING CONTRACTORS <-------------------------------
-            //- button(@click="expandContractors=!expandContractors" x-show="user.contractors.length") show contractors
-            //- div(x-show="expandContractors")
-            //-     i contractors
-            //-     template(x-for="c in user.contractors" :key="c.contractorID")
-            //-         div(x-bind:id="`contractor${c.contractorID}`" style="border:2px solid black; margin-bottom:10px;")
-            //-             p(x-text="`${c.name} (${c.occupation}) - id:${c.contractorID}`")
-            
-            button(@click="await deleteUser(user.userID);") Delete user
-
-        //- Create form
-        div(id="createUser", @user-changed.camel.window="await fetchUsers();")
-            form(@submit.prevent="await createUser($event.target);")
-                input(type="text", name="name", placeholder="name")
-                input(type="phone", name="phone", placeholder="telephone")
-                input(type="email", name="email", placeholder="email")
-                input(type="password", name="password", placeholder="password")
-                input(type="checkbox", id="adminCheck"  name="admin" checked=false)
-                label(for="adminCheck" value="admin?") admin?
-                input(type="submit", value="create user")
-                
-
-        //- Card-view with all users
-        div(x-init="await fetchUsers(); console.log('users: ', users)")
+        .tabBox
+            a(href="#" @click.prevent="subtab='userWrapper'") All Users
+            a(href="#" @click.prevent="subtab='userDetails'" x-show="user.userID") User Details
+            a(href="#" @click.prevent="subtab='form'") Form
+        
+        #userWrapper(x-show="subtab=='userWrapper'")
+            h2.contentHeader Users
             template(x-for="u in users" :key="u.userID")
-                div(class="userCard" style="border:2px solid black; margin-bottom:10px;"
-                    @click="await fetchUserDetails(u.userID);")
-                    h3 Name:
-                        span(x-text="u.name")
-                    h4 userID:
-                        span(x-text="u.userID")
-                    
+                div.card(x-bind:id="`user-${u.userID}`" @click="user = await getUser(u.userID); subtab='userDetails';")
+                    .cardInfo
+                        h2(x-text="u.name")
+                        p(x-text="u.email")
 
+        #userDetails(x-show="subtab=='userDetails'" class="detailsView")
+            .selectContainer
+                label(for="userID") Showing User:
+                select#userID(name="userID" @change="user = await getUser($event.target.value)")
+                    option(selected="" hidden="") ---
+                    template(x-for="u in users" :key="u.userID")
+                        option(x-bind:value="u.userID" x-text="u.email")
+            .detailsBody
+                h2(x-text="user.name")
+                p
+                    b UserID: #
+                    span(x-text="user.userID")
+                p
+                    b Email: 
+                    span(x-text="user.email")
+                p
+                    b Phone: 
+                    span(x-text="user.phone")
+                p
+                    b Created At: 
+                    span(x-text="new Date(user.created_at).toLocaleString()")
 
+                p
+                    b Administrator: 
+                    span(x-text="user.admin? 'True' : 'False' ")
+
+                p 
+                    b Houses Created: 
+                    span(x-text="`(${user.houses.length})`")
+                p
+                    b Contractors Invited: 
+                    span(x-text="`(${user.contractors.length})`")
+                .buttonBox
+                    button(@click="modal='deleteUserConfirm'")
+                        span.material-icons delete
+
+        #userForm(x-show="subtab=='form'")
+            h2.contentHeader Create Users
+            form(@submit.prevent="await createUser($event.target);")
+                .labelContainer
+                    label(for="#userName") Name:  
+                    input#userName(type="text", name="name", placeholder="name")
+
+                .labelContainer
+                    label(for="userPhone") Phone: 
+                    input#userPhone(type="phone", name="phone", placeholder="telephone")
+                
+                .labelContainer
+                    label(for="userEmail") Email: 
+                    input#userEmail(type="email", name="email", placeholder="email")
+                .labelContainer
+                    label(for="userPassword") Password: 
+                    input#userPassword(type="password", name="password", placeholder="password")
+                
+                .labelContainer
+                    label(for="userAdmin") Administrator:
+                    input#userAdmin(type="checkbox", name="admin" checked=false)
+                input(type="submit", value="create user")
+
+        .modalContainer(x-show="modal")
+            .confirmModal(x-show="modal=='deleteUserConfirm'")
+                h2.contentHeader Delete User
+                p.confirmContent Are you sure you want to delete this user?
+                .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
+                    button.destroyButton(@click="await destroy('administrator/user', user.userID); subtab='userWrapper'; modal=false") Yes
+                    button.cancelButton(@click="modal=false") Cancel
 
         script
             include scripts/administrator.js

@@ -200,7 +200,7 @@
     Wrapper used for houses, it should perhaps be turned into a class, since this code
     will be re-used by every card-wrapper div, across all views not only houses.
 */
-#houseWrapper, #taskWrapper, #contractorWrapper{
+#houseWrapper, #taskWrapper, #contractorWrapper, #userWrapper{
     display:grid;
     place-items:center;
     overflow-y: scroll;

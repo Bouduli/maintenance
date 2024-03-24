@@ -38,7 +38,7 @@ router.get("/user/:id", async(req,res)=>{
         });
         
         //retreive info of a user, this will be used as a base for the response object
-        const user_sql = "SELECT userID, email, name, phone, last_login, active_account, admin  FROM Users WHERE userID = ?";
+        const user_sql = "SELECT userID, email, name, phone, last_login, created_at, active_account, admin  FROM Users WHERE userID = ?";
         const user_data = await db.query(user_sql, [id]);
         if(!user_data.length) return res.status(404).json({
             error:" no user found with the provided userID",
@@ -144,7 +144,8 @@ router.post("/user", async(req,res)=>{
 
         return res.status(200).json({
             content:{
-                registered_user: `${name} with email ${email}`
+                registered_user: `${name} with email ${email}`,
+                id: insert_data.insertId
             }
         });
 
