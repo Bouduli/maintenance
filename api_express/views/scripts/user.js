@@ -1,10 +1,7 @@
 
 console.log("User scripts loaded");
 
-//Events used to re-trigger fetching new data. 
-const insertHouseEvent = new Event("insertHouse");
-const insertTaskEvent = new Event("insertTask");
-const insertContractorEvent = new Event("insertContractor");
+//Event used to re-trigger fetching new data. 
 const dataChangeEvent = new Event("dataChange");
 
 async function alterHouse(target, editing = false) {

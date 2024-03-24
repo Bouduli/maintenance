@@ -33,6 +33,7 @@ block content
                     select#houseID(@change="house = getHouse($event.target.value); console.log(house);")
                         template(x-for="h in houses")
                             option(x-bind:value="h.houseID" x-text="h.address") 
+                        option(selected="" hidden="") ---
                 .detailsBody()
                     h2(x-text="house.address")
                     p
@@ -92,7 +93,7 @@ block content
                     .selectContainer
                         label(for="taskFilter") Filter by house:
                         select#taskFilter(name="filterID" x-model="filterID" @change="filteredTasks=filterTasksBy(filterGroup, filterID)")
-                            option(value="") Any
+                            option(value="" selected="") Any
                             template(x-for="h in houses")
                                 option(x-bind:value="h.houseID" x-text="h.address" x-bind:selected="h.houseID == selected_house_id")
                     
@@ -124,6 +125,7 @@ block content
                     .selectContainer
                         label(for="taskID") Viewing Task:
                         select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
+                            option(selected="" hidden="") ---
                             template(x-for="t in filteredTasks;" :key="t.taskID")
                                 option(x-bind:value="t.taskID" x-text="`Task #${t.taskID}`")
                 .detailsBody()
@@ -171,7 +173,7 @@ block content
                     x-model="selectedHouse")
                         template(x-for="h in houses")
                             option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == selected_house_id")
-                        option(value=false selected="") ---    
+                        option(value=false selected="" hidden="") ---    
                 form(action="/task", id="taskForm" method="post" 
                 @submit.prevent="await alterTask($event.target, editTask); subtab='taskDetails'; ")
                     .labelContainer
@@ -199,7 +201,8 @@ block content
             #contractorDetails(x-show="subtab=='contractorDetails';" class="detailsView")
                 .selectContainer
                     label(for="contractorID") Showing Contractor: 
-                    select#contractorID(name="contractorID" @change="contractor = await getContractor($event.target.value); console.log(contractor);") 
+                    select#contractorID(name="contractorID" @change="contractor = await getContractor($event.target.value); console.log(contractor);")
+                        option(selected="" hidden="") --- 
                         template(x-for="c in contractors" :key="c.contractorID")
                             option(x-bind:value="c.contractorID" x-text="`${c.name} (${c.occupation})`")
                 .detailsBody()
