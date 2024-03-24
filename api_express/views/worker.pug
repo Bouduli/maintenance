@@ -1,47 +1,110 @@
 extends template.pug
 
 block content 
-    h1 worker view
+    div(x-data = "view()" x-init="await data()" @data-change.camel.window="await data()")
 
+        .tabBox
+            a(href="#" @click.prevent="subtab='taskWrapper'") Tasks
+            a(href="#" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
+            a(href="#" @click.prevent="subtab='form'") Suggestion Form
 
-    div(x-data = "view()")
-
-        h2 You have tasks in the following locations
-        div(id="houses"   x-init="await fetchData()" @update-task.camel.window="await fetchData()")
-            //-Looping over houses
-            template(x-for="h in houses" :key="h.houseID")
-                //-wrapper for each house
-                div(x-bind:id="h.houseID" style="border:2px solid black; margin-bottom:10px;" x-data="{tasks: h.tasks, showSuggestionForm:false}")
-                    h3(x-text="h.address")
-                    h5 Tasks:
-                    div(class="tasks", x-init="console.log(h)")
-                        template(x-for="t in h.tasks" :key="t.taskID" x-init="console.log(h.tasks)")
-                            div( style="border:2px solid black;margin-bottom:10px;" x-bind:id="t.taskID") 
-                                p taskID: 
-                                    span(x-text="t.taskID")
-                                p description:
-                                    span(x-text="t.description")
-                                div
-                                    p completed?
-                                        bold 
-                                            span(x-text="t.completed? 'YES' : 'NO';")
-                                    button(@click="await markComplete(t.taskID, t.completed, $event.target)") Mark as complete
-                        div(x-show="!tasks.length")
-                            i no tasks to show
-                    button(@click="showSuggestionForm=!showSuggestionForm") Make a suggestion
-                    div(id="createTask" x-show="showSuggestionForm") 
-                        h3 create suggestion 
-                        form(action="/task", method="post", @submit.prevent="await makeSuggestion($event.target)")
-                            input(type="hidden", name="houseID", required, readonly x-bind:value="h.houseID")
-                            input(type="text", name="description" placeholder="Description" required)
-                            input(type="submit" value="create")
-                    div(class="houseInfo")
-                        h5 More house info 
-                        p houseid: 
-                            span(x-text="h.houseID")
-                        i(x-text="h.name")
-                        p(x-text="h.description")
+        #taskWrapper(x-show="subtab=='taskWrapper'")
+            h2.contentHeader Tasks
+            .selectContainer
+                label(for="showSelection") Showing:
+                select#showSelection(name="filteringType" x-model="filterGroup" @change="filteredTasks = filterTasksBy(filterGroup, filterID); console.log(filterGroup)")
+                    option(value="tasks" selected="") Tasks
+                    option(value="suggestions") Suggestions
+                
+            template(x-for="t in filteredTasks" :key="t.taskID")
+                .card(x-bind:id="`task-${t.taskID}`" @click="task= await getTask(t.taskID);subtab='taskDetails';")
+                    .cardInfo
+                        h2(x-text="`Task #${t.taskID}`")
+                        p(x-text="t.description")
+        #taskDetails(x-show="subtab=='taskDetails'" class="detailsView")
+            .selectContainer
+                    label(for="taskID") Viewing Task:
+                    select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
+                        option(selected="" hidden="") ---
+                        template(x-for="t in filteredTasks;" :key="t.taskID")
+                            option(x-bind:value="t.taskID" x-text="`Task #${t.taskID}`")
+            h2.contentHeader Task Details
+            .detailsBody()
+                h2 
+                    span(x-show="filterGroup=='tasks'") Task: #
+                    span(x-show="filterGroup=='suggestions'") Suggestion: #
+                    span(x-text="task.taskID")
+                h3
+                    b Completed: 
+                    span(x-text="task.completed? 'Yes' : 'No' ")
+                hr
+                p 
+                    b Description: 
+                    span(x-text="task.description")
+                p 
+                    b Address: 
+                    span(x-text="task.house.address")
+                p
+                    b HouseID: 
+                    span(x-text="task.houseID")
+                p
+                    b Created at: 
+                    span(x-text="new Date(task.created_at).toLocaleString()")
+                p 
+                    b Last updated: 
+                    span(x-text="new Date(task.last_edited).toLocaleString()")
+                
+                .buttonBox
+                    button(@click="modal='toggleCompleteModal'")
+                        span.material-icons() check
+        #suggestionForm(x-show="subtab=='form'")
+            h2.contentHeader Create Suggestion
+        //- h2 You have tasks in the following locations
+        //- div(id="houses"   x-init="await fetchData()" @update-task.camel.window="await fetchData()")
+        //-     //-Looping over houses
+        //-     template(x-for="h in houses" :key="h.houseID")
+        //-         //-wrapper for each house
+        //-         div(x-bind:id="h.houseID" style="border:2px solid black; margin-bottom:10px;" x-data="{tasks: h.tasks, showSuggestionForm:false}")
+        //-             h3(x-text="h.address")
+        //-             h5 Tasks:
+        //-             div(class="tasks", x-init="console.log(h)")
+        //-                 template(x-for="t in h.tasks" :key="t.taskID" x-init="console.log(h.tasks)")
+        //-                     div( style="border:2px solid black;margin-bottom:10px;" x-bind:id="t.taskID") 
+        //-                         p taskID: 
+        //-                             span(x-text="t.taskID")
+        //-                         p description:
+        //-                             span(x-text="t.description")
+        //-                         div
+        //-                             p completed?
+        //-                                 bold 
+        //-                                     span(x-text="t.completed? 'YES' : 'NO';")
+        //-                             button(@click="await markComplete(t.taskID, t.completed, $event.target)") Mark as complete
+        //-                 div(x-show="!tasks.length")
+        //-                     i no tasks to show
+        //-             button(@click="showSuggestionForm=!showSuggestionForm") Make a suggestion
+        //-             div(id="createTask" x-show="showSuggestionForm") 
+        //-                 h3 create suggestion 
+        //-                 form(action="/task", method="post", @submit.prevent="await makeSuggestion($event.target)")
+        //-                     input(type="hidden", name="houseID", required, readonly x-bind:value="h.houseID")
+        //-                     input(type="text", name="description" placeholder="Description" required)
+        //-                     input(type="submit" value="create")
+        //-             div(class="houseInfo")
+        //-                 h5 More house info 
+        //-                 p houseid: 
+        //-                     span(x-text="h.houseID")
+        //-                 i(x-text="h.name")
+        //-                 p(x-text="h.description")
                     
-
+        .modalContainer(x-show="modal")
+            .confirmModal(x-show="modal=='toggleCompleteModal'")
+                h2.contentHeader
+                    span(x-show="task.completed") Mark as incomplete
+                    span(x-show="!task.completed") Mark as complete 
+                p.confirmContent
+                    span(x-show="!task.completed") Are you sure you want to mark this task as complete
+                    span(x-show="task.completed") Are you sure you want to mark this task as not complete
+                .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
+                    button.confirmButton(@click="modal=false; await markComplete(task.taskID, !(task.completed))") Yes
+                    button.cancelButton(@click="modal=false;") Cancel
         script
             include scripts/worker.js

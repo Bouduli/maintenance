@@ -1,4 +1,4 @@
-const updateTaskEvent = new Event("updateTask");
+const dataChangeEvent = new Event("dataChange");
 
 async function makeSuggestion(target){
     try {
@@ -28,12 +28,12 @@ async function makeSuggestion(target){
     }
 }
 
-async function markComplete(id, completed, target){
+async function markComplete(id, setStatus, target){
     console.log("taskID: ", id);
-    console.log("is_completed: ", completed);
+    console.log("setStatus: ", setStatus);
 
     const body = {
-        completed: Boolean(!completed)
+        completed: setStatus
     };
     
     const res = await fetch(`/worker/task/${id}`, {
@@ -48,7 +48,7 @@ async function markComplete(id, completed, target){
 
     if(res.ok){
         // target.parentElement.parentElement.remove();
-        window.dispatchEvent(updateTaskEvent);
+        window.dispatchEvent(dataChangeEvent);
     }
 
 }
@@ -56,31 +56,109 @@ async function markComplete(id, completed, target){
 function view(){
 
     return {
-        tab:"#tasks",
+        modal:false,
+        subtab:"taskWrapper",
+
         houses:[],
-        suggested_tasks:[],
+        house:{},
+
+        tasks: [],
+        task: {house: {}},
+
+        filteredTasks:[],
+        filterGroup:'tasks',
+        filterID:'',
+
+
+        suggestions:[],
+        
+
+        filterTasksBy(group, houseID) {
+            //if no houseID - output is unfiltered according to tasks
+            
+            if(group=="tasks") {
+                if(!houseID) return this.tasks;
+                return this.tasks.filter(t=>t.houseID == houseID);
+            }
+                
+            if(group=="suggestions") {
+                if(!houseID) return this.suggestions;
+                return this.suggestions.filter(t=>t.houseID == houseID);
+            }
+            
+        },
 
         //fetch data
-        async fetchData(){
+        async data(){
             try {
-                const res = await fetch(`/worker/data`);
+
+                await this.fetchTasks();
+                if(this.task.taskID) this.task = await this.getTask(this.task.taskID);
+                console.log(this.tasks);
+                this.tasks.forEach(t=>{
+                    if(!this.houses.find(h=>h.houseID == t.houseID))
+                        this.houses.push(t.houseID);
+                })
+                this.filteredTasks = this.tasks;
+            } catch (err) {
+                console.log("unable to fetch tasks: ", err);
+            }
+        },
+        async fetchTasks(){
+            try {
+                const init_length = this.tasks.length;
+
+
+                const res = await fetch(`/worker/task`);
                 const json = await res.json();
 
                 if(res.ok){
-                    //all houses a contractor have been appointed tasks are set.
-                    this.houses = json.content
+                    this.tasks = json.content;
 
-                    //sort them with ascending houseID
-                    this.houses.sort((a,b)=>a.houseID-b.houseID)
-
-                    console.log("houses: ", this.houses);
+                    console.log("tasks: ", this.tasks);
                 }
                 else {
-                    console.log(json);
+                    this.tasks = [];
+                }
+
+                if(this.filteredTasks.length){
+
                 }
 
             } catch (err) {
-                console.log("unable to fetch tasks: ", err);
+                console.log("unable to fetch task:", err);
+            }
+        },
+
+        async fetchTaskDetails(t){
+            try {
+                if(!t) return console.error("no id");
+                console.log(t);
+                const res = await fetch(`/worker/task/${t}`)
+                const json = await res.json();
+
+                if(res.ok){
+                    console.log("task:", json.content);
+                    return json.content
+
+
+                }
+                else this.task=false;
+            } catch (err) {
+
+                console.log(err);
+                this.task = false;
+            }
+        },
+        async getTask(task) {
+            try {
+                const t = await this.fetchTaskDetails(task);
+                if (!t) return {house: {}};
+
+                return t
+            } catch (err) {
+                console.log(err)
+                return {house: {}};
             }
         }
     }
