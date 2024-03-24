@@ -234,6 +234,7 @@ function view() {
                 await this.fetchContractors();
                 await this.fetchSuggestions();
 
+                console.log(this.contractors);
 
                 //make house-modal update itself.
                 if (this.house.houseID) {
@@ -245,7 +246,7 @@ function view() {
                     this.task = await this.getTask(this.task.taskID) || this.tasks.find(t => t.taskID == this.task.taskID) || { contractors: [] } ;
                 }
                 if(this.contractor.contractorID){
-                    this.contractor = this.contractors.find(c=>c.contractorID == this.contractor.contractorID) || {};
+                    this.contractor = this.contractors.find(c=>c.contractorID == this.contractor.contractorID) || {suggestions:[]};
                     if(this.contractor.contractorID) this.contractor = await this.getContractor(this.contractor.contractorID);
                 }
             } catch (error) {
@@ -304,7 +305,7 @@ function view() {
             try {
                 const res = await fetch("/contractor");
                 const json = await res.json();
-                if(res.ok) this.contractor = json;
+                if(res.ok) this.contractors = json.content;
                 else {
                     console.log("no contractors");
                     this.contractors=[];
