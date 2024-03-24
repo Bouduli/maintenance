@@ -55,7 +55,7 @@ block content
                     p
                         b Tasks: 
                             span(x-text="`(${house.tasks.length}) `")
-                            span(x-show="house.tasks.length" @click="tab='#tasks'; subtab='taskWrapper'; selected_house_id=house.houseID; filteredTasks = filterTasksBy(group, house.houseID);") Show
+                            span(x-show="house.tasks.length" @click="tab='#tasks'; subtab='taskWrapper'; selected_house_id=house.houseID; filteredTasks = filterTasksBy('tasks', house.houseID);") Show
                     .buttonBox(style="width:100%;")
                         button(@click="modal='deleteHouse'")
                             span.material-icons delete
@@ -117,17 +117,13 @@ block content
                         p Pick another filter, or click here to create a task for your house!
 
             #taskDetails(x-show="subtab=='taskDetails'" class="detailsView")
+                
                 .selectContainer
-                    label(for="groupFilter") Showing:
-                    select#groupFilter(name="" x-model="filterGroup" @change="filteredTasks=filterTasksBy(filterGroup, '')")
-                        option(value="tasks" selected="") Tasks
-                        option(value="suggestions") Suggestions
-                    .selectContainer
-                        label(for="taskID") Viewing Task:
-                        select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
-                            option(selected="" hidden="") ---
-                            template(x-for="t in filteredTasks;" :key="t.taskID")
-                                option(x-bind:value="t.taskID" x-text="`Task #${t.taskID}`")
+                    label(for="taskID") Viewing Task:
+                    select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
+                        option(selected="" hidden="") ---
+                        template(x-for="t in filteredTasks;" :key="t.taskID")
+                            option(x-bind:value="t.taskID" x-text="`Task #${t.taskID}`")
                 .detailsBody()
                     h2 
                         span(x-show="filterGroup=='tasks'") Task: #
