@@ -51,7 +51,26 @@ router.get("/data", async(req,res)=>{
         });
     }
 });
-//fetching a specific task from the db (unused?)
+
+//fetching all tasks from the db
+router.get("/task", async(req,res)=>{
+    //contractorID is retreived to regulate which tasks are shown.
+    const {token} = req.user;
+    const contractorID = token.id;
+
+    //appointed tasks are queried using nestled queries.
+    const task_sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ?)";
+    const tasks = await db.query(task_sql, [contractorID]);
+    if(!tasks.length) return res.status(404).json({
+        error:"no tasks", message: "Phew, seems your work is done..."
+    });
+
+    return res.status(200).json({
+        content:tasks
+    });
+
+});
+//fetching task details from db
 router.get("/task/:id", async(req,res)=>{
 
     try {
@@ -66,15 +85,23 @@ router.get("/task/:id", async(req,res)=>{
 
         //appointed task is queried with both contractorID and taskID in the inner query, 
         //to ensure that the contractor is appointed for the requested task.
-        const sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ? AND taskID = ?)";
-        const data = await db.query(sql, [contractorID, taskID]);
+        const sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ? AND taskID = ?) AND houseID IN (SELECT houseID FROM houses WHERE active=?)";
+        const data = await db.query(sql, [contractorID, taskID, 1]);
         if(!data.length) return res.status(404).json({
             error:"no tasks", message: "Phew, seems your work is done..."
         });
+        
+        const houseSQL = "SELECT * FROM Houses WHERE houseID = ?"
+        const houseData = await db.query(houseSQL, [data[0].houseID])
+        if(!houseData.length) return res.status(404).json({
+            error:"no house found for task",
+        });
+
+        const task = data[0];
+        task.house = houseData[0];
 
         return res.status(200).json({
-            content:data[0]
-            
+            content:task,
         });
 
     } catch (err) {
