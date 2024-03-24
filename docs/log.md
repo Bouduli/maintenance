@@ -307,3 +307,8 @@ Saker som har gjorts:
     - Task-viewen kan filtrera så att det visar, antingen "tasks" eller "suggestions".
 
 - Contractor-viewen är klar
+
+### Söndag 24/03
+Saker som har gjorts:
+- Administrator-Vyn är klar.
+- Worker-vyn har påbörjats, men det tar lite längre tid p.g.a. att API förändringar krävdes för att uppnå den önskade strukturen.
