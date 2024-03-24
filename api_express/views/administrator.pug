@@ -54,7 +54,7 @@ block content
 
         #userForm(x-show="subtab=='form'")
             h2.contentHeader Create Users
-            form(@submit.prevent="await createUser($event.target);")
+            form(@submit.prevent="await createUser($event.target); subtab='userWrapper'")
                 .labelContainer
                     label(for="#userName") Name:  
                     input#userName(type="text", name="name", placeholder="name")
