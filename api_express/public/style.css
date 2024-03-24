@@ -84,19 +84,28 @@
     }
 }
 
-.selectContainer{
+.selectContainer, .labelContainer{
     width: 90%;
     display:grid;
     margin:auto;
     margin-bottom: 20px;
     
     label{
+        width: 100%;
         font-weight: 600;
     }
     select{
         font-size: 1.25em;
     }
+    input{
+        width: 100%;
+        place-self:center;
+    }
 }
+.labelContainer{
+    place-items:center;
+}
+
 .extendedInfo, .houseInfo{
     background-color: var(--card-text-background);
     padding:2%;

@@ -64,9 +64,15 @@ block content
                 h2.contentHeader(x-text="editHouse? `Update House (#${house.houseID})` : 'Create House'")
                 form(action="/house", id="houseForm" method="post" 
                 @submit.prevent="selected_house_id = await alterHouse($event.target, editHouse); subtab='houseDetails'; house=getHouse(selected_house_id);")
-                    input(type="text", name="address", required="" placeholder="Address", x-bind:value="editHouse? house.address : ''")
-                    input(type="text", name="description" placeholder="Description" x-bind:value="editHouse? house.description :''")
-                    input(type="text", name="name", placeholder="Name" x-bind:value="editHouse? house.name : ''")
+                    .labelContainer
+                        label(for="houseAddress") Address:
+                        input#houseAddress(type="text", name="address", required="" placeholder="Address", x-bind:value="editHouse? house.address : ''")
+                    .labelContainer
+                        label(for="houseDescription") Description (Optional):
+                        input#houseDescription(type="text", name="description" placeholder="Description" x-bind:value="editHouse? house.description :''")
+                    .labelContainer
+                        label(for="houseName") Name (Optional):
+                        input#houseName(type="text", name="name", placeholder="Name" x-bind:value="editHouse? house.name : ''")
                     input(type="hidden", name="houseID", x-bind:value="editHouse? house.houseID : ''")
                     input(type="submit" x-bind:value="editHouse? 'Save' : 'Create'")
         
@@ -168,7 +174,9 @@ block content
                         option(value=false selected="") ---    
                 form(action="/task", id="taskForm" method="post" 
                 @submit.prevent="await alterTask($event.target, editTask); subtab='taskDetails'; ")
-                    input(type="text", name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")
+                    .labelContainer
+                        label(for="taskDescription") Description:   
+                        input#taskDescription(type="text", name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")
                     input(type="hidden", name="taskID", x-bind:value="editTask? task.taskID : ''")
                     input(type="hidden" name="houseID" x-bind:value="selectedHouse")
                     input(type="submit" x-bind:value="editTask ? 'Save' : 'Create'")
@@ -217,10 +225,18 @@ block content
             #contractorForm(x-show="subtab=='form'")
                 h2.contentHeader(x-text="editContractor? 'Update Contractor' : 'New Contractor'")
                 form(action="/contractor", @submit.prevent="await alterContractor($event.target, editContractor); subtab='detailsView'")
-                    input(type="text", name="name", placeholder="Name" required="" x-bind:value="editContractor? contractor.name : ''")
-                    input(type="email", name="email", placeholder="Email" required="" x-bind:value="editContractor? contractor.email : ''")
-                    input(type="phone", name="phone", placeholder="Phone" required="" x-bind:value="editContractor? contractor.phone : ''")
-                    input(type="text", name="occupation", placeholder="Occupation", required="" x-bind:value="editContractor? contractor.occupation : ''")
+                    .labelContainer
+                        label(for="contractorName") Name: 
+                        input#contractorName(type="text", name="name", placeholder="Name" required="" x-bind:value="editContractor? contractor.name : ''")
+                    .labelContainer
+                        label(for="contractorEmail") Email: 
+                        input#contractorEmail(type="email", name="email", placeholder="Email" required="" x-bind:value="editContractor? contractor.email : ''")
+                    .labelContainer
+                        label(for="contractorPhone") Phone: 
+                        input#contractorPhone(type="phone", name="phone", placeholder="Phone" required="" x-bind:value="editContractor? contractor.phone : ''")
+                    .labelContainer
+                        label(for="contractorOccupation") Occupation:  
+                        input#contractorOccupation(type="text", name="occupation", placeholder="Occupation", required="" x-bind:value="editContractor? contractor.occupation : ''")
                     input(type="hidden" name="contractorID", x-bind:value="editContractor? contractor.contractorID : ''")
                     input(type="submit", x-bind:value="editContractor? 'Save' : 'Create contractor'")
         
