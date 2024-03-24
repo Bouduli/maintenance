@@ -100,7 +100,7 @@ router.get("/appointee/:id", async(req,res)=>{
         //NOTE: a check should be added so that the db wont return anything, if the task or the contractor, wasn't created by this person. 
 
         //returns all contractors, where contractorID matches field in task_contractors
-        const sql  = "SELECT * FROM contractors WHERE contractorID IN (SELECT contractorID from task_contractors WHERE taskID = ?)";
+        const sql  = "SELECT * FROM contractors WHERE contractorID IN (SELECT contractorID from task_contractors WHERE taskID = ?) and active_account=1";
         const data = await db.query(sql, [taskID]);
         if(!data.length) return res.status(404).json({
             error:" no contractors appointed for this taskid",
