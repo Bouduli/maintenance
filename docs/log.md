@@ -299,3 +299,11 @@ Planen fortskrider bra, och det finns hopp i projektet!
 dock krävs refactoring och mer styling med CSS för att jag skall känna mig nöjd.
 
 Samtidigt behöver också Login, samt Worker och Administrator vyerna få en re-write dem med, så att gränssnittet blir mer konsekvent.
+
+### Fredag 22/03
+Saker som har gjorts:
+- Task view är klar!
+    - Suggestions kan visas, 
+    - Task-viewen kan filtrera så att det visar, antingen "tasks" eller "suggestions".
+
+- Contractor-viewen är klar
