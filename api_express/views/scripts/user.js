@@ -228,30 +228,44 @@ function view() {
 
         suggestions: [],
         async data() {
-            await this.fetchHouses();
-            await this.fetchTasks();
-            await this.fetchContractors();
-            await this.fetchSuggestions();
-            //make house-modal update itself.
-            if (this.house.houseID) {
-                //re-assigning house allows showing updated information in houseDetails - after update.
-                this.house = this.getHouse(this.house.houseID) || { tasks: [] };
-            }
-            if (this.task.taskID) {
-                //re-assigning task, allows for updated information to be fetched.
-                this.task = await this.getTask(this.task.taskID) || this.tasks.find(t => t.taskID == this.task.taskID) || { contractors: [] } ;
-            }
-            if(this.contractor.contractorID){
-                this.contractor = this.contractors.find(c=>c.contractorID == this.contractor.contractorID) || {};
-                if(this.contractor.contractorID) this.contractor = await this.getContractor(this.contractor.contractorID);
+            try {
+                await this.fetchHouses();
+                await this.fetchTasks();
+                await this.fetchContractors();
+                await this.fetchSuggestions();
+
+
+                //make house-modal update itself.
+                if (this.house.houseID) {
+                    //re-assigning house allows showing updated information in houseDetails - after update.
+                    this.house = this.getHouse(this.house.houseID) || { tasks: [] };
+                }
+                if (this.task.taskID) {
+                    //re-assigning task, allows for updated information to be fetched.
+                    this.task = await this.getTask(this.task.taskID) || this.tasks.find(t => t.taskID == this.task.taskID) || { contractors: [] } ;
+                }
+                if(this.contractor.contractorID){
+                    this.contractor = this.contractors.find(c=>c.contractorID == this.contractor.contractorID) || {};
+                    if(this.contractor.contractorID) this.contractor = await this.getContractor(this.contractor.contractorID);
+                }
+            } catch (error) {
+                console.log("unable to fetch data")
             }
 
         },
         async fetchHouses() {
             try {
-                this.houses = (await (await fetch("/house")).json()).content
+                const res = await fetch("/house");
+                const json = await res.json();
+                if(res.ok) this.houses = json.content;
+                else {
+                    this.houses=[];
+                    console.log("no houses");
+                }
+
             } catch (err) {
-                console.error("NO HOUSES");
+                console.log("no houses");
+
                 this.houses = [];
             }
         },
@@ -260,7 +274,13 @@ function view() {
             try {
                 const initial_length = this.tasks.length;
 
-                this.tasks = (await (await fetch("/task")).json()).content;
+                const res = await fetch("/task");
+                const json = await res.json();
+                if(res.ok) this.tasks = json.content;
+                else {
+                    console.log("no tasks");
+                    this.tasks = [];
+                }
 
                 //if there is a selected house for filtering (filteredTasks have a length, not equal to the initial length of tasks.)
                 if (this.filteredTasks.length != initial_length) {
@@ -275,14 +295,20 @@ function view() {
                 else this.filteredTasks = this.tasks;
 
             } catch (err) {
-                console.error("no tasks");
+                console.log("no tasks");
                 this.tasks = [];
                 this.filteredTasks = [];
             }
         },
         async fetchContractors() {
             try {
-                this.contractors = (await (await fetch("/contractor")).json()).content
+                const res = await fetch("/contractor");
+                const json = await res.json();
+                if(res.ok) this.contractor = json;
+                else {
+                    console.log("no contractors");
+                    this.contractors=[];
+                }
 
             } catch (err) {
                 console.log("no contractors");
@@ -291,13 +317,20 @@ function view() {
         },
         async fetchSuggestions() {
             try {
-                this.suggestions = (await (await fetch("/task/suggestion")).json()).content;
+                const res = await fetch("/task/suggestion");
+                const json = await res.json();
+
+                if(res.ok) this.suggestions = json.content;
+                else {
+                    console.log("no suggestions")
+                    this.suggestions = [];
+                }
 
                 //make a suggestion functionally the same as a task...
                 this.suggestions.forEach(s=>{
                     s.taskID = s.suggestionID;
                 });
-                // console.log(this.suggestions);
+
             } catch (err) {
                 console.log("no suggestions");
                 this.suggestions = [];

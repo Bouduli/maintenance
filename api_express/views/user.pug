@@ -55,7 +55,7 @@ block content
                     p
                         b Tasks: 
                             span(x-text="`(${house.tasks.length}) `")
-                            span(x-show="house.tasks.length" @click="tab='#tasks'; subtab='taskWrapper'; selected_house_id=house.houseID; filteredTasks = tasks.filter(t=>t.houseID==selected_house_id);") Show
+                            span(x-show="house.tasks.length" @click="tab='#tasks'; subtab='taskWrapper'; selected_house_id=house.houseID; filteredTasks = filterTasksBy(group, house.houseID);") Show
                     .buttonBox(style="width:100%;")
                         button(@click="modal='deleteHouse'")
                             span.material-icons delete
@@ -151,7 +151,7 @@ block content
                     p 
                         b Contractors invited: 
                         span(x-text="`(${task.contractors.length}) `")
-                        span(x-show="task.contractors.length" @click="tab='#contractors'; alert('implement contractor task-filter');") Show
+                        span(x-show="task.contractors.length" @click="tab='#contractors'; subtab='contractorWrapper';") Show
                     .buttonBox(style="width:100%;")
                         button(@click="modal='deleteTask'" x-show="filterGroup=='tasks'")
                             span.material-icons delete
