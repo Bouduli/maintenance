@@ -77,7 +77,7 @@ block content
                     input(type="hidden", name="houseID", x-bind:value="editHouse? house.houseID : ''")
                     input(type="submit" x-bind:value="editHouse? 'Save' : 'Create'")
         
-        div(x-show="tab=='#tasks'" x-data= "{editTask:false, filterGroup:'tasks', filterID:''}")
+        div(x-show="tab=='#tasks'" x-data= "{editTask:false}")
             .tabBox 
                 a(href="#" @click.prevent="subtab='taskWrapper'") All tasks
                 a(href="#" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details

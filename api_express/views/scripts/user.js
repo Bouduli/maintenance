@@ -222,6 +222,8 @@ function view() {
         tasks: [],
         filteredTasks: [],
         task: { contractors: [] },
+        //filtering tasks
+        filterGroup:'tasks', filterID:'',
 
         contractors: [],
         contractor: { suggestions:[] },
@@ -273,7 +275,7 @@ function view() {
         async fetchTasks() {
 
             try {
-                const initial_length = this.tasks.length;
+                const initial_length = this["filterGroup"].length;
 
                 const res = await fetch("/task");
                 const json = await res.json();
@@ -282,20 +284,23 @@ function view() {
                     console.log("no tasks");
                     this.tasks = [];
                 }
+                if(this.filterGroup == "tasks"){
+                    //if there is a selected house for filtering (filteredTasks have a length, not equal to the initial length of tasks.)
+                    if (this.filteredTasks.length && this.filteredTasks.length != initial_length) {
+                        /**
+                         * @type {string} houseID used to filter tasks in taskWrapper
+                         */
+                        const id_for_filter = this.filteredTasks[0].houseID;
+                        if (!id_for_filter) this.filteredTasks = this.tasks;
 
-                //if there is a selected house for filtering (filteredTasks have a length, not equal to the initial length of tasks.)
-                if (this.filteredTasks.length != initial_length) {
-                    /**
-                     * @type {string} houseID used to filter tasks in taskWrapper
-                     */
-                    const id_for_filter = this.filteredTasks[0].houseID;
-                    if (!id_for_filter) this.filteredTasks = this.tasks;
-
-                    this.filteredTasks = this.tasks.filter(t => t.houseID == id_for_filter);
+                        this.filteredTasks = this.tasks.filter(t => t.houseID == id_for_filter);
+                    }
+                    else this.filteredTasks = this.tasks;
                 }
-                else this.filteredTasks = this.tasks;
+                
 
             } catch (err) {
+                console.log(err);
                 console.log("no tasks");
                 this.tasks = [];
                 this.filteredTasks = [];
@@ -318,6 +323,8 @@ function view() {
         },
         async fetchSuggestions() {
             try {
+                const initial_length = this["filterGroup"].length
+
                 const res = await fetch("/task/suggestion");
                 const json = await res.json();
 
@@ -326,11 +333,24 @@ function view() {
                     console.log("no suggestions")
                     this.suggestions = [];
                 }
-
+                
                 //make a suggestion functionally the same as a task...
                 this.suggestions.forEach(s=>{
                     s.taskID = s.suggestionID;
                 });
+
+                if(this.filterGroup == "suggestions"){
+                    if (this.filteredTasks.length != initial_length) {
+                        /**
+                         * @type {string} houseID used to filter tasks in taskWrapper
+                         */
+                        const id_for_filter = this.filteredTasks[0].houseID;
+                        if (!id_for_filter) this.filteredTasks = this.suggestions;
+
+                        this.filteredTasks = this.suggestions.filter(t => t.houseID == id_for_filter);
+                    }
+                    else this.filteredTasks = this.suggestions;
+                }
 
             } catch (err) {
                 console.log("no suggestions");
