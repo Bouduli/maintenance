@@ -6,6 +6,7 @@ block content
         .tabBox
             a(href="#" @click.prevent="subtab='taskWrapper'") Tasks
             a(href="#" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
+            a(href="#" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House Details
             a(href="#" @click.prevent="subtab='form'") Suggestion Form
 
         #taskWrapper(x-show="subtab=='taskWrapper'")
@@ -43,7 +44,7 @@ block content
                     span(x-text="task.description")
                 p 
                     b Address: 
-                    span(x-text="task.house.address")
+                    span( style="color:#6aa4d8; text-decoration:underline;" x-text="task.house.address" @click="subtab='houseDetails'; house = getHouse(task.houseID);")
                 p
                     b HouseID: 
                     span(x-text="task.houseID")
@@ -57,8 +58,50 @@ block content
                 .buttonBox
                     button(@click="modal='toggleCompleteModal'")
                         span.material-icons() check
-        #suggestionForm(x-show="subtab=='form'")
+        
+        #houseDetails(x-show="subtab=='houseDetails'" class="detailsView")
+                .selectContainer
+                    label(for="houseID") Viewing House:
+                    select#houseID(@change="house = getHouse($event.target.value); console.log(house);")
+                        template(x-for="h in houses")
+                            option(x-bind:value="h.houseID" x-text="h.address") 
+                        option(selected="" hidden="") ---
+                .detailsBody()
+                    h2(x-text="house.address")
+                    p
+                        b Name: 
+                        span(x-text="house.name")
+                    p
+                        b Description: 
+                        span(x-text="house.description")
+                    p 
+                        b ID: #
+                        span(x-text="house.houseID")
+                    p
+                        b Created at: 
+                        span(x-text="new Date(house.created_at).toLocaleString()")
+                    p
+                        b Suggestion: 
+                        span(style="color:#6aa4d8; text-decoration:underline;" @click="subtab='form'") Open Form
+                            span.material-icons(style="font-size:small;") launch
+
+        #suggestionForm(x-show="subtab=='form'" x-data="{selectedHouse: ''}")
             h2.contentHeader Create Suggestion
+            .selectContainer 
+                label(for="houseID_task") For house:
+                select#houseID_task(name="houseID" form="taskForm" @change="selectedHouse = $event.target.value;"
+                x-model="selectedHouse")
+                    template(x-for="h in houses")
+                        option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == house.houseID")
+                    option(value="" selected="" hidden="") ---
+            
+            form#taskForm(@submit.prevent="if(await makeSuggestion(selectedHouse, $event.target.description.value)){$event.target.reset(); modal = 'suggestedSuccessmodal';} else modal='somethingWentWrongModal'; ")
+                .labelContainer
+                    label(for="description") Description: 
+                    input#description(type="text", name="description" placeholder="description")
+                input(type="hidden", name="houseID" x-bind:value="selectedHouse")
+                input(type="submit", value="Create Suggestion")
+
         //- h2 You have tasks in the following locations
         //- div(id="houses"   x-init="await fetchData()" @update-task.camel.window="await fetchData()")
         //-     //-Looping over houses
@@ -103,8 +146,18 @@ block content
                 p.confirmContent
                     span(x-show="!task.completed") Are you sure you want to mark this task as complete
                     span(x-show="task.completed") Are you sure you want to mark this task as not complete
-                .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
+                .buttonBox(style="width:50%; margin-left:auto; margin-right:auto;")
                     button.confirmButton(@click="modal=false; await markComplete(task.taskID, !(task.completed))") Yes
                     button.cancelButton(@click="modal=false;") Cancel
+            .confirmModal(x-show="modal=='suggestedSuccessmodal'")
+                h2.contentHeader Suggestion
+                p.confirmContent Your suggestion have been sent to the owner of this house.
+                .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
+                    button.confirmButton(@click="modal=false;") Got it!
+            .confirmModal(x-show="modal=='somethingWentWrongModal'")
+                h2.contentHeader Ooops!
+                p.confirmContent Something went wrong, please try again, and make sure to check your inputs again
+                .buttonBox(style="width:60%; margin-left:auto; margin-right:auto;")
+                    button.cancelButton(@click="modal=false;") Ok
         script
             include scripts/worker.js

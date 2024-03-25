@@ -1,12 +1,10 @@
 const dataChangeEvent = new Event("dataChange");
 
-async function makeSuggestion(target){
-    try {
-        console.log(target.houseID.value);
-
+async function makeSuggestion(houseID, description){
+    try {   
         const body = {
-            houseID : target.houseID.value || null,
-            description : target.description.value || null,
+            houseID : houseID || null,
+            description : description || null,
             
         };
         const res = await fetch("/worker/task", {
@@ -21,10 +19,12 @@ async function makeSuggestion(target){
 
         if(res.ok){
             console.log("task_suggested: ", json.content.id);
-            target.reset();
+            return true;
         }
+        else console.log(json);
     } catch (err) {
-        console.error("couldn't send suggestion: ", err);   
+        console.error("couldn't send suggestion: ", err);
+        return false;
     }
 }
 
@@ -91,10 +91,12 @@ function view(){
         //fetch data
         async data(){
             try {
-
+                await this.fetchHouses();
                 await this.fetchTasks();
+                if(this.house.houseID) this.house = await this.getHouse(this.house.houseID);
                 if(this.task.taskID) this.task = await this.getTask(this.task.taskID);
-                console.log(this.tasks);
+                console.log("houses: ", this.houses);
+                console.log("tasks: ", this.tasks);
                 this.tasks.forEach(t=>{
                     if(!this.houses.find(h=>h.houseID == t.houseID))
                         this.houses.push(t.houseID);
@@ -102,6 +104,21 @@ function view(){
                 this.filteredTasks = this.tasks;
             } catch (err) {
                 console.log("unable to fetch tasks: ", err);
+            }
+        },
+        async fetchHouses(){
+            try {
+                const res = await fetch("/worker/house");
+                const json = await res.json();
+
+                if(res.ok) {
+                    this.houses = json.content;
+                }
+                else {
+                    this.houses = [];
+                }
+            } catch (err) {
+                console.log(err);
             }
         },
         async fetchTasks(){
@@ -114,8 +131,6 @@ function view(){
 
                 if(res.ok){
                     this.tasks = json.content;
-
-                    console.log("tasks: ", this.tasks);
                 }
                 else {
                     this.tasks = [];
@@ -160,6 +175,11 @@ function view(){
                 console.log(err)
                 return {house: {}};
             }
+        },
+        getHouse(house){
+            const h = this.houses.find(h=>h.houseID == house);
+            if(!h) return {};
+            return h;
         }
     }
 }

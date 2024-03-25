@@ -4,20 +4,13 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 const { restart } = require("nodemon");
 
-//Returns all houses where the contractor have been assigned tasks, which contains an array of every task.
-router.get("/data", async(req,res)=>{
+//Returns all houses where the contractor have been assigned tasks
+router.get("/house", async(req,res)=>{
 
     try {
         //contractorID is retreived to regulate which tasks are shown.
         const {token} = req.user;
         const contractorID = token.id;
-
-        //appointed tasks are queried using nestled queries.
-        const task_sql = "SELECT * FROM tasks where taskID IN (SELECT taskID FROM task_contractors WHERE contractorID= ?)";
-        const tasks = await db.query(task_sql, [contractorID]);
-        if(!tasks.length) return res.status(404).json({
-            error:"no tasks", message: "Phew, seems your work is done..."
-        });
 
         //Houses for all appointed tasks are reteived. (this is a fucked up query i know. but it works).
         const house_sql = "SELECT * FROM houses where houseID IN (SELECT houseID FROM tasks WHERE taskID IN (SELECT taskID FROM task_contractors WHERE contractorID =?))";
@@ -31,13 +24,6 @@ router.get("/data", async(req,res)=>{
             });
     
         }
-        //a "task" field is added to all houses.
-        houses.forEach(h=>h.tasks=[]);
-        
-        // "task" field is populated with entries from tasks array. empty if no tasks exists (shouldn't happen tho.)
-        houses.forEach(h=>{
-            h.tasks.push(...tasks.filter(t=>t.houseID == h.houseID));
-        })
 
         return res.status(200).json({
             content:houses
