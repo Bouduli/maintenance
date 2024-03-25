@@ -312,3 +312,8 @@ Saker som har gjorts:
 Saker som har gjorts:
 - Administrator-Vyn är klar.
 - Worker-vyn har påbörjats, men det tar lite längre tid p.g.a. att API förändringar krävdes för att uppnå den önskade strukturen.
+
+### Måndag 25/03
+Saker som har gjorts:
+- Worker-vyn är klar, inklusive task-suggestion.
+- User vyn har fått en liten buggfix.
