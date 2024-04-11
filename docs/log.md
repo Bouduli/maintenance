@@ -317,3 +317,9 @@ Saker som har gjorts:
 Saker som har gjorts:
 - Worker-vyn är klar, inklusive task-suggestion.
 - User vyn har fått en liten buggfix.
+
+### Söndag 07/04
+Saker som har gjorts:
+- Meddelande för "inga-suggestions" kan nu visas istället för att visa "inga tasks", eftersom dessa är två olika saker.
+- `x-cloak` har implementerats på sina ställen för att ta bort "flickering" vid sidladdning för dem element som döljs med x-cloak. 
+
