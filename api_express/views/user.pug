@@ -14,12 +14,12 @@ block content
 
             
         // This content is tabbed, right?!
-        div( x-show='tab=="#houses"' x-data="{editHouse:false}")
+        div( x-show='tab=="#houses"' x-data="{editHouse:false}" x-cloak="")
             .tabBox
                 a(href="#" @click.prevent="subtab='houseWrapper'") All houses
                 a(href="#" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House details
                 a(href="#" @click.prevent="subtab='form'; editHouse=false;") Form
-            #houseWrapper(x-show="subtab=='houseWrapper'")
+            #houseWrapper(x-show="subtab=='houseWrapper'" x-cloak="")
                 h2.contentHeader Houses
                 template(x-for="h in houses" :key="h.houseID")
                     div.card(x-bind:id="`house-${h.houseID}`"
@@ -27,7 +27,7 @@ block content
                         .cardInfo
                             h2(x-text="h.address")
                             p(x-text="h.name")
-            #houseDetails(x-show="subtab=='houseDetails'" class="detailsView")
+            #houseDetails(x-show="subtab=='houseDetails'" class="detailsView" x-cloak="")
                 .selectContainer
                     label(for="houseID") Viewing House:
                     select#houseID(@change="house = getHouse($event.target.value); console.log(house);")
@@ -61,7 +61,7 @@ block content
                             span.material-icons delete
                         button(@click="subtab='form'; editHouse=true;")
                             span.material-icons edit
-            #houseForm(x-show="subtab=='form'" )
+            #houseForm(x-show="subtab=='form'" x-cloak="")
                 h2.contentHeader(x-text="editHouse? `Update House (#${house.houseID})` : 'Create House'")
                 form(action="/house", id="houseForm" method="post" 
                 @submit.prevent="selected_house_id = await alterHouse($event.target, editHouse); subtab='houseDetails'; house=getHouse(selected_house_id);")
@@ -77,13 +77,13 @@ block content
                     input(type="hidden", name="houseID", x-bind:value="editHouse? house.houseID : ''")
                     input(type="submit" x-bind:value="editHouse? 'Save' : 'Create'")
         
-        div(x-show="tab=='#tasks'" x-data= "{editTask:false}")
+        div(x-show="tab=='#tasks'" x-data= "{editTask:false}" x-cloak="")
             .tabBox 
                 a(href="#" @click.prevent="subtab='taskWrapper'") All tasks
                 a(href="#" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
                 a(href="#" @click.prevent="subtab='form'; editTask=false;") Form
 
-            #taskWrapper(x-show="subtab=='taskWrapper'")
+            #taskWrapper(x-show="subtab=='taskWrapper'" x-cloak="")
                 h2.contentHeader Tasks
                 .selectContainer
                     label(for="showSelection") Showing:
@@ -111,12 +111,19 @@ block content
 
                 
 
-                .card(x-show="!filteredTasks.length" @click="subtab='form'; editTask=false;")
-                    .cardInfo
+                .card(x-show="!filteredTasks.length" )
+                    .cardInfo(x-show="filterGroup == 'tasks'" @click="subtab='form'; editTask=false;" x-cloak="")
                         h2 No tasks!
-                        p Pick another filter, or click here to create a task for your house!
+                        p(x-show="filterID") Pick another filter, or click here to create a task for a house!
+                        p(x-show="!filterID") There are no tasks, click here to create one!
+                    .cardInfo(x-show="filterGroup == 'suggestions'" x-cloak="")
+                        h2 No suggestions!
+                        p(x-show="!filterID") There are no task suggestions!
+                        p(x-show="filterID") There are suggested tasks for this filter!
 
-            #taskDetails(x-show="subtab=='taskDetails'" class="detailsView")
+
+
+            #taskDetails(x-show="subtab=='taskDetails'" class="detailsView" x-cloak="")
                 
                 .selectContainer
                     label(for="taskID") Viewing Task:
@@ -161,7 +168,7 @@ block content
                             span.material-icons check 
 
                     
-            #taskForm(x-show="subtab=='form';" x-data="{selectedHouse:''}")
+            #taskForm(x-show="subtab=='form';" x-data="{selectedHouse:''}" x-cloak="")
                 h2.contentHeader(x-text="editTask? `Update Task (#${task.taskID})` : 'Create Task'")
                 .selectContainer 
                     label(for="houseID_task") For house:
@@ -179,14 +186,14 @@ block content
                     input(type="hidden" name="houseID" x-bind:value="selectedHouse")
                     input(type="submit" x-bind:value="editTask ? 'Save' : 'Create'")
 
-        div(x-show="tab=='#contractors'" x-data="{editContractor:false}")
+        div(x-show="tab=='#contractors'" x-data="{editContractor:false}" x-cloak="")
 
             .tabBox
                 a(href="#" @click.prevent="subtab='contractorWrapper'") All Contractors
                 a(href="#" @click.prevent="subtab='contractorDetails';" x-show="contractor.contractorID") Contractor Details
                 a(href="#" @click.prevent="subtab='form'; editContractor=false;") Form
             
-            #contractorWrapper(x-show="subtab=='contractorWrapper';")
+            #contractorWrapper(x-show="subtab=='contractorWrapper';" x-cloak="")
                 h2.contenHeader Contractors
                 template(x-for="c in contractors;" :key="c.contractorID")
                     .card(x-bind:id="`contractor-${c.contractorID}`" @click="contractor = await getContractor(c.contractorID); console.log(contractor); subtab='contractorDetails'")
@@ -194,7 +201,7 @@ block content
                             h2(x-text="c.name")
                             p(x-text="c.phone")
 
-            #contractorDetails(x-show="subtab=='contractorDetails';" class="detailsView")
+            #contractorDetails(x-show="subtab=='contractorDetails';" class="detailsView" x-cloak="")
                 .selectContainer
                     label(for="contractorID") Showing Contractor: 
                     select#contractorID(name="contractorID" @change="contractor = await getContractor($event.target.value); console.log(contractor);")
@@ -221,7 +228,7 @@ block content
                         button(@click="subtab='form'; editContractor=true;")
                             span.material-icons edit
                     
-            #contractorForm(x-show="subtab=='form'")
+            #contractorForm(x-show="subtab=='form'" x-cloak="")
                 h2.contentHeader(x-text="editContractor? 'Update Contractor' : 'New Contractor'")
                 form(action="/contractor", @submit.prevent="await alterContractor($event.target, editContractor); subtab='detailsView'")
                     .labelContainer
@@ -239,8 +246,8 @@ block content
                     input(type="hidden" name="contractorID", x-bind:value="editContractor? contractor.contractorID : ''")
                     input(type="submit", x-bind:value="editContractor? 'Save' : 'Create contractor'")
         
-        .modalContainer(x-show="modal")
-            .confirmModal(x-show="modal=='deleteHouse'")
+        .modalContainer(x-show="modal" x-cloak="")
+            .confirmModal(x-show="modal=='deleteHouse'" x-cloak="" )
                 h2.contentHeader Delete house
                     span(x-text="`(#${house.houseID})`")
                 p.confirmContent Are you sure you want to delete this house
@@ -248,14 +255,14 @@ block content
                     button.destroyButton(@click="await destroy('house', house.houseID); modal=false; subtab='houseWrapper';") Yes
                     button.cancelButton(@click="modal=false;") No
 
-            .confirmModal(x-show="modal=='deleteTask'")
+            .confirmModal(x-show="modal=='deleteTask'" x-cloak="")
                 h2.contentHeader Delete Task
                     span(x-text="`(${task.taskID})`")
                 p.confirmContent Are you sure you want to delete this task
                 .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
                     button.destroyButton(@click="await destroy('task', task.taskID); modal=false; subtab='taskWrapper';") Yes
                     button.cancelButton(@click="modal=false;") No
-            .modal(x-show="modal=='taskInvite'" x-data="{appointee:''}")
+            .modal(x-show="modal=='taskInvite'" x-data="{appointee:''}" x-cloak="")
                 h2.contentHeader Invite To Task
                 .selectContainer
                     label(for="contractorInvite") Contractor
@@ -266,14 +273,14 @@ block content
                         button.confirmButton(@click="await inviteContractor(appointee,task.taskID); modal=false;") Invite
                         button.cancelButton(@click="modal=false;") Cancel
 
-            .confirmModal(x-show="modal=='rejectSuggestion'")
+            .confirmModal(x-show="modal=='rejectSuggestion'" x-cloak="")
                 h2.contentHeader Reject Suggestion
                     span(x-text="`(#${task.taskID})`")
                 p.confirmContent Are you sure you want to reject this task
                 .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
                     button.destroyButton(@click="await destroy('task/suggestion', task.taskID); modal=false; subtab='taskWrapper';") Yes
                     button.cancelButton(@click="modal=false;") No
-            .confirmModal(x-show="modal=='approveSuggestion'")
+            .confirmModal(x-show="modal=='approveSuggestion'" x-cloak="")
                 h2.contentHeader Approve Suggestion
                     span(x-text="`(#${task.taskID})`")
                 p.confirmContent Are you sure you want to approve this task, elevating it to a regular task?
@@ -281,7 +288,7 @@ block content
                     button.confirmButton(@click="await destroy('task/suggestion', task.taskID); modal=false; subtab='taskWrapper';") Yes
                     button.cancelButton(@click="modal=false;") No
             
-            .confirmModal(x-show="modal=='deleteContractor'")
+            .confirmModal(x-show="modal=='deleteContractor'" x-cloak="")
                 h2.contentHeader Delete Contractor
                 p.confirmContent Are you sure you want to delete this user?
                 .buttonBox(style="90%; margin-left:auto; margin-right:auto;")

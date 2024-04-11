@@ -9,7 +9,7 @@ block content
             a(href="#" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House Details
             a(href="#" @click.prevent="subtab='form'") Suggestion Form
 
-        #taskWrapper(x-show="subtab=='taskWrapper'")
+        #taskWrapper(x-show="subtab=='taskWrapper'" x-cloak="")
             h2.contentHeader Tasks
             .selectContainer
                 label(for="showSelection") Showing:
@@ -22,7 +22,7 @@ block content
                     .cardInfo
                         h2(x-text="`Task #${t.taskID}`")
                         p(x-text="t.description")
-        #taskDetails(x-show="subtab=='taskDetails'" class="detailsView")
+        #taskDetails(x-show="subtab=='taskDetails'" class="detailsView" x-cloak="")
             .selectContainer
                     label(for="taskID") Viewing Task:
                     select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
@@ -59,7 +59,7 @@ block content
                     button(@click="modal='toggleCompleteModal'")
                         span.material-icons() check
         
-        #houseDetails(x-show="subtab=='houseDetails'" class="detailsView")
+        #houseDetails(x-show="subtab=='houseDetails'" class="detailsView" x-cloak="")
                 .selectContainer
                     label(for="houseID") Viewing House:
                     select#houseID(@change="house = getHouse($event.target.value); console.log(house);")
@@ -85,7 +85,7 @@ block content
                         span(style="color:#6aa4d8; text-decoration:underline;" @click="subtab='form'") Open Form
                             span.material-icons(style="font-size:small;") launch
 
-        #suggestionForm(x-show="subtab=='form'" x-data="{selectedHouse: ''}")
+        #suggestionForm(x-show="subtab=='form'" x-data="{selectedHouse: ''}" x-cloak="")
             h2.contentHeader Create Suggestion
             .selectContainer 
                 label(for="houseID_task") For house:
@@ -138,8 +138,8 @@ block content
         //-                 i(x-text="h.name")
         //-                 p(x-text="h.description")
                     
-        .modalContainer(x-show="modal")
-            .confirmModal(x-show="modal=='toggleCompleteModal'")
+        .modalContainer(x-show="modal" x-cloak="")
+            .confirmModal(x-show="modal=='toggleCompleteModal'" x-cloak="")
                 h2.contentHeader
                     span(x-show="task.completed") Mark as incomplete
                     span(x-show="!task.completed") Mark as complete 
@@ -149,12 +149,12 @@ block content
                 .buttonBox(style="width:50%; margin-left:auto; margin-right:auto;")
                     button.confirmButton(@click="modal=false; await markComplete(task.taskID, !(task.completed))") Yes
                     button.cancelButton(@click="modal=false;") Cancel
-            .confirmModal(x-show="modal=='suggestedSuccessmodal'")
+            .confirmModal(x-show="modal=='suggestedSuccessmodal'" x-cloak="")
                 h2.contentHeader Suggestion
                 p.confirmContent Your suggestion have been sent to the owner of this house.
                 .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
                     button.confirmButton(@click="modal=false;") Got it!
-            .confirmModal(x-show="modal=='somethingWentWrongModal'")
+            .confirmModal(x-show="modal=='somethingWentWrongModal'" x-cloak="")
                 h2.contentHeader Ooops!
                 p.confirmContent Something went wrong, please try again, and make sure to check your inputs again
                 .buttonBox(style="width:60%; margin-left:auto; margin-right:auto;")
