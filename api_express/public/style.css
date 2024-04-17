@@ -19,6 +19,52 @@
     font-family: var(--primary-font);
 }
 [x-cloak] { display: none !important; }
+
+#loginContent{
+    width:90%; margin-left:auto; margin-right:auto; min-height:60vh;
+    display:grid;
+    place-items:center;
+    padding:6%;
+    border-radius: 10px;
+    border: 2px solid black;
+    position:relative;
+}
+#loginButtons{
+    
+    width:100%;
+    display:grid;
+    place-items:center;
+    a{
+        border:2px solid red;
+        border-radius: 15px;
+        padding:2%;
+    }
+    
+}
+#loginTabs{
+    background:#eee;
+
+    width:100%;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    text-align:center;
+    border-radius:10px 10px 0 0 ;
+
+    a{
+
+        padding:2%;
+        
+        border-bottom: 1px solid #404040;
+    }
+    a.selected{
+        background:#fff;
+        border-bottom:none;
+        border-radius: 10px 10px 0 0;
+        border-left:1px solid #202020;
+        border-right:1px solid #202020;
+    }
+}
+
 .linkIcon{
     color:#777;
 }
@@ -288,10 +334,8 @@ form{
 
 @media only screen and (min-width: 768px) {
     
-    #houseModal{
-        width: 90%;
-        height:90%;
-        border-radius: 10px;
-
+    #loginContent {
+        max-width: 60%;
+        
     }
   }

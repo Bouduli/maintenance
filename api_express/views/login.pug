@@ -1,34 +1,49 @@
 extends template.pug 
 
 block content
-    //- open toggles visibility of user / contractor-login
-    div(x-data='{stateful: true, verified:false}')
-        #toggler()
-            p Select login:
-            button(@click='stateful=true') User
-            button(@click='stateful=false') Contractor
-        hr
-        div(id="stateful" x-show='stateful')
-            h2 User login
-            form(action="/auth/login", method="post" @submit.prevent="await login($event.target)")
-                input(type="email", name="email", placeholder="email")
-                input(type="password", name="password" placeholder="password") 
-                input(type="submit", value = "login")
-        div(id="pwl" x-show='!stateful')
-            h2 Contractor login
-            div(x-show='!verified')
-                h3 login
-                form(action="/auth/login_pwl", method="post",
-                @submit.prevent="await login_pwl($event.target)",
-                @show-verify.camel="console.log('evented'); verified=true")
-                    input(type="email", name="email" placeholder="email")
-                    input(type="submit" value="login")
-            div(x-show='verified')
-                h3 Please enter your one-time-password provided by email
-                form(action="/auth/verify_pwl", method="post" @submit.prevent="await verify_pwl($event.target)")
-                    input(type="code" name="code" placeholder="code")
-                    input(type="submit", value="verify")
-        div(id="error" @auth-error.camel.window='console.log("errored"); error=true;' x-data='{error: false}' x-show='error')
-            p there was an error with your request
+    div(x-data='{loginType:false, verified:false}'
+        style="display:grid; place-items:center;")
+        #loginContent(style="")
+            #loginTabs(
+                style="position:absolute; top:0;")
+                a(@click="loginType='user'" x-bind:class="loginType=='user'? 'selected' : '' ") User
+                a(@click="loginType='contractor'" x-bind:class="loginType=='contractor'? 'selected' : '' ") Contractor
+
+            h2.contentHeader(style="position:sticky; top:0;") 
+                span(x-show="!loginType") Login
+                span(x-show="loginType=='user'") User login
+                span(x-show="loginType=='contractor'") Contractor Login
+            div(id="loginButtons" x-show="!loginType"
+                style="display:grid; place-items:center;")
+                a(style="display:block;" @click="loginType='contractor'") Login as contractor
+                a(style="display:block;" @click="loginType='user'") Login as user
+
+            div(id="stateful" x-show="loginType=='user'" x-cloak)
+                form(action="/auth/login", method="post" @submit.prevent="await login($event.target)")
+                    .labelContainer
+                        label(for="userEmail") Email: 
+                        input#userEmail(type="email", name="email", placeholder="email")
+                    .labelContainer 
+                        label(for="userPw") Password:
+                        input#userPw(type="password", name="password" placeholder="password") 
+                    input(type="submit", value = "login")
+            div(id="pwl" x-show='loginType=="contractor"' x-cloak)
+                div(x-show='!verified')
+                    form(action="/auth/login_pwl", method="post",
+                    @submit.prevent="await login_pwl($event.target)",
+                    @show-verify.camel="console.log('evented'); verified=true")
+                        .labelContainer
+                            label(for="contractorEmail") Email:
+                            input#contractorEmail(type="email", name="email" placeholder="Email")
+                        input(type="submit" value="login")
+                div(x-show='verified')
+                    p Please enter your one-time-password provided by email
+                    form(action="/auth/verify_pwl", method="post" @submit.prevent="await verify_pwl($event.target)")
+                        .labelContainer
+                            label(for="contractorCode") Code:
+                            input#contractorCode(type="code" name="code" placeholder="Code")
+                        input(type="submit", value="verify")
+            div(id="error" @auth-error.camel.window='console.log("errored"); error=true;' x-data='{error: false}' x-show='error')
+                p there was an error with your request
         script 
             include scripts/login.js
