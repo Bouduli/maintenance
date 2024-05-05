@@ -18,8 +18,10 @@
     padding: 0;
     font-family: var(--primary-font);
 }
+/* Part of Alpine.JS, this will prevent items from "blipping" on page-load */
 [x-cloak] { display: none !important; }
 
+/* sidebar and header css*/
 header {
     height: 10vh;
     border: 1px solid #4d4d3d;
@@ -33,7 +35,6 @@ header {
     display: grid;
     place-content: center;
 }
-
 .sidebar {
     background: #fafafa;
     position: absolute;
@@ -68,18 +69,13 @@ header {
     transform: none !important;
 
 }
-
 .pushable.pushed{
 
     position: static;
     transform: translateX(250px);
     background-color:  rgba(0,0,0,0.4) !important;
 }
-
-
-
-.pushable,
-.sidebar {
+.pushable, .sidebar {
     transition: transform .5s cubic-bezier(0.52, -0.01, 0.25, 1)
 }
 
@@ -87,6 +83,7 @@ main {
     height: 90vh;
 }
 
+/* CSS for the login-view*/
 #loginContent{
     width:90%; margin-left:auto; margin-right:auto; min-height:60vh;
     display:grid;
@@ -131,6 +128,12 @@ main {
         border-right:1px solid #202020;
     }
 }
+
+/*CSS for the tabview, tabs-wrapper, and tabcontent*/
+.tabview{
+    width:100%;
+    position:relative;
+}
 .tabs{
     background:#eee;
     display:grid;
@@ -151,6 +154,13 @@ main {
         border-radius: 8px 8px 0 0;
     }
 }
+.tabcontent{
+    width:90%;
+    padding:4%;
+    margin-left: auto; margin-right: auto; 
+}
+
+/* helper classes determining width of the tabs-container (amount of grid columns)*/
 .tabs.two-wide{
     grid-template-columns: repeat(2, 1fr);
 }
@@ -163,12 +173,8 @@ main {
 .tabs.five-wide{
     grid-template-columns: repeat(5, 1fr);
 }
-.tabview{
-    width:100%;
-    position:relative;
-    /* border:2px solid black; */
-}
 
+/*Alternate tabview, used for selecting sub-tabs*/
 .tabview.alternate{
     /*
         Alternate tab-view, used without .tabcontent, and only for selecting a sub-tab
@@ -211,35 +217,8 @@ main {
         }
     }
 }
-.tabcontent{
-    width:90%;
-    padding:4%;
-    margin-left: auto; margin-right: auto; 
-}
 
-.linkIcon{
-    color:#777;
-}
-.tabBox{
-    margin: auto;
-    display:flex;
-    width: 100%;
-    text-align: center;
-    background: #777;
-    border-radius: 10px;
-    border:1px solid #777;
-    a{
-        width: 100%;
-        border-radius: inherit;
-    }
-    a:hover{
-        background-color: #eee;
-    }
-}
-
-#houseDetails{
-    min-height: 100vh;
-}
+/*Box used to align buttons, and setting background colors of buton based on classes*/
 .buttonBox{
     width: 100%;
     display:flex;
@@ -259,13 +238,13 @@ main {
         background-color: #ccc;
     }
 }
+
+/*Details view - used to display the details of an "object" (House, Task, User, Suggestion etc)*/
 .detailsView{
 
     min-height: 100vh;
     background-color: var(--card-text-background);
-    padding:2%;
-    /* Text settings*/
-    
+    padding:2%;    
 
     .detailsBody{
         width:90%; 
@@ -283,6 +262,7 @@ main {
     }
 }
 
+/* Labels and alignment for <input>/<select> elements*/
 .selectContainer, .labelContainer{
     width: 90%;
     display:grid;
@@ -305,27 +285,8 @@ main {
     place-items:center;
 }
 
-.extendedInfo, .houseInfo{
-    background-color: var(--card-text-background);
-    padding:2%;
-    /* Text settings*/
-    h2{
-        font-size: 1.5em;
-        font-family: var(--primary-font)
-    }
-
-    p{
-        font-size: 1em;
-        font-family: var(--primary-font)
-    
-    }
-}
-
-
-
-/*container, clickable event to remove modal, semi-transparent bg*/
+/*container for a modal, semi-transparent bg, equiped with a "clickable" event to remove the modal*/
 .modalContainer{
-
     background-color: rgba(0,0,0,0.2);
     position:fixed;
     top:0;
@@ -364,30 +325,9 @@ main {
     }
     
 }
-/*ButtonBox for confirm modal*/
-.buttonBox2{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: fit-content;
-    padding: 4%;
-    display: flex;
-  
-    .destroyButton{
-        background-color:var(--destroy-color);
-    }
-    .confirmButton{
-        background-color:var(--confirm-color);
-    }
-    .cancelButton{
-        background-color: #ccc;
-    }
-}
-
-
 
 /*header used for each content-page, generally used to tell a user where they are
-  ie. if I'm browing my houses, contentHeader is 'HOUSES', or if im creating a house, 
+  ie. if I'm browsing my houses, contentHeader is 'HOUSES', or if im creating a house, 
   contentHeader is 'CREATE HOUSE'*/
 .contentHeader{
     text-align:center;
@@ -395,7 +335,7 @@ main {
     letter-spacing: 1.5;
 }
 
-/*^
+/*
     Wrapper used for houses, it should perhaps be turned into a class, since this code
     will be re-used by every card-wrapper div, across all views not only houses.
 */
@@ -434,6 +374,8 @@ main {
         }
     }
 }
+
+/*the text for each card-item*/
 .cardInfo{
     
     border-radius: 0 0 5px 5px;
@@ -470,20 +412,8 @@ form{
     }
     
 }
-.labelWrapper{
-    display: grid;
-    place-items: center;
-    width: 100%;
-    margin-bottom:5px;
-    >*{
-        width: 90%;
-        padding: 1%;
-        text-align: start;
-    }
-    
-}
 
-
+/*Mobile first was implemented, and there really isn't a whole-lot going on here.*/
 @media only screen and (min-width: 768px) {
     
     #loginContent {
