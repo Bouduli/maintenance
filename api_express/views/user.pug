@@ -84,10 +84,11 @@ block content
                             input(type="submit" x-bind:value="editHouse? 'Save' : 'Create'")
 
                 div(x-show="tab=='#tasks'" x-data= "{editTask:false}" x-cloak="")
-                    .tabBox 
-                        a(href="#" @click.prevent="subtab='taskWrapper'") All tasks
-                        a(href="#" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
-                        a(href="#" @click.prevent="subtab='form'; editTask=false;") Form
+                    div.tabview.alternate
+                        .tabs(x-bind:class="task.taskID? 'three-wide': 'two-wide'")
+                            a(href="#" x-bind:class="subtab=='taskWrapper'? 'selected' : ''" @click.prevent="subtab='taskWrapper'") All tasks
+                            a(href="#" x-bind:class="subtab=='taskDetails'? 'selected' : ''" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
+                            a(href="#" x-bind:class="subtab=='form'? 'selected' : ''" @click.prevent="subtab='form'; editTask=false;") Form
 
                     #taskWrapper(x-show="subtab=='taskWrapper'" x-cloak="")
                         h2.contentHeader Tasks
@@ -126,9 +127,6 @@ block content
                                 h2 No suggestions!
                                 p(x-show="!filterID") There are no task suggestions!
                                 p(x-show="filterID") There are suggested tasks for this filter!
-
-
-
                     #taskDetails(x-show="subtab=='taskDetails'" class="detailsView" x-cloak="")
 
                         .selectContainer
@@ -172,8 +170,6 @@ block content
                                     span.material-icons person_add
                                 button(@click="modal='approveSuggestion'" x-show="filterGroup=='suggestions'")
                                     span.material-icons check 
-
-
                     #taskForm(x-show="subtab=='form';" x-data="{selectedHouse:''}" x-cloak="")
                         h2.contentHeader(x-text="editTask? `Update Task (#${task.taskID})` : 'Create Task'")
                         .selectContainer 
@@ -194,10 +190,11 @@ block content
 
                 div(x-show="tab=='#contractors'" x-data="{editContractor:false}" x-cloak="")
 
-                    .tabBox
-                        a(href="#" @click.prevent="subtab='contractorWrapper'") All Contractors
-                        a(href="#" @click.prevent="subtab='contractorDetails';" x-show="contractor.contractorID") Contractor Details
-                        a(href="#" @click.prevent="subtab='form'; editContractor=false;") Form
+                    div.tabview.alternate
+                        .tabs(x-bind:class="contractor.contractorID? 'three-wide' : 'two-wide'")
+                            a(href="#" x-bind:class="subtab=='contractorWrapper'? 'selected':''" @click.prevent="subtab='contractorWrapper'") All Contractors
+                            a(href="#" x-bind:class="subtab=='contractorDetails'? 'selected':''" @click.prevent="subtab='contractorDetails';" x-show="contractor.contractorID") Contractor Details
+                            a(href="#" x-bind:class="subtab=='form'? 'selected':''" @click.prevent="subtab='form'; editContractor=false;") Form
 
                     #contractorWrapper(x-show="subtab=='contractorWrapper';" x-cloak="")
                         h2.contenHeader Contractors
