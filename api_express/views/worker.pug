@@ -2,12 +2,12 @@ extends template.pug
 
 block content 
     div(x-data = "view()" x-init="await data()" @data-change.camel.window="await data()")
-
-        .tabBox
-            a(href="#" @click.prevent="subtab='taskWrapper'") Tasks
-            a(href="#" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
-            a(href="#" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House Details
-            a(href="#" @click.prevent="subtab='form'") Suggestion Form
+        div.tabview.alternate
+            .tabs(x-bind:class="(task.taskID && house.houseID)? 'four-wide': ((task.taskID || house.houseID)? 'three-wide': 'two-wide')")
+                a(href="#" x-bind:class="subtab=='taskWrapper'? 'selected' : ''" @click.prevent="subtab='taskWrapper'") Tasks
+                a(href="#" x-bind:class="subtab=='taskDetails'? 'selected' : ''" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
+                a(href="#" x-bind:class="subtab=='houseDetails'? 'selected' : ''" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House Details
+                a(href="#" x-bind:class="subtab=='form'? 'selected' : ''" @click.prevent="subtab='form'") Suggestion Form
 
         #taskWrapper(x-show="subtab=='taskWrapper'" x-cloak="")
             h2.contentHeader Tasks
