@@ -95,8 +95,10 @@ function view(){
                 await this.fetchSuggestions();
                 if(this.house.houseID) this.house = await this.getHouse(this.house.houseID);
                 if(this.task.taskID) this.task = await this.getTask(this.task.taskID);
-                console.log("houses: ", this.houses);
-                console.log("tasks: ", this.tasks);
+                // console.log("houses: ", this.houses);
+                // console.log("tasks: ", this.tasks);
+                // console.log("suggestions: ", this.suggestions);
+
                 this.tasks.forEach(t=>{
                     if(!this.houses.find(h=>h.houseID == t.houseID))
                         this.houses.push(t.houseID);
@@ -144,17 +146,15 @@ function view(){
         async fetchTaskDetails(t){
             try {
                 if(!t) return console.error("no id");
-                console.log(t);
+                // console.log(t);
                 //endpoint is different depending on if it's a task or a suggestion. 
                 const endpoint = this.filterGroup =='tasks'? 'task' : 'suggestion';
                 const res = await fetch(`/worker/${endpoint}/${t}`)
                 const json = await res.json();
 
                 if(res.ok){
-                    console.log("task:", json.content);
+                    // console.log("task:", json.content);
                     return json.content
-
-
                 }
                 else this.task=false;
             } catch (err) {
@@ -174,7 +174,6 @@ function view(){
                     this.suggestions.forEach(t=>{
                         t.taskID = t.suggestionID;
                     });
-                    console.log("suggestions: ", json.content);
                 }
                 else this.suggestions = [];
             } catch (err) {

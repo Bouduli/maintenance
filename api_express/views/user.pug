@@ -36,7 +36,7 @@ block content
                     #houseDetails(x-show="subtab=='houseDetails'" class="detailsView" x-cloak="")
                         .selectContainer
                             label(for="houseID") Viewing House:
-                            select#houseID(@change="house = getHouse($event.target.value); console.log(house);")
+                            select#houseID(@change="house = getHouse($event.target.value); /* console.log(house); */")
                                 template(x-for="h in houses")
                                     option(x-bind:value="h.houseID" x-text="h.address") 
                                 option(selected="" hidden="") ---
@@ -107,7 +107,7 @@ block content
 
 
                         template(x-for="t in filteredTasks;" :key="t.taskID")
-                            .card(x-bind:id="`task-${t.taskID}`" x-bind:class="filterGroup=='tasks'? 'teal' : 'green'" @click="task= await getTask(t.taskID);subtab='taskDetails'; console.log(task)")
+                            .card(x-bind:id="`task-${t.taskID}`" x-bind:class="filterGroup=='tasks'? 'teal' : 'green'" @click="task= await getTask(t.taskID);subtab='taskDetails'; /* console.log(task) */")
                                 .cardInfo
                                     h2
                                         span(x-show="filterGroup=='tasks';") Task #
@@ -131,7 +131,7 @@ block content
 
                         .selectContainer
                             label(for="taskID") Viewing Task:
-                            select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
+                            select#taskID(name="taskID" @change="task= await getTask($event.target.value); /* console.log(task) */")
                                 option(selected="" hidden="") ---
                                 template(x-for="t in filteredTasks;" :key="t.taskID")
                                     option(x-bind:value="t.taskID" x-text="`Task #${t.taskID}`")
@@ -174,8 +174,7 @@ block content
                         h2.contentHeader(x-text="editTask? `Update Task (#${task.taskID})` : 'Create Task'")
                         .selectContainer 
                             label(for="houseID_task") For house:
-                            select#houseID_task(name="houseID" form="taskForm" @change="console.log($event.target.value)"
-                            x-model="selectedHouse")
+                            select#houseID_task(name="houseID" form="taskForm" x-model="selectedHouse")
                                 template(x-for="h in houses")
                                     option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == selected_house_id")
                                 option(value=false selected="" hidden="") ---    
@@ -199,7 +198,7 @@ block content
                     #contractorWrapper(x-show="subtab=='contractorWrapper';" x-cloak="")
                         h2.contenHeader Contractors
                         template(x-for="c in contractors;" :key="c.contractorID")
-                            .card.yellow(x-bind:id="`contractor-${c.contractorID}`" @click="contractor = await getContractor(c.contractorID); console.log(contractor); subtab='contractorDetails'")
+                            .card.yellow(x-bind:id="`contractor-${c.contractorID}`" @click="contractor = await getContractor(c.contractorID);  /*console.log(contractor);*/ subtab='contractorDetails';")
                                 .cardInfo 
                                     h2(x-text="c.name")
                                     p(x-text="c.phone")
@@ -207,7 +206,7 @@ block content
                     #contractorDetails(x-show="subtab=='contractorDetails';" class="detailsView" x-cloak="")
                         .selectContainer
                             label(for="contractorID") Showing Contractor: 
-                            select#contractorID(name="contractorID" @change="contractor = await getContractor($event.target.value); console.log(contractor);")
+                            select#contractorID(name="contractorID" @change="contractor = await getContractor($event.target.value); /* console.log(contractor); */")
                                 option(selected="" hidden="") --- 
                                 template(x-for="c in contractors" :key="c.contractorID")
                                     option(x-bind:value="c.contractorID" x-text="`${c.name} (${c.occupation})`")

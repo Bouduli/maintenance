@@ -4,11 +4,11 @@ const dataChangeEvent = new Event("dataChange");
 
 async function destroy(type, id) {
 
-    console.log("destroyType: ", type );
-    console.log("destroyId: ", id );
+    // console.log("destroyType: ", type );
+    // console.log("destroyId: ", id );
 
     const url = `/${type}/${id}`;
-    console.log("destroy url : ", url);
+    // console.log("destroy url : ", url);
 
     const res = await fetch(url, {
         method: "DELETE"
@@ -17,7 +17,7 @@ async function destroy(type, id) {
     const json = await res.json();
 
     if (res.ok) {
-        console.log(json);
+        // console.log(json);
         window.dispatchEvent(dataChangeEvent);
     }
     else {
@@ -49,7 +49,7 @@ async function createUser(target){
 
         if(res.ok){
             window.dispatchEvent(dataChangeEvent);
-            console.log("created user: ", json.content);
+            // console.log("created user: ", json.content);
             target.reset();
         }
         else console.error("unable to create user", json.content);
