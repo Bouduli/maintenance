@@ -13,23 +13,33 @@ block content
             h2.contentHeader Tasks
             .selectContainer
                 label(for="showSelection") Showing:
-                select#showSelection(name="filteringType" x-model="filterGroup" @change="filteredTasks = filterTasksBy(filterGroup, filterID); console.log(filterGroup)")
+                select#showSelection(name="filteringType" x-model="filterGroup" @change="filteredTasks = filterTasksBy(filterGroup, filterID);")
                     option(value="tasks" selected="") Tasks
                     option(value="suggestions") Suggestions
                 
             template(x-for="t in filteredTasks" :key="t.taskID")
                 .card.teal(x-bind:id="`task-${t.taskID}`" @click="task= await getTask(t.taskID);subtab='taskDetails';")
                     .cardInfo
-                        h2(x-text="`Task #${t.taskID}`")
+                        h2
+                            span(x-show="filterGroup=='tasks'") Task 
+                            span(x-show="filterGroup=='suggestions'") Suggestion 
+                            span(x-text="`#${t.taskID}`")
                         p(x-text="t.description")
         #taskDetails(x-show="subtab=='taskDetails'" class="detailsView" x-cloak="")
             .selectContainer
-                    label(for="taskID") Viewing Task:
+                    label(for="taskID") 
+                        span Viewing 
+                        span(x-show="filterGroup=='tasks'") Task 
+                        span(x-show="filterGroup=='suggestions'") Suggestion 
                     select#taskID(name="taskID" @change="task= await getTask($event.target.value); console.log(task)")
                         option(selected="" hidden="") ---
                         template(x-for="t in filteredTasks;" :key="t.taskID")
-                            option(x-bind:value="t.taskID" x-text="`Task #${t.taskID}`")
-            h2.contentHeader Task Details
+                            option(x-bind:value="t.taskID" x-text="`${filterGroup=='tasks'?'Task ': 'Suggestion'} #${t.taskID}`")
+
+            h2.contentHeader 
+                span(x-show="filterGroup=='tasks'") Task 
+                span(x-show="filterGroup=='suggestions'") Suggestion 
+                span Details
             .detailsBody()
                 h2 
                     span(x-show="filterGroup=='tasks'") Task: #
@@ -55,7 +65,7 @@ block content
                     b Last updated: 
                     span(x-text="new Date(task.last_edited).toLocaleString()")
                 
-                .buttonBox
+                .buttonBox(x-show="filterGroup=='tasks' && !task.suggestionID")
                     button(@click="modal='toggleCompleteModal'")
                         span.material-icons() check
         
