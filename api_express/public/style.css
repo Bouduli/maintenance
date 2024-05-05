@@ -134,7 +134,7 @@ main {
 .tabs{
     background:#eee;
     display:grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* grid-template-columns: repeat(3, 1fr); */
     text-align:center;
     a{
 
@@ -151,10 +151,65 @@ main {
         border-radius: 8px 8px 0 0;
     }
 }
+.tabs.two-wide{
+    grid-template-columns: repeat(2, 1fr);
+}
+.tabs.three-wide{
+    grid-template-columns: repeat(3, 1fr);
+}
+.tabs.four-wide{
+    grid-template-columns: repeat(4, 1fr);
+}
+.tabs.five-wide{
+    grid-template-columns: repeat(5, 1fr);
+}
 .tabview{
     width:100%;
     position:relative;
     /* border:2px solid black; */
+}
+
+.tabview.alternate{
+    /*
+        Alternate tab-view, used without .tabcontent, and only for selecting a sub-tab
+         (houseCards, houseDetails, Form, etc. etc.) 
+        
+        Generally (differences from regular tabview) :
+          .tabs : Thick border, rounded courners. 
+          a : Borders on the left and right of items (separating clickable items)
+          a.selected : no borders and no border-radius on selected item. 
+    */
+    .tabs {
+        border:2px solid black;
+        border-radius:10px;
+        a{
+
+            border-bottom: none;
+            border-top:none;
+            border-left:1px solid #202020;
+            border-right:1px solid #202020;
+        }
+        a.selected{
+            background:#fff;
+            border-radius: 0 0 0 0;
+        }
+
+        /* Not showing borders to the left, or right; to first and last items respectively */
+        a:first-of-type{
+            border-left:none;
+        }
+        a:last-of-type {
+            border-right:none;
+        }
+
+        /* Showing border-radius of parent-div correctly.*/
+        a:first-of-type.selected{
+            border-radius: 10px 0 0 10px;
+        }
+        a:last-of-type.selected{
+            border-radius: 0 10px 10px 0;
+        }
+    }
 }
 .tabcontent{
     width:90%;

@@ -6,7 +6,8 @@ block content
 
         //- Tab page wrapper
         div.tabview
-            .tabs
+            //- Tabs for selecting the main-tabs (houses / tasks / contractors)
+            .tabs.three-wide
                 //
                     These are links used for tabs
                     Sauce for this is https://talltips.novate.co.uk/tabbed-content-using-alpine-js 
@@ -17,10 +18,13 @@ block content
             //- Tabbed content
             div.tabcontent
                 div( x-show='tab=="#houses"' x-data="{editHouse:false}" x-cloak="")
-                    .tabBox
-                        a(href="#" @click.prevent="subtab='houseWrapper'") All houses
-                        a(href="#" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House details
-                        a(href="#" @click.prevent="subtab='form'; editHouse=false;") Form
+
+                    //- tabview alternate for selecting sub-tab
+                    div.tabview.alternate
+                        .tabs(x-bind:class="house.houseID? 'three-wide' : 'two-wide'")
+                            a(href="#" x-bind:class="subtab=='houseWrapper'?'selected':''" @click.prevent="subtab='houseWrapper'") All houses
+                            a(href="#" x-bind:class="subtab=='houseDetails'?'selected':''" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House details
+                            a(href="#" x-bind:class="subtab=='form'?'selected':''" @click.prevent="subtab='form'; editHouse=false;") Form
                     #houseWrapper(x-show="subtab=='houseWrapper'" x-cloak="")
                         h2.contentHeader Houses
                         template(x-for="h in houses" :key="h.houseID")
