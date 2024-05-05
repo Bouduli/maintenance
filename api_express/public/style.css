@@ -121,7 +121,7 @@ main {
 
         padding:2%;
         
-        border-bottom: 1px solid #404040;
+        border-bottom: 2px solid #202020;
     }
     a.selected{
         background:#fff;
@@ -130,6 +130,36 @@ main {
         border-left:1px solid #202020;
         border-right:1px solid #202020;
     }
+}
+.tabs{
+    background:#eee;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align:center;
+    a{
+
+        padding:2%;
+        
+        border-bottom: 2px solid #202020;
+    }
+    a.selected{
+        background:#fff;
+        border-bottom:none;
+        border-top:2px solid #202020;
+        border-left:2px solid #202020;
+        border-right:2px solid #202020;
+        border-radius: 8px 8px 0 0;
+    }
+}
+.tabview{
+    width:100%;
+    position:relative;
+    /* border:2px solid black; */
+}
+.tabcontent{
+    width:90%;
+    padding:4%;
+    margin-left: auto; margin-right: auto; 
 }
 
 .linkIcon{
@@ -317,7 +347,7 @@ main {
 #houseWrapper, #taskWrapper, #contractorWrapper, #userWrapper{
     display:grid;
     place-items:center;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
 
     /* background:greenyellow; */
 }
