@@ -323,3 +323,13 @@ Saker som har gjorts:
 - Meddelande för "inga-suggestions" kan nu visas istället för att visa "inga tasks", eftersom dessa är två olika saker.
 - `x-cloak` har implementerats på sina ställen för att ta bort "flickering" vid sidladdning för dem element som döljs med x-cloak. 
 
+
+### Onsdag 17/04 
+Saker som har gjorts: 
+- **Login-redesign med "tabs"**
+
+### Söndag 05/05
+Saker som har gjorts: 
+- Sidebar med länkar till andra vyer (headern blev snyggare)
+- **tabview** i alla vyer för att lättare välja "sub-tabs" och "main-tabs"
+- CSS har rensats för att vara mer presentabelt
