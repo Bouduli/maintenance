@@ -12,7 +12,7 @@ block content
         #userWrapper(x-show="subtab=='userWrapper'")
             h2.contentHeader Users
             template(x-for="u in users" :key="u.userID")
-                div.card(x-bind:id="`user-${u.userID}`" @click="user = await getUser(u.userID); subtab='userDetails';")
+                div.card.purple(x-bind:id="`user-${u.userID}`" @click="user = await getUser(u.userID); subtab='userDetails';")
                     .cardInfo
                         h2(x-text="u.name")
                         p(x-text="u.email")

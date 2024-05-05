@@ -18,7 +18,7 @@ block content
                     option(value="suggestions") Suggestions
                 
             template(x-for="t in filteredTasks" :key="t.taskID")
-                .card(x-bind:id="`task-${t.taskID}`" @click="task= await getTask(t.taskID);subtab='taskDetails';")
+                .card.teal(x-bind:id="`task-${t.taskID}`" @click="task= await getTask(t.taskID);subtab='taskDetails';")
                     .cardInfo
                         h2(x-text="`Task #${t.taskID}`")
                         p(x-text="t.description")

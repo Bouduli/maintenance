@@ -7,6 +7,16 @@
     --card-text-background: #fff;
     --modal-bg: #eee;
 
+    /*colors for card-types*/
+    --card-blue: #103fb5;
+    --card-teal:#5be7d0;
+    --card-green: #267e62;
+    --card-light-green:#87eda8;
+    --card-purple: #7a1470;
+    --card-yellow: #F2F280;
+
+
+
     /*Semantic colors*/
     --destroy-color:#ff5050;
     --confirm-color:#27a154;
@@ -335,8 +345,7 @@ main {
     letter-spacing: 1.5;
 }
 
-/*
-    Wrapper used for houses, it should perhaps be turned into a class, since this code
+/* Wrapper used for houses, it should perhaps be turned into a class, since this code
     will be re-used by every card-wrapper div, across all views not only houses.
 */
 #houseWrapper, #taskWrapper, #contractorWrapper, #userWrapper{
@@ -373,6 +382,24 @@ main {
             width: 100%;
         }
     }
+}
+.card.blue{
+    background: var(--card-blue);
+}
+.card.teal{
+    background:var(--card-teal);
+}
+.card.green{
+    background:var(--card-green);
+}
+.card.light-green{
+    background:var(--card-light-green);
+}
+.card.purple{
+    background:var(--card-purple);
+}
+.card.yellow{
+    background:var(--card-yellow);
 }
 
 /*the text for each card-item*/

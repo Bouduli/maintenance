@@ -28,7 +28,7 @@ block content
                     #houseWrapper(x-show="subtab=='houseWrapper'" x-cloak="")
                         h2.contentHeader Houses
                         template(x-for="h in houses" :key="h.houseID")
-                            div.card(x-bind:id="`house-${h.houseID}`"
+                            div.card.light-green(x-bind:id="`house-${h.houseID}`"
                                         @click="house=getHouse(h.houseID); subtab='houseDetails'")
                                 .cardInfo
                                     h2(x-text="h.address")
@@ -107,7 +107,7 @@ block content
 
 
                         template(x-for="t in filteredTasks;" :key="t.taskID")
-                            .card(x-bind:id="`task-${t.taskID}`" @click="task= await getTask(t.taskID);subtab='taskDetails'; console.log(task)")
+                            .card.teal(x-bind:id="`task-${t.taskID}`" @click="task= await getTask(t.taskID);subtab='taskDetails'; console.log(task)")
                                 .cardInfo
                                     h2
                                         span(x-show="filterGroup=='tasks';") Task #
@@ -199,7 +199,7 @@ block content
                     #contractorWrapper(x-show="subtab=='contractorWrapper';" x-cloak="")
                         h2.contenHeader Contractors
                         template(x-for="c in contractors;" :key="c.contractorID")
-                            .card(x-bind:id="`contractor-${c.contractorID}`" @click="contractor = await getContractor(c.contractorID); console.log(contractor); subtab='contractorDetails'")
+                            .card.yellow(x-bind:id="`contractor-${c.contractorID}`" @click="contractor = await getContractor(c.contractorID); console.log(contractor); subtab='contractorDetails'")
                                 .cardInfo 
                                     h2(x-text="c.name")
                                     p(x-text="c.phone")
