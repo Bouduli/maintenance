@@ -90,7 +90,7 @@ router.get("/task/:id", async(req,res)=>{
         });
 
     } catch (err) {
-        console.log("err @ GET /worker/task  : ", err);
+        console.log("err @ GET /worker/task/:id  : ", err);
         return res.status(500).json({
             error:"internal server error"
         });
@@ -201,4 +201,46 @@ router.get("/suggestion", async(req,res)=>{
 
 })
 
+//fetching details for a task-suggestion
+router.get("/suggestion/:id", async(req,res)=>{
+    try {
+        const {token} = req.user;
+        const contractorID = token.id;
+        const suggestionID = req.params.id;
+
+        if(!suggestionID) return res.status(400).json({
+            error:"id not provided"
+        })
+
+        //the suggestion is retreived by quering against contractorID, provided suggestionID, and if the house is active.
+        const sql = "SELECT * FROM suggested_tasks WHERE contractorID = ? AND suggestionID = ? AND houseID in (SELECT houseID FROM houses WHERE active=?) ";
+        const data = await db.query(sql, [contractorID, suggestionID, 1]);
+        if(!data.length) return res.status(404).json({
+            error:"no tasks", message: "Phew, seems your work is done..."
+        });
+        
+        //retreiving the house for which the suggestion applies. 
+        const houseSQL = "SELECT * FROM Houses WHERE houseID = ?"
+        const houseData = await db.query(houseSQL, [data[0].houseID])
+        if(!houseData.length) return res.status(404).json({
+            error:"no house found for task",
+        });
+
+        const suggestion = data[0];
+        suggestion.house = houseData[0];
+
+        //manipulate suggestion to behave like a Task in the application
+        suggestion.taskID = suggestion.suggestionID;
+
+        return res.status(200).json({
+            content:suggestion,
+        });
+
+    } catch (err) {
+        console.log("err @ GET /worker/suggestion/:id  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        });
+    }
+})
 module.exports  = router;
