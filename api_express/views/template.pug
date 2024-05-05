@@ -17,6 +17,7 @@ html
 
         //- Icons
         link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
+        link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200")
         script(src="client.js" defer)
 
         //- Alpine collapse plugin (animations for a collapsable view)
@@ -24,17 +25,46 @@ html
 
         //- Main Alpine JS
         script( src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer)
+
+        script(src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous")
  
-    body 
-        header 
-            h1 Maintenance
-            nav
-                a(href="/login") Login
-                a(href="/") Index
-                a(href="/user") User
-                a(href="/worker") Worker
-                a(href="/admin") Admin
-                a(href="/auth/logout") Logout
-            
-        main 
-            block content
+    body
+        div.sidebar
+            div.sidebarGroup
+                h2.contentHeader Account
+                a(href="/login") 
+                    div.sidebarLinkItem
+                        span.material-symbols-outlined.icon passkey
+                        span Login
+                a(href="/auth/logout") 
+                    .sidebarLinkItem
+                        span.material-symbols-outlined.icon logout
+                        span Logout
+            div.sidebarGroup
+                h2.contentHeader Views
+                a(href="/") 
+                    div.sidebarLinkItem
+                        span.material-symbols-outlined.icon home 
+                        span Index
+                a(href="/user")
+                    div.sidebarLinkItem
+                        span.material-symbols-outlined.icon person
+                        span User
+                a(href="/worker")
+                    div.sidebarLinkItem
+                        span.material-symbols-outlined.icon build
+                        span Worker
+                a(href="/admin") 
+                    div.sidebarLinkItem 
+                        span.material-symbols-outlined.icon shield_person
+                        span Admin
+        div.pushable 
+            header 
+                nav 
+                    div(class="navItem" id="expandButton")
+                        span.material-symbols-outlined menu
+                h1 Maintenance
+                
+                
+            main 
+                block content
