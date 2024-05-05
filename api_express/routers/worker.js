@@ -2,7 +2,6 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const db = require("../db");
-const { restart } = require("nodemon");
 
 //Returns all houses where the contractor have been assigned tasks
 router.get("/house", async(req,res)=>{
@@ -176,4 +175,30 @@ router.post("/task", async (req,res)=>{
         })
     }
 })
+
+//fetching all the contractor-created suggestions from the db.
+router.get("/suggestion", async(req,res)=>{
+    try {
+        const {token} = req.user;
+        const contractorID = token.id;
+
+        const suggestion_sql = "SELECT * FROM suggested_tasks WHERE contractorID = ?";
+        const suggestions = await db.query(suggestion_sql, [contractorID]);
+        console.log("suggestions: ", suggestions);
+
+        if(!suggestions.length) return res.status(404).json({
+            error:"no suggestions", message: "you haven't created any suggestions, or your suggestions have been turned into tasks."
+        });
+        return res.status(200).json({
+            content:suggestions
+        });
+    } catch (err) {
+        console.log("Err @ GET /worker/suggestion  : ", err );
+        return res.status(500).json({
+            error:"internal server error"
+        });
+    }
+
+})
+
 module.exports  = router;
