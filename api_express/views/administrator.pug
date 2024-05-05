@@ -3,10 +3,11 @@ extends template.pug
 block content
     div(x-data="view();" x-init="await data(); modal=false;" @data-change.camel.window="await data()")
 
-        .tabBox
-            a(href="#" @click.prevent="subtab='userWrapper'") All Users
-            a(href="#" @click.prevent="subtab='userDetails'" x-show="user.userID") User Details
-            a(href="#" @click.prevent="subtab='form'") Form
+        div.tabview.alternate
+            .tabs(x-bind:class="user.userID?'three-wide':'two-wide'")
+                a(href="#" x-bind:class="subtab=='userWrapper'?'selected':''" @click.prevent="subtab='userWrapper'") All Users
+                a(href="#" x-bind:class="subtab=='userDetails'?'selected':''" @click.prevent="subtab='userDetails'" x-show="user.userID") User Details
+                a(href="#" x-bind:class="subtab=='form'?'selected':''" @click.prevent="subtab='form'") Form
         
         #userWrapper(x-show="subtab=='userWrapper'")
             h2.contentHeader Users
