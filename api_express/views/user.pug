@@ -168,6 +168,8 @@ block content
                                     span.material-icons edit
                                 button(@click="modal='taskInvite'" x-show="filterGroup=='tasks'")
                                     span.material-icons person_add
+                                button(@click="modal='taskBan'")
+                                    span.material-icons person_remove
                                 button(@click="modal='approveSuggestion'" x-show="filterGroup=='suggestions'")
                                     span.material-icons check 
                     #taskForm(x-show="subtab=='form';" x-data="{selectedHouse:''}" x-cloak="")
@@ -278,6 +280,20 @@ block content
                         button.confirmButton(@click="await inviteContractor(appointee,task.taskID); modal=false;") Invite
                         button.cancelButton(@click="modal=false;") Cancel
 
+            .modal(x-show="modal=='taskBan'" x-data="{kicked_appointees:[]}" x-cloak="")
+                h2.contentHeader Remove from task
+                div(style="padding:4%;")
+                    p(style="margin-bottom:1rem;") Select the contractors you wish to remove from this task
+                    div(style="width:90%; margin-left:auto; margin-right:auto; margin-bottom:1rem;")
+                        template(x-for="c in task.contractors")
+                            p(style="margin-bottom:0.5rem; font-size:0.9rem;")
+                                span(x-text="`${c.name} (${c.occupation})`")
+                                label.switch(style="float:right; margin-right:1em;")
+                                    input(type="checkbox" @change="updateAppointeesArray(kicked_appointees, c.contractorID);")
+                                    span.slider.round
+                    .buttonBox(style="width:90%; margin-left:auto; margin-right:auto; button { padding:2%;}")
+                        button.destroyButton(@click="await removeFromTask(kicked_appointees); modal=false;") Confirm
+                        button.cancelButton(@click="modal=false;") Cancel
             .confirmModal(x-show="modal=='rejectSuggestion'" x-cloak="")
                 h2.contentHeader Reject Suggestion
                     span(x-text="`(#${task.taskID})`")

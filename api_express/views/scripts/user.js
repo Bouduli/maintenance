@@ -423,6 +423,16 @@ function view() {
             //select all suggestions this user has created. (unsure if i will display them...)
             c.suggestions = this.suggestions.filter(s=>s.contractorID == contractor);
             return c;
+        },
+
+        updateAppointeesArray(appointees, id){
+            if(appointees.find(a=>a.contractorID == id)) appointees = appointees.filter(a=>a.contractorID != id);
+            else appointees.push(id);
+        },
+        async removeFromTask(appointees){
+            console.log(appointees);
+
+
         }
     }
 }
