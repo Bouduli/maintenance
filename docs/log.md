@@ -333,3 +333,14 @@ Saker som har gjorts:
 - Sidebar med länkar till andra vyer (headern blev snyggare)
 - **tabview** i alla vyer för att lättare välja "sub-tabs" och "main-tabs"
 - CSS har rensats för att vara mer presentabelt
+
+### Måndag 06/05
+Saker som har gjorts: 
+- `index.pug` har blivit en "navigation" sida - med länkar till User-View (och till Admin view om rättigheter finns)
+- `mw.identity()` - Ett middleware för att identifiera användar-rollen för index.html (bestämmer vilka menyer som visas) Commit-meddelandet beskriver varför denna finns, och varför inte `mw.auth()` kan användas i detta fall.
+
+### Tisdag 07/05
+Saker som har gjorts: 
+- Misslyckad autentisering redirectar till `login.pug` + **Access denied banner**
+- Filtrera Appointees när man clickar "show appointees"
+- Ta bort appointees från task
