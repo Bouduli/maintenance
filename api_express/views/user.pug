@@ -158,7 +158,7 @@ block content
                             p 
                                 b Contractors invited: 
                                 span(x-text="`(${task.contractors.length}) `")
-                                span(x-show="task.contractors.length" @click="tab='#contractors'; subtab='contractorWrapper';") Show
+                                span(x-show="task.contractors.length" @click="tab='#contractors'; filteredContractors = task.contractors; contractorFilter = task.taskID; subtab='contractorWrapper';") Show
                             .buttonBox(style="width:100%;")
                                 button(@click="modal='deleteTask'" x-show="filterGroup=='tasks'")
                                     span.material-icons delete
@@ -191,13 +191,16 @@ block content
 
                     div.tabview.alternate
                         .tabs(x-bind:class="contractor.contractorID? 'three-wide' : 'two-wide'")
-                            a(href="#" x-bind:class="subtab=='contractorWrapper'? 'selected':''" @click.prevent="subtab='contractorWrapper'") All Contractors
+                            a(href="#" x-bind:class="subtab=='contractorWrapper'? 'selected':''" @click.prevent="subtab='contractorWrapper'; contractorFilter =''; filteredContractors = contractors;") All Contractors
                             a(href="#" x-bind:class="subtab=='contractorDetails'? 'selected':''" @click.prevent="subtab='contractorDetails';" x-show="contractor.contractorID") Contractor Details
                             a(href="#" x-bind:class="subtab=='form'? 'selected':''" @click.prevent="subtab='form'; editContractor=false;") Form
 
                     #contractorWrapper(x-show="subtab=='contractorWrapper';" x-cloak="")
-                        h2.contenHeader Contractors
-                        template(x-for="c in contractors;" :key="c.contractorID")
+                        h2.contenHeader 
+                            span(x-show="!contractorFilter") Contractors
+                            span(x-show="contractorFilter") Appointees  
+                                span(x-text="`(Task #${task.taskID})`")
+                        template(x-for="c in filteredContractors;" :key="c.contractorID")
                             .card.yellow(x-bind:id="`contractor-${c.contractorID}`" @click="contractor = await getContractor(c.contractorID);  /*console.log(contractor);*/ subtab='contractorDetails';")
                                 .cardInfo 
                                     h2(x-text="c.name")

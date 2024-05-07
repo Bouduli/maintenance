@@ -227,6 +227,8 @@ function view() {
 
         contractors: [],
         contractor: { suggestions:[] },
+        filteredContractors: [],
+        contractorFilter: '',
 
         suggestions: [],
         async data() {
@@ -315,6 +317,7 @@ function view() {
                     console.log("no contractors");
                     this.contractors=[];
                 }
+                this.filteredContractors = this.contractors;
 
             } catch (err) {
                 console.log("no contractors");
@@ -405,7 +408,8 @@ function view() {
             })();
             console.log(`appointees for task ${task} : `, appointees);
             t.contractors = appointees;
-
+            // this.filteredContractors = t.contractors;
+            // this.contractorFilter = task;
             return t
         },
         /**
