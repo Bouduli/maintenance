@@ -119,7 +119,41 @@ router.get("/appointee/:id", async(req,res)=>{
         })
     }
 })
+router.delete("/appointee/:id", async(req,res)=>{
 
+    try {
+        console.log(req.body);
+
+        const taskID = req.params.id;
+        if(!taskID) return res.status(400).json({
+            error:"no task to remove appointees from"
+        });
+        const {appointees} = req.body;
+        if(!appointees?.length) return res.status(400).json({
+            error:"no appointees provided to remove from task"
+        });
+
+        const userID = req.user.token.id;
+        if(!userID) return res.status(401).json({
+            error:"no userid provided with request, please login again"
+        });
+
+        // some badness
+        const matchString = appointees.map(a=>'contractorID = ?').join(' OR ');
+        const sql = `DELETE FROM task_contractors WHERE taskID = ? AND ${matchString}`;
+        const data = await db.query(sql, [taskID,...appointees]);
+        console.log(data);
+
+        res.status(200).json({
+            appointees
+        });
+    } catch (err) {
+        console.log("err @ DELETE /task/appointee  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        });
+    }
+})
 //List all task suggestions
 router.get("/suggestion", async(req,res)=>{
 

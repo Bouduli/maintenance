@@ -429,8 +429,30 @@ function view() {
             if(appointees.find(a=>a.contractorID == id)) appointees = appointees.filter(a=>a.contractorID != id);
             else appointees.push(id);
         },
-        async removeFromTask(appointees){
+        async removeFromTask(appointees, taskID){
             console.log(appointees);
+
+            try {
+                if(!taskID) return;
+                const res = await fetch(`/task/appointee/${taskID}`, {
+                    method: "DELETE",
+                    body: JSON.stringify({appointees}),
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }
+                }); 
+
+                if(res.ok) {
+                    console.log(`removed ${appointees.length} contractors from task #${taskID}`);
+                    window.dispatchEvent(dataChangeEvent);
+                }
+                else {
+                    console.log(await res.json());
+                }
+            } catch (err) {
+                console.log(err);
+                console.log("unable to remove appointees from task");
+            }
 
 
         }

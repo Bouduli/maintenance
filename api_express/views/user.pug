@@ -292,7 +292,7 @@ block content
                                     input(type="checkbox" @change="updateAppointeesArray(kicked_appointees, c.contractorID);")
                                     span.slider.round
                     .buttonBox(style="width:90%; margin-left:auto; margin-right:auto; button { padding:2%;}")
-                        button.destroyButton(@click="await removeFromTask(kicked_appointees); modal=false;") Confirm
+                        button.destroyButton(@click="await removeFromTask(kicked_appointees, task.taskID); modal=false;") Confirm
                         button.cancelButton(@click="modal=false;") Cancel
             .confirmModal(x-show="modal=='rejectSuggestion'" x-cloak="")
                 h2.contentHeader Reject Suggestion
