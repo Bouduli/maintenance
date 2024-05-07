@@ -1,8 +1,20 @@
 extends template.pug 
 //- 
-    This is an index 'view' and could be used as a way to tell users to authenticate
-    providing a link on where to do it.
-
-    As you can see, now it is used to show the "user" view. 
+    This is an index 'view' and could be used as a "menu" with buttons redirecting the user to a specific view.
 block content
-    h2 index 
+    div( x-data="" style="display:grid; place-items:center; width:60%; margin-left:auto; margin-right:auto; gap:20px; margin-top:20px;")
+
+        .card.light-green(@click.prevent="window.location='/user'")
+            .cardInfo 
+                h2 User view
+                p Create houses, tasks, create contractors and invite them to tasks. 
+            .cardIcon
+                span.material-symbols-outlined home
+
+        if admin
+            .card.purple(@click.prevent="window.location='/admin'")
+                .cardInfo 
+                    h2 Administrator view
+                    p Create and remove users from the maintenance system
+                .cardIcon
+                    span.material-symbols-outlined shield_person

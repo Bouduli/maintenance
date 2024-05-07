@@ -370,9 +370,9 @@ main {
     border-radius: 5px;
     border:2px solid black;
     grid-template-areas: 
-        "a a a"
-        "a a a"
-        "a a a"
+        "a a icon"
+        "a a icon"
+        "a a icon"
         "b b b";
 
     .buttonBox{
@@ -423,6 +423,16 @@ main {
     }
     
     
+}
+.cardIcon {
+    grid-area: icon;
+    position:relative;
+    span{
+        position:absolute;
+        top:1rem;
+        right:1rem;
+        font-size: 4em;
+    }
 }
 
 form{
