@@ -61,9 +61,12 @@ function auth(tokenType = "stateful"){
             
         } catch (err) {
             console.log("err @ mw.auth()  : ", err);
-            return res.status(401).json({
+            
+            if(req.body.api_only) return res.status(401).json({
                 error:"Invalid token, please re-authenticate."
             });
+
+            else return res.status(401).render("login", {title:"Login", unauthorized:true});
             
         }
     }

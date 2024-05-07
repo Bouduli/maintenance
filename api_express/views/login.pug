@@ -1,9 +1,18 @@
 extends template.pug 
 
 block content
-    div(x-data='{loginType:false, verified:false}'
+    div(x-data='{loginType:false, verified:false, error:true}'
         style="display:grid; place-items:center;")
-        #loginContent(style="")
+        if unauthorized
+            div#notLoggedIn(x-show="error" x-cloak="")
+                h2.contentHeader Access Denied
+                div#notLoggedInContent
+                    span.material-symbols-outlined.icon shield_locked
+                    div#notLoggedInText
+                        p(style="margin-bottom: 0.5em;") You don't have access to this page!
+                        p If you believe this is a mistake, please contact a system administrator.
+                        button(@click="error = false;" ) Ok
+        #loginContent(style="margin-top: 5vh; margin-bottom:5vh;")
             #loginTabs(
                 style="position:absolute; top:0;")
                 a(@click="loginType='user'" x-bind:class="loginType=='user'? 'selected' : '' ") User

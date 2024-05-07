@@ -138,6 +138,42 @@ main {
         border-right:1px solid #202020;
     }
 }
+#notLoggedIn{
+    width:100%;
+    min-height:30vh;
+    background:#ffc1c1;
+    
+    .contentHeader {
+        margin-bottom:10px;
+    }
+    #notLoggedInContent{
+        display:flex; 
+        width:85%;
+        margin-left:auto; 
+        margin-right:auto;
+    }
+    .icon{
+
+        flex: 1;
+        font-size:6rem;
+        text-align:center;
+    }
+    #notLoggedInText{
+        flex: 2; 
+        align-content:center;
+
+        button {
+            display:block;
+            padding:3%;
+            margin-top:0.5rem;
+            margin-bottom:0.5rem;
+            margin-left:auto;
+            margin-right:auto;
+            width:40%;
+        }
+    }
+}
+
 
 /*CSS for the tabview, tabs-wrapper, and tabcontent*/
 .tabview{
@@ -456,5 +492,22 @@ form{
     #loginContent {
         max-width: 60%;
         
+    }
+
+    #notLoggedIn{
+        width:100%;
+        min-height:30vh;
+        background:#ffc1c1;
+        
+        .contentHeader {
+            margin-bottom:10px;
+        }
+        #notLoggedInContent{
+            width:60%;
+        }
+        .icon{
+            font-size:8rem;
+            text-align:center;
+        }
     }
   }
