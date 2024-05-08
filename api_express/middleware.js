@@ -61,8 +61,8 @@ function auth(tokenType = "stateful"){
             
         } catch (err) {
             console.log("err @ mw.auth()  : ", err);
-            
-            if(req.accepts('application/json')) return res.status(401).json({
+
+            if(req.body?.isApi) return res.status(401).json({
                 error:"Invalid token, please re-authenticate."
             });
 
@@ -77,7 +77,8 @@ function admin(){
             const {token, admin} = req.user;
 
             if(!admin || token.validate_required) {
-                if(req.accepts('application/json')) return res.status(403).json({
+
+                if(req.body?.isApi) return res.status(403).json({
                     error:"you are not authorized for this action "
                 });
                 else return res.status(401).render("login", {title:"Login", unauthorized:true});

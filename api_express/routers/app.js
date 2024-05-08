@@ -2,9 +2,15 @@ const router = require("express").Router();
 
 const mw = require("../middleware");
 
-router.get("/", async(req,res)=>{
+router.get("/", mw.identity() ,async(req,res)=>{
 
-    res.render("index", {title:"Maintenance System"});
+
+    console.log("index user: ", req.user);
+        
+    if(!req.user) return res.render("login", {title:"login"})
+    if(req.user.role == 'contractor')
+        return res.redirect('/worker');
+    else return res.render('index', {title: 'Maintenance System', admin: req.user.role == 'admin'});
 });
 router.get("/login", async(req,res)=>{
     res.render("login", {title:"Login"});
