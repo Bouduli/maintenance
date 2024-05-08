@@ -238,8 +238,6 @@ function view() {
                 await this.fetchContractors();
                 await this.fetchSuggestions();
 
-                console.log(this.contractors);
-
                 //make house-modal update itself.
                 if (this.house.houseID) {
                     //re-assigning house allows showing updated information in houseDetails - after update.
@@ -425,9 +423,12 @@ function view() {
             return c;
         },
 
-        updateAppointeesArray(appointees, id){
-            if(appointees.find(a=>a.contractorID == id)) appointees = appointees.filter(a=>a.contractorID != id);
-            else appointees.push(id);
+        updateAppointeesArray(checked, appointees, id){
+            let updated = [];
+            if(!checked)
+                updated = appointees.filter(a=>a != id);
+            else updated = [id, ...appointees];
+            return updated;
         },
         async removeFromTask(appointees, taskID){
             console.log(appointees);
