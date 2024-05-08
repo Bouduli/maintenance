@@ -64,7 +64,7 @@ router.post("/invite", async(req,res)=>{
         });
 
         //optional: sending an email that a user have been appointed a task.
-        const email_data = await email_client.sendHtmlMail(email, {
+        const email_data = email_client.sendHtmlMail(email, {
             Header:"You have been appointed with another task", //--------------------------------------------------------> Do something with this link <----------
             Body:`<p>You have been invited to another task.!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>`,
             Footer :"If you beleive this was a mistake, I suggest you disregard this email"
