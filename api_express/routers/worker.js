@@ -184,7 +184,7 @@ router.get("/suggestion", async(req,res)=>{
 
         const suggestion_sql = "SELECT * FROM suggested_tasks WHERE contractorID = ?";
         const suggestions = await db.query(suggestion_sql, [contractorID]);
-        console.log("suggestions: ", suggestions);
+        // console.log("suggestions: ", suggestions);
 
         if(!suggestions.length) return res.status(404).json({
             error:"no suggestions", message: "you haven't created any suggestions, or your suggestions have been turned into tasks."
