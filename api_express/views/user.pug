@@ -178,7 +178,7 @@ block content
                             label(for="houseID_task") For house:
                             select#houseID_task(name="houseID" form="taskForm" x-model="selectedHouse")
                                 template(x-for="h in houses")
-                                    option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == selected_house_id")
+                                    option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`")
                                 option(value=false selected="" hidden="") ---    
                         form(action="/task", id="taskForm" method="post" 
                         @submit.prevent="await alterTask($event.target, editTask); subtab='taskDetails'; ")

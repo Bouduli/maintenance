@@ -105,7 +105,7 @@ block content
                         option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == house.houseID")
                     option(value="" selected="" hidden="") ---
             
-            form#taskForm(@submit.prevent="if(await makeSuggestion(selectedHouse, $event.target.description.value)){$event.target.reset(); modal = 'suggestedSuccessmodal';} else modal='somethingWentWrongModal'; ")
+            form#taskForm(@submit.prevent="selectedHouse = selectedHouse? selectedHouse : house.houseID? house.houseID : ''; if(await makeSuggestion(selectedHouse, $event.target.description.value)){$event.target.reset(); modal = 'suggestedSuccessmodal';} else modal='somethingWentWrongModal'; ")
                 .labelContainer
                     label(for="description") Description: 
                     input#description(type="text", name="description" placeholder="description")
