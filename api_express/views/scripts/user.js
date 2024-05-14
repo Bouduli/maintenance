@@ -84,7 +84,7 @@ async function alterTask(target, editing = false) {
                     //This tells Alpine.JS to re-fetch the data.
                     window.dispatchEvent(dataChangeEvent);
             */
-           
+
             //clears form
             target.reset();
 
@@ -403,7 +403,7 @@ function view() {
          * @returns {Promise<task>} the task
          */
         async getTask(task) {
-            this.filteredTasks =this.filterTasksBy('tasks', 0);
+
             const t = this.filteredTasks.find(t => t.taskID == task);
             if (!t) return { contractors: [] }
 
