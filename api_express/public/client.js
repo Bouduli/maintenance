@@ -10,7 +10,7 @@ document.querySelector('#expandButton').addEventListener('click', function (ev) 
     sidebar.classList.toggle('active');
     const pushable = document.querySelector('.pushable');
     pushable.classList.toggle('pushed');
-
+    document.querySelector('.overlay').classList.toggle('pushed');
 
     //the "pushed" part should have a click/event for "dismissing" the sidebar.
     //this is placed in a timeout of 0 seconds, because otherwise, the eventListener on '.pushable' will be able to trigger on the same click that opened the sidebar.
@@ -29,4 +29,5 @@ function toggleSidebar() {
     pushable.removeEventListener('click', toggleSidebar);
     document.querySelector('.sidebar').classList.toggle('active');
     pushable.classList.toggle('pushed')
+    document.querySelector('.overlay').classList.toggle('pushed');
 }

@@ -83,10 +83,23 @@ header {
 
     position: static;
     transform: translateX(250px);
-    background-color:  rgba(0,0,0,0.4) !important;
+    /* background-color:  rgba(0,0,0,0.4) !important; */
 }
 .pushable, .sidebar {
     transition: transform .5s cubic-bezier(0.52, -0.01, 0.25, 1)
+}
+.overlay{
+    display:none;
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    background: rgba(20,20,20,.4);
+}
+.overlay.pushed{
+    display:block;
 }
 
 main {
