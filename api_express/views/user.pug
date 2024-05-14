@@ -1,7 +1,7 @@
 extends template.pug 
 
 block content 
-    div(x-data="view();" x-init="await data(); modal=false;" @data-change.camel.window="await data()"
+    div(x-data="view();" x-init="await data(); modal=false;" @data-change.camel.window="await data();"
         style="display:grid; place-items:center;")
 
         //- Tab page wrapper
@@ -99,10 +99,10 @@ block content
                                 option(value="suggestions") Suggestions
                             .selectContainer
                                 label(for="taskFilter") Filter by house:
-                                select#taskFilter(name="filterID" x-model="filterID" @change="filteredTasks=filterTasksBy(filterGroup, filterID)")
-                                    option(value="" selected="") Any
+                                select#taskFilter(name="filterID" x-model="filterID" @change="filteredTasks=filterTasksBy(filterGroup, filterID); console.log('changed filterID');")
+                                    option(value="" x-bind:selected="!filterID") Any
                                     template(x-for="h in houses")
-                                        option(x-bind:value="h.houseID" x-text="h.address" x-bind:selected="h.houseID == selected_house_id")
+                                        option(x-bind:value="h.houseID" x-text="h.address" x-bind:selected="h.houseID == filterID")
 
 
 
@@ -181,7 +181,7 @@ block content
                                     option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`")
                                 option(value=false selected="" hidden="") ---    
                         form(action="/task", id="taskForm" method="post" 
-                        @submit.prevent="tempID = await alterTask($event.target, editTask); await data(); filterGroup = 'tasks'; filteredTasks = filterTasksBy(filterGroup, 0); task = await getTask(tempID); subtab='taskDetails'; ")
+                        @submit.prevent="tempID = await alterTask($event.target, editTask); await data(); task = await getTask(tempID); subtab='taskDetails'; ")
                             .labelContainer
                                 label(for="taskDescription") Description:   
                                 input#taskDescription(type="text", name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")

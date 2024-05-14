@@ -225,7 +225,6 @@ function view() {
 
         house: { tasks: [] },
         // used to accurately display task_filter when going from houseDetails to Tasks with the "show tasks" button. 
-        selected_house_id: "",
         houses: [],
 
         tasks: [],
@@ -244,9 +243,9 @@ function view() {
         async data() {
             try {
                 await this.fetchHouses();
+                await this.fetchSuggestions();
                 await this.fetchTasks();
                 await this.fetchContractors();
-                await this.fetchSuggestions();
 
                 //make house-modal update itself.
                 if (this.house.houseID) {
@@ -261,6 +260,8 @@ function view() {
                     this.contractor = this.contractors.find(c=>c.contractorID == this.contractor.contractorID) || {suggestions:[]};
                     if(this.contractor.contractorID) this.contractor = await this.getContractor(this.contractor.contractorID);
                 }
+
+                this.filteredTasks = this.filterTasksBy(this.filterGroup, this.filterID);
             } catch (error) {
                 console.log("unable to fetch data")
             }
@@ -294,20 +295,8 @@ function view() {
                     console.log("no tasks");
                     this.tasks = [];
                 }
-                if(this.filterGroup == "tasks"){
-                    //if there is a selected house for filtering (filteredTasks have a length, not equal to the initial length of tasks.)
-                    if (this.filteredTasks.length && this.filteredTasks.length != initial_length) {
-                        /**
-                         * @type {string} houseID used to filter tasks in taskWrapper
-                         */
-                        const id_for_filter = this.filteredTasks[0].houseID;
-                        if (!id_for_filter) this.filteredTasks = this.tasks;
-
-                        this.filteredTasks = this.tasks.filter(t => t.houseID == id_for_filter);
-                    }
-                    else this.filteredTasks = this.tasks;
-                }
-                
+                // filter the tasks by filterGroup and houseID, if these doesn't exist, we get All entries in filterGroup (tasks or suggestions).
+                this.filteredTasks = this.filterTasksBy(this.filterGroup, this.filterID);
 
             } catch (err) {
                 console.log(err);
@@ -350,18 +339,7 @@ function view() {
                     s.taskID = s.suggestionID;
                 });
 
-                if(this.filterGroup == "suggestions"){
-                    if (this.filteredTasks.length != initial_length) {
-                        /**
-                         * @type {string} houseID used to filter tasks in taskWrapper
-                         */
-                        const id_for_filter = this.filteredTasks[0].houseID;
-                        if (!id_for_filter) this.filteredTasks = this.suggestions;
-
-                        this.filteredTasks = this.suggestions.filter(t => t.houseID == id_for_filter);
-                    }
-                    else this.filteredTasks = this.suggestions;
-                }
+                this.filteredTasks = this.filterTasksBy(this.filterGroup, this.filterID);
 
             } catch (err) {
                 console.log("no suggestions");
@@ -404,7 +382,8 @@ function view() {
          */
         async getTask(task) {
 
-            const t = this.filteredTasks.find(t => t.taskID == task);
+            //find the task from filtered (in the case of task or suggestions), or from all tasks, if the task has been added. &
+            const t = this.filteredTasks.find(t => t.taskID == task) || this.tasks.find(t=>t.taskID == task);
             if (!t) return { contractors: [] }
 
 
