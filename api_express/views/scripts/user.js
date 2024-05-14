@@ -73,9 +73,18 @@ async function alterTask(target, editing = false) {
 
         if (res.ok) {
             console.log("altered task with id: ", json.content);
-            //This tells Alpine.JS to re-fetch the data.
-            window.dispatchEvent(dataChangeEvent);
 
+            /* 
+                ----> When creating a new task, we need the new task from the server.
+                By dispatching the event, Alpine will do this on a separate thread, and the new task isn't accessible until much later.
+                Which facilitates fetching the data manually, with `await`, once alterTask() has returned the id.
+
+                By commenting out the event, we won't fetch data two times. 
+                ---------------------------------------------------------------------------<
+                    //This tells Alpine.JS to re-fetch the data.
+                    window.dispatchEvent(dataChangeEvent);
+            */
+           
             //clears form
             target.reset();
 
@@ -222,6 +231,7 @@ function view() {
         tasks: [],
         filteredTasks: [],
         task: { contractors: [] },
+        tempID: '',
         //filtering tasks
         filterGroup:'tasks', filterID:'',
 
@@ -393,6 +403,7 @@ function view() {
          * @returns {Promise<task>} the task
          */
         async getTask(task) {
+            this.filteredTasks =this.filterTasksBy('tasks', 0);
             const t = this.filteredTasks.find(t => t.taskID == task);
             if (!t) return { contractors: [] }
 

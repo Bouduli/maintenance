@@ -181,7 +181,7 @@ block content
                                     option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`")
                                 option(value=false selected="" hidden="") ---    
                         form(action="/task", id="taskForm" method="post" 
-                        @submit.prevent="await alterTask($event.target, editTask); subtab='taskDetails'; ")
+                        @submit.prevent="tempID = await alterTask($event.target, editTask); await data(); task = await getTask(tempID); subtab='taskDetails'; ")
                             .labelContainer
                                 label(for="taskDescription") Description:   
                                 input#taskDescription(type="text", name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")
