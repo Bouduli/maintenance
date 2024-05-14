@@ -355,3 +355,6 @@ Saker som har gjorts:
 Saker som har gjorts: 
 - Buggfixar med `<select>` dropdowns i Task-formulären
 - Buggfix där redirect inte funkar för nyskapad task. 
+- Buggfix där CUD operationer på tasks orsakade att filtret ändrade i Task-viewen.
+- Fixat overlayen så att den faktiskt dimmar "ALLA" element. (nice!!!)
+- (fixat) CSS för `.card` element som clippar vid slutet av skärmen i mobil-vyn. 
