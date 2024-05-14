@@ -344,3 +344,14 @@ Saker som har gjorts:
 - Misslyckad autentisering redirectar till `login.pug` + **Access denied banner**
 - Filtrera Appointees när man clickar "show appointees"
 - Ta bort appointees från task
+
+
+### Måndag 13/05
+Saker som har gjorts:
+- Worker vyn har städats upp med hänsyn till `console.log()`:s 
+- Sidebarens javascript har skrivits om utan jQuery. 
+
+### Tisdag 14/05
+Saker som har gjorts: 
+- Buggfixar med `<select>` dropdowns i Task-formulären
+- Buggfix där redirect inte funkar för nyskapad task. 
