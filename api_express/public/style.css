@@ -214,7 +214,6 @@ main {
     }
 }
 .tabcontent{
-    width:90%;
     padding:4%;
     margin-left: auto; margin-right: auto; 
 }
@@ -431,6 +430,9 @@ main {
             width: 100%;
         }
     }
+}
+.card:last-of-type{
+    margin-bottom:10vh;
 }
 .card.blue{
     background: var(--card-blue);
