@@ -11,9 +11,9 @@ block content
                 //
                     These are links used for tabs
                     Sauce for this is https://talltips.novate.co.uk/tabbed-content-using-alpine-js 
-                a(href="#" x-bind:class="tab=='#houses'? 'selected' : ''" x-on:click.prevent="tab='#houses'; subtab='houseWrapper'") houses 
-                a(href="#" x-bind:class="tab=='#tasks'? 'selected' : ''" x-on:click.prevent="tab='#tasks'; subtab='taskWrapper'") tasks 
-                a(href="#" x-bind:class="tab=='#contractors'? 'selected' : ''" x-on:click.prevent="tab='#contractors'; subtab='contractorWrapper'") contractors 
+                a(href="#" x-bind:class="tab=='#houses'? 'selected' : ''" x-on:click.prevent="tab='#houses'; subtab='houseWrapper'") Houses 
+                a(href="#" x-bind:class="tab=='#tasks'? 'selected' : ''" x-on:click.prevent="tab='#tasks'; subtab='taskWrapper'") Tasks 
+                a(href="#" x-bind:class="tab=='#contractors'? 'selected' : ''" x-on:click.prevent="tab='#contractors'; subtab='contractorWrapper'") Contractors 
 
             //- Tabbed content
             div.tabcontent
@@ -198,7 +198,7 @@ block content
                             a(href="#" x-bind:class="subtab=='form'? 'selected':''" @click.prevent="subtab='form'; editContractor=false;") Form
 
                     #contractorWrapper(x-show="subtab=='contractorWrapper';" x-cloak="")
-                        h2.contenHeader 
+                        h2.contentHeader 
                             span(x-show="!contractorFilter") Contractors
                             span(x-show="contractorFilter") Appointees  
                                 span(x-text="`(Task #${task.taskID})`")
