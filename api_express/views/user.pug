@@ -70,7 +70,7 @@ block content
                     #houseForm(x-show="subtab=='form'" x-cloak="")
                         h2.contentHeader(x-text="editHouse? `Update House (#${house.houseID})` : 'Create House'")
                         form(action="/house", id="houseForm" method="post" 
-                        @submit.prevent="selected_house_id = await alterHouse($event.target, editHouse); subtab='houseDetails'; house=getHouse(selected_house_id);")
+                        @submit.prevent="selected_house_id = await alterHouse($event.target, editHouse); if(selected_house_id){ $event.target.reset(); subtab='houseDetails'; house=getHouse(selected_house_id);} else modal='somethingWentWrongModal';")
                             .labelContainer
                                 label(for="houseAddress") Address:
                                 input#houseAddress(type="text", name="address", required="" placeholder="Address", x-bind:value="editHouse? house.address : ''")
@@ -181,7 +181,7 @@ block content
                                     option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`")
                                 option(value=false selected="" hidden="") ---    
                         form(action="/task", id="taskForm" method="post" 
-                        @submit.prevent="tempID = await alterTask($event.target, editTask); await data(); task = await getTask(tempID); subtab='taskDetails'; ")
+                        @submit.prevent="tempID = await alterTask($event.target, editTask); if(tempID){await data(); task = await getTask(tempID); subtab='taskDetails';} else {modal='somethingWentWrongModal';}  ")
                             .labelContainer
                                 label(for="taskDescription") Description:   
                                 input#taskDescription(type="text", name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")
@@ -237,7 +237,7 @@ block content
 
                     #contractorForm(x-show="subtab=='form'" x-cloak="")
                         h2.contentHeader(x-text="editContractor? 'Update Contractor' : 'New Contractor'")
-                        form(action="/contractor", @submit.prevent="await alterContractor($event.target, editContractor); subtab='detailsView'")
+                        form(action="/contractor", @submit.prevent="tempContractor = await alterContractor($event.target, editContractor); if(tempContractor) {subtab='contractorDetails'; tempContractor=0;} else {modal='somethingWentWrongModal';}")
                             .labelContainer
                                 label(for="contractorName") Name: 
                                 input#contractorName(type="text", name="name", placeholder="Name" required="" x-bind:value="editContractor? contractor.name : ''")
@@ -317,7 +317,11 @@ block content
                 .buttonBox(style="90%; margin-left:auto; margin-right:auto;")
                     button.destroyButton(@click="await destroy('contractor', contractor.contractorID); modal=false; subtab='contractorWrapper';") Yes
                     button.cancelButton(@click="modal=false;") No
-                
+            .confirmModal(x-show="modal=='somethingWentWrongModal'" x-cloak="")
+                h2.contentHeader Ooops!
+                p.confirmContent Something went wrong, please try again, and make sure to check your inputs again
+                .buttonBox(style="width:60%; margin-left:auto; margin-right:auto;")
+                    button.cancelButton(@click="modal=false;") Ok
         script
             include scripts/user.js
             

@@ -238,6 +238,7 @@ function view() {
         contractor: { suggestions:[] },
         filteredContractors: [],
         contractorFilter: '',
+        tempContractor: '',
 
         suggestions: [],
         async data() {
