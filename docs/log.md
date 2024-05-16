@@ -358,3 +358,13 @@ Saker som har gjorts:
 - Buggfix där CUD operationer på tasks orsakade att filtret ändrade i Task-viewen.
 - Fixat overlayen så att den faktiskt dimmar "ALLA" element. (nice!!!)
 - (fixat) CSS för `.card` element som clippar vid slutet av skärmen i mobil-vyn. 
+
+### Onsdag 15/05
+Saker som har gjorts:
+- Förbättrad CSS av tabview + inga blåa länkar längre.
+- Felmeddelande i formulär vid misslyckad submit. 
+
+### Torsdag 16/05
+Saker som har gjorts:
+- Buggfix där create av Hus eller Contractor inte kan redirecta till detaljvyn. 
+- Create av user (admin-vyn) kan inte redirecta till skapad user.
