@@ -70,7 +70,7 @@ block content
                     #houseForm(x-show="subtab=='form'" x-cloak="")
                         h2.contentHeader(x-text="editHouse? `Update House (#${house.houseID})` : 'Create House'")
                         form(action="/house", id="houseForm" method="post" 
-                        @submit.prevent="selected_house_id = await alterHouse($event.target, editHouse); if(selected_house_id){ $event.target.reset(); subtab='houseDetails'; house=getHouse(selected_house_id);} else modal='somethingWentWrongModal';")
+                        @submit.prevent="selected_house_id = await alterHouse($event.target, editHouse); if(selected_house_id){ $event.target.reset(); await data();subtab='houseDetails'; house=getHouse(selected_house_id);} else modal='somethingWentWrongModal';")
                             .labelContainer
                                 label(for="houseAddress") Address:
                                 input#houseAddress(type="text", name="address", required="" placeholder="Address", x-bind:value="editHouse? house.address : ''")
@@ -237,7 +237,7 @@ block content
 
                     #contractorForm(x-show="subtab=='form'" x-cloak="")
                         h2.contentHeader(x-text="editContractor? 'Update Contractor' : 'New Contractor'")
-                        form(action="/contractor", @submit.prevent="tempContractor = await alterContractor($event.target, editContractor); if(tempContractor) {subtab='contractorDetails'; tempContractor=0;} else {modal='somethingWentWrongModal';}")
+                        form(action="/contractor", @submit.prevent="tempContractor = await alterContractor($event.target, editContractor); if(tempContractor) {await data(); contractor= getContractor(tempContractor); subtab='contractorDetails'; tempContractor=0;} else {modal='somethingWentWrongModal';}")
                             .labelContainer
                                 label(for="contractorName") Name: 
                                 input#contractorName(type="text", name="name", placeholder="Name" required="" x-bind:value="editContractor? contractor.name : ''")

@@ -32,8 +32,17 @@ async function alterHouse(target, editing = false) {
         if (res.ok) {
             console.log("Inserted house with id: ", json.content);
 
-            //This tells Alpine.JS to re-fetch the data.
-            window.dispatchEvent(dataChangeEvent);
+
+            /* 
+                ----> When creating a new house, we need the new house from the server.
+                By dispatching the event, Alpine will do this on a separate thread, and the new house isn't accessible until much later.
+                Which facilitates fetching the data manually, with `await`, once alterHouse() has returned the id.
+
+                By commenting out the event, we won't fetch data two times. 
+                ---------------------------------------------------------------------------<
+                    //This tells Alpine.JS to re-fetch the data.
+                    window.dispatchEvent(dataChangeEvent);
+            */
 
             //clears form
             target.reset();
@@ -127,7 +136,16 @@ async function alterContractor(target, editing=false){
         if(res.ok){
             console.log("altered contractor: ", json);
 
-            window.dispatchEvent(dataChangeEvent);
+            /* 
+                ----> When creating a new contractor, we need the new contractor from the server.
+                By dispatching the event, Alpine will do this on a separate thread, and the new contractor isn't accessible until much later.
+                Which facilitates fetching the data manually, with `await`, once alterContractor() has returned the id.
+
+                By commenting out the event, we won't fetch data two times. 
+                ---------------------------------------------------------------------------<
+                    //This tells Alpine.JS to re-fetch the data.
+                    window.dispatchEvent(dataChangeEvent);
+            */
 
             //clears-form
             target.reset();
