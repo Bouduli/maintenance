@@ -48,8 +48,8 @@ async function createUser(target){
         const json = await res.json();
 
         if(res.ok){
-            window.dispatchEvent(dataChangeEvent);
-            // console.log("created user: ", json.content);
+            // window.dispatchEvent(dataChangeEvent);
+            console.log("created user: ", json.content);
             target.reset();
         }
         else console.error("unable to create user", json.content);
@@ -67,7 +67,7 @@ function view(){
 
         users : [],
         user:{houses:[], contractors:[]},
-
+        tempUserID: '',
         async data(){
             try {
                 await this.fetchUsers();

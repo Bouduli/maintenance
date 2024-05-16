@@ -55,7 +55,7 @@ block content
 
         #userForm(x-show="subtab=='form'")
             h2.contentHeader Create Users
-            form(@submit.prevent="await createUser($event.target); subtab='userWrapper'")
+            form(@submit.prevent="tempUserID = await createUser($event.target); if(tempUserID) {subtab='userWrapper'; await data(); user=getUser(tempUserID);} else {modal='somethingWentWrongModal';}")
                 .labelContainer
                     label(for="#userName") Name:  
                     input#userName(type="text", name="name", placeholder="name")
@@ -83,6 +83,10 @@ block content
                 .buttonBox(style="width:90%; margin-left:auto; margin-right:auto;")
                     button.destroyButton(@click="await destroy('administrator/user', user.userID); subtab='userWrapper'; modal=false") Yes
                     button.cancelButton(@click="modal=false") Cancel
-
+            .confirmModal(x-show="modal=='somethingWentWrongModal'" x-cloak="")
+                h2.contentHeader Ooops!
+                p.confirmContent Something went wrong, please try again, and make sure to check your inputs again
+                .buttonBox(style="width:60%; margin-left:auto; margin-right:auto;")
+                    button.cancelButton(@click="modal=false;") Ok
         script
             include scripts/administrator.js
