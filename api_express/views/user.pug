@@ -76,7 +76,7 @@ block content
                                 input#houseAddress(type="text", name="address", required="" placeholder="Address", x-bind:value="editHouse? house.address : ''")
                             .labelContainer
                                 label(for="houseDescription") Description (Optional):
-                                input#houseDescription(type="text", name="description" placeholder="Description" x-bind:value="editHouse? house.description :''")
+                                input#houseDescription(type="text", name="description" placeholder="Enter your task description here..." x-bind:value="editHouse? house.description :''")
                             .labelContainer
                                 label(for="houseName") Name (Optional):
                                 input#houseName(type="text", name="name", placeholder="Name" x-bind:value="editHouse? house.name : ''")
@@ -140,9 +140,9 @@ block content
                                 span(x-show="filterGroup=='tasks'") Task: #
                                 span(x-show="filterGroup=='suggestions'") Suggestion: #
                                 span(x-text="task.taskID")
-                            p 
-                                b Description: 
-                                span(x-text="task.description")
+                            .labelContainer(style="width:100%;")
+                                label Description:
+                                textarea(x-bind:value="task.description" readonly="") 
                             p 
                                 b Address: 
                                 span(x-text="task.houseID ? houses.find(h=>h.houseID == task.houseID).address : 'no address' ")
@@ -184,7 +184,7 @@ block content
                         @submit.prevent="tempID = await alterTask($event.target, editTask); if(tempID){await data(); task = await getTask(tempID); subtab='taskDetails';} else {modal='somethingWentWrongModal';}  ")
                             .labelContainer
                                 label(for="taskDescription") Description:   
-                                input#taskDescription(type="text", name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")
+                                textarea#taskDescription(cols="30" rows="10" name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")
                             input(type="hidden", name="taskID", x-bind:value="editTask? task.taskID : ''")
                             input(type="hidden" name="houseID" x-bind:value="selectedHouse")
                             input(type="submit" x-bind:value="editTask ? 'Save' : 'Create'")
