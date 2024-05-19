@@ -403,6 +403,7 @@ main {
 #houseWrapper, #taskWrapper, #contractorWrapper, #userWrapper{
     display:grid;
     place-items:center;
+    margin-bottom:30vh;
     /* overflow-y: scroll; */
 
     /* background:greenyellow; */
@@ -462,9 +463,10 @@ main {
     
     border-radius: 0 0 5px 5px;
     grid-area: b;
-
     background-color: var(--card-text-background);
     padding:2%;
+    overflow:hidden;
+    
     /* Text settings*/
     h2{
         font-size: 1.5em;
@@ -473,7 +475,12 @@ main {
 
     p{
         font-size: 1em;
-        font-family: var(--primary-font)
+        font-family: var(--primary-font);
+        height:1.5em; 
+        overflow:hidden;
+        white-space: nowrap;
+        text-overflow:ellipsis;
+
     
     }
     

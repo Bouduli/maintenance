@@ -142,7 +142,7 @@ block content
                                 span(x-text="task.taskID")
                             .labelContainer(style="width:100%;")
                                 label Description:
-                                textarea(x-bind:value="task.description" readonly="") 
+                                textarea(x-bind:value="task.description" rows="7" readonly="") 
                             p 
                                 b Address: 
                                 span(x-text="task.houseID ? houses.find(h=>h.houseID == task.houseID).address : 'no address' ")
