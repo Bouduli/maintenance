@@ -2,111 +2,125 @@ extends template.pug
 
 block content 
     div(x-data = "view()" x-init="await data()" @data-change.camel.window="await data()")
-        div.tabview.alternate
-            .tabs(x-bind:class="(task.taskID && house.houseID)? 'four-wide': ((task.taskID || house.houseID)? 'three-wide': 'two-wide')")
-                a(href="#" x-bind:class="subtab=='taskWrapper'? 'selected' : ''" @click.prevent="subtab='taskWrapper'") Tasks
-                a(href="#" x-bind:class="subtab=='taskDetails'? 'selected' : ''" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
-                a(href="#" x-bind:class="subtab=='houseDetails'? 'selected' : ''" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House Details
-                a(href="#" x-bind:class="subtab=='form'? 'selected' : ''" @click.prevent="subtab='form'") Suggestion Form
 
-        #taskWrapper(x-show="subtab=='taskWrapper'" x-cloak="")
-            h2.contentHeader Tasks
-            .selectContainer
-                label(for="showSelection") Showing:
-                select#showSelection(name="filteringType" x-model="filterGroup" @change="filteredTasks = filterTasksBy(filterGroup, filterID);")
-                    option(value="tasks" selected="") Tasks
-                    option(value="suggestions") Suggestions
+        div.tabview
+            .tabs.two-wide
+                a(href="#" @click.prevent="tab='';" x-bind:class="tab!='changeProfile'? 'selected' : ''") Main Content
+                a(href="#" @click.prevent="tab='changeProfile';" x-bind:class="tab=='changeProfile'? 'selected' : ''") Change Profile
+            .tabcontent(x-show="tab=='changeProfile'" x-cloak="")
+                form(@submit.prevent="await swapProfile($event.target); ") 
+                    .selectContainer
+                        label(for="profileID") Select contractor-profile
+                        select#profileID(name="profile")
+                            template(x-for="p in profiles" :key="p.contractorID")
+                                option(x-bind:value="p.contractorID" x-bind:selected="p.current" x-text="`${p.name} (${p.occupation})`")
+                    input(type="submit", value="Change")
+            .tabcontent(x-show="tab!='changeProfile'")
+                div.tabview.alternate
+                    .tabs(x-bind:class="(task.taskID && house.houseID)? 'four-wide': ((task.taskID || house.houseID)? 'three-wide': 'two-wide')")
+                        a(href="#" x-bind:class="subtab=='taskWrapper'? 'selected' : ''" @click.prevent="subtab='taskWrapper'") Tasks
+                        a(href="#" x-bind:class="subtab=='taskDetails'? 'selected' : ''" @click.prevent="subtab='taskDetails'" x-show="task.taskID") Task Details
+                        a(href="#" x-bind:class="subtab=='houseDetails'? 'selected' : ''" @click.prevent="subtab='houseDetails'" x-show="house.houseID") House Details
+                        a(href="#" x-bind:class="subtab=='form'? 'selected' : ''" @click.prevent="subtab='form'") Suggestion Form
+
+                #taskWrapper(x-show="subtab=='taskWrapper'" x-cloak="")
+                    h2.contentHeader Tasks
+                    .selectContainer
+                        label(for="showSelection") Showing:
+                        select#showSelection(name="filteringType" x-model="filterGroup" @change="filteredTasks = filterTasksBy(filterGroup, filterID);")
+                            option(value="tasks" selected="") Tasks
+                            option(value="suggestions") Suggestions
+                        
+                    template(x-for="t in filteredTasks" :key="t.taskID")
+                        .card(x-bind:id="`task-${t.taskID}`" x-bind:class="filterGroup=='tasks'? 'teal' : 'green'" @click="task= await getTask(t.taskID);subtab='taskDetails';")
+                            .cardInfo
+                                h2
+                                    span(x-show="filterGroup=='tasks'") Task 
+                                    span(x-show="filterGroup=='suggestions'") Suggestion 
+                                    span(x-text="`#${t.taskID}`")
+                                p(x-text="t.description")
+                #taskDetails(x-show="subtab=='taskDetails'" class="detailsView" x-cloak="")
+                    .selectContainer
+                            label(for="taskID") 
+                                span Viewing 
+                                span(x-show="filterGroup=='tasks'") Task 
+                                span(x-show="filterGroup=='suggestions'") Suggestion 
+                            select#taskID(name="taskID" @change="task= await getTask($event.target.value); /*console.log(task)*/")
+                                option(selected="" hidden="") ---
+                                template(x-for="t in filteredTasks" :key="t.taskID")
+                                    option(x-bind:value="t.taskID" x-text="`${filterGroup=='tasks'?'Task ': 'Suggestion'} #${t.taskID}`")
+
+                    .detailsBody()
+                        h2 
+                            span(x-show="filterGroup=='tasks'") Task: #
+                            span(x-show="filterGroup=='suggestions'") Suggestion: #
+                            span(x-text="task.taskID")
+                        h3
+                            b Completed: 
+                            span(x-text="task.completed? 'Yes' : 'No' ")
+                        hr( style="margin-bottom:1em; margin-top:1em;")
+                        .labelContainer(style="width:100%;")
+                            label Description:
+                            textarea(x-bind:value="task.description" rows="7" readonly="") 
+                        p 
+                            b Address: 
+                            span( style="color:#6aa4d8; text-decoration:underline;" x-text="task.house.address" @click="console.log('houses: ', houses); subtab='houseDetails'; house = getHouse(task.houseID);")
+                        p
+                            b HouseID: 
+                            span(x-text="task.houseID")
+                        p
+                            b Created at: 
+                            span(x-text="new Date(task.created_at).toLocaleString()")
+                        p 
+                            b Last updated: 
+                            span(x-text="new Date(task.last_edited).toLocaleString()")
+                        
+                        .buttonBox(x-show="filterGroup=='tasks' && !task.suggestionID")
+                            button(@click="modal='toggleCompleteModal'")
+                                span.material-icons() check
                 
-            template(x-for="t in filteredTasks" :key="t.taskID")
-                .card(x-bind:id="`task-${t.taskID}`" x-bind:class="filterGroup=='tasks'? 'teal' : 'green'" @click="task= await getTask(t.taskID);subtab='taskDetails';")
-                    .cardInfo
-                        h2
-                            span(x-show="filterGroup=='tasks'") Task 
-                            span(x-show="filterGroup=='suggestions'") Suggestion 
-                            span(x-text="`#${t.taskID}`")
-                        p(x-text="t.description")
-        #taskDetails(x-show="subtab=='taskDetails'" class="detailsView" x-cloak="")
-            .selectContainer
-                    label(for="taskID") 
-                        span Viewing 
-                        span(x-show="filterGroup=='tasks'") Task 
-                        span(x-show="filterGroup=='suggestions'") Suggestion 
-                    select#taskID(name="taskID" @change="task= await getTask($event.target.value); /*console.log(task)*/")
-                        option(selected="" hidden="") ---
-                        template(x-for="t in filteredTasks;" :key="t.taskID")
-                            option(x-bind:value="t.taskID" x-text="`${filterGroup=='tasks'?'Task ': 'Suggestion'} #${t.taskID}`")
+                #houseDetails(x-show="subtab=='houseDetails'" class="detailsView" x-cloak="")
+                        .selectContainer
+                            label(for="houseID") Viewing House:
+                            select#houseID(@change="house = getHouse($event.target.value); /* console.log(house); */")
+                                template(x-for="h in houses")
+                                    option(x-bind:value="h.houseID" x-text="h.address") 
+                                option(selected="" hidden="") ---
+                        .detailsBody()
+                            h2(x-text="house.address")
+                            p
+                                b Name: 
+                                span(x-text="house.name")
+                            p
+                                b Description: 
+                                span(x-text="house.description")
+                            p 
+                                b ID: #
+                                span(x-text="house.houseID")
+                            p
+                                b Created at: 
+                                span(x-text="new Date(house.created_at).toLocaleString()")
+                            p
+                                b Suggestion: 
+                                span(style="color:#6aa4d8; text-decoration:underline;" @click="subtab='form'") Open Form
+                                    span.material-icons(style="font-size:small;") launch
 
-            .detailsBody()
-                h2 
-                    span(x-show="filterGroup=='tasks'") Task: #
-                    span(x-show="filterGroup=='suggestions'") Suggestion: #
-                    span(x-text="task.taskID")
-                h3
-                    b Completed: 
-                    span(x-text="task.completed? 'Yes' : 'No' ")
-                hr( style="margin-bottom:1em; margin-top:1em;")
-                .labelContainer(style="width:100%;")
-                    label Description:
-                    textarea(x-bind:value="task.description" rows="7" readonly="") 
-                p 
-                    b Address: 
-                    span( style="color:#6aa4d8; text-decoration:underline;" x-text="task.house.address" @click="console.log('houses: ', houses); subtab='houseDetails'; house = getHouse(task.houseID);")
-                p
-                    b HouseID: 
-                    span(x-text="task.houseID")
-                p
-                    b Created at: 
-                    span(x-text="new Date(task.created_at).toLocaleString()")
-                p 
-                    b Last updated: 
-                    span(x-text="new Date(task.last_edited).toLocaleString()")
-                
-                .buttonBox(x-show="filterGroup=='tasks' && !task.suggestionID")
-                    button(@click="modal='toggleCompleteModal'")
-                        span.material-icons() check
-        
-        #houseDetails(x-show="subtab=='houseDetails'" class="detailsView" x-cloak="")
-                .selectContainer
-                    label(for="houseID") Viewing House:
-                    select#houseID(@change="house = getHouse($event.target.value); /* console.log(house); */")
-                        template(x-for="h in houses")
-                            option(x-bind:value="h.houseID" x-text="h.address") 
-                        option(selected="" hidden="") ---
-                .detailsBody()
-                    h2(x-text="house.address")
-                    p
-                        b Name: 
-                        span(x-text="house.name")
-                    p
-                        b Description: 
-                        span(x-text="house.description")
-                    p 
-                        b ID: #
-                        span(x-text="house.houseID")
-                    p
-                        b Created at: 
-                        span(x-text="new Date(house.created_at).toLocaleString()")
-                    p
-                        b Suggestion: 
-                        span(style="color:#6aa4d8; text-decoration:underline;" @click="subtab='form'") Open Form
-                            span.material-icons(style="font-size:small;") launch
-
-        #suggestionForm(x-show="subtab=='form'" x-data="{selectedHouse: ''}" x-cloak="")
-            h2.contentHeader Create Suggestion
-            .selectContainer 
-                label(for="houseID_task") For house:
-                select#houseID_task(name="houseID" form="taskForm" @change="selectedHouse = $event.target.value;"
-                x-model="selectedHouse")
-                    template(x-for="h in houses")
-                        option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == house.houseID")
-                    option(value="" selected="" hidden="") ---
-            
-            form#taskForm(@submit.prevent="selectedHouse = selectedHouse? selectedHouse : house.houseID? house.houseID : ''; if(await makeSuggestion(selectedHouse, $event.target.description.value)){$event.target.reset(); modal = 'suggestedSuccessmodal';} else modal='somethingWentWrongModal'; ")
-                .labelContainer
-                    label(for="taskDescription") Description:   
-                    textarea#taskDescription(cols="30" rows="10" name="description" required="" placeholder="Description")
-                input(type="hidden", name="houseID" x-bind:value="selectedHouse")
-                input(type="submit", value="Create Suggestion")
+                #suggestionForm(x-show="subtab=='form'" x-data="{selectedHouse: ''}" x-cloak="")
+                    h2.contentHeader Create Suggestion
+                    .selectContainer 
+                        label(for="houseID_task") For house:
+                        select#houseID_task(name="houseID" form="taskForm" @change="selectedHouse = $event.target.value;"
+                        x-model="selectedHouse")
+                            template(x-for="h in houses")
+                                option(x-bind:value="h.houseID" x-text="`${h.address}(#${h.houseID})`" x-bind:selected="h.houseID == house.houseID")
+                            option(value="" selected="" hidden="") ---
+                    
+                    form#taskForm(@submit.prevent="selectedHouse = selectedHouse? selectedHouse : house.houseID? house.houseID : ''; if(await makeSuggestion(selectedHouse, $event.target.description.value)){$event.target.reset(); modal = 'suggestedSuccessmodal';} else modal='somethingWentWrongModal'; ")
+                        .labelContainer
+                            label(for="taskDescription") Description:   
+                            textarea#taskDescription(cols="30" rows="10" name="description" required="" placeholder="Description")
+                        input(type="hidden", name="houseID" x-bind:value="selectedHouse")
+                        input(type="submit", value="Create Suggestion")
                     
         .modalContainer(x-show="modal" x-cloak="")
             .confirmModal(x-show="modal=='toggleCompleteModal'" x-cloak="")

@@ -53,11 +53,47 @@ async function markComplete(id, setStatus, target){
 
 }
 
+
+async function swapProfile(target){
+    try {
+        console.log(target);
+
+        newID = target.profile.value;
+
+        const body = {newID, isApi:true};
+        console.log(body);
+        const res = await fetch("/auth/change_profile", {
+            method:"POST",
+            body: JSON.stringify(body),
+            headers:{
+                "Content-Type": "application/json"
+            }
+            
+        });
+
+        console.log(res);
+
+        const data = await res.json();
+        if(res.ok){
+            console.log("successfully swapped ", data.content);
+            location.reload();
+        }
+        else {
+            console.error("unsuccessful swap: ", data.content);
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
+}
 function view(){
 
     return {
+        tab:'',
         modal:false,
         subtab:"taskWrapper",
+
+        profiles: [],
 
         houses:[],
         house:{},
@@ -90,6 +126,10 @@ function view(){
         //fetch data
         async data(){
             try {
+                //being able to switch profiles
+                await this.fetchProfiles();
+
+
                 await this.fetchHouses();
                 await this.fetchTasks();
                 await this.fetchSuggestions();
@@ -106,6 +146,22 @@ function view(){
                 this.filteredTasks = this.tasks;
             } catch (err) {
                 console.log("unable to fetch tasks: ", err);
+            }
+        },
+        async fetchProfiles(){
+            try {
+                const res = await fetch("/worker/profiles");
+                const json = await res.json();
+
+                if(res.ok){
+                    this.profiles = json.content;
+
+                }
+                else {
+                    this.profiles = [];
+                }
+            } catch (err) {
+                console.log(err);
             }
         },
         async fetchHouses(){
