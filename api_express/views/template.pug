@@ -30,6 +30,14 @@ html
         div.sidebar
             div.sidebarGroup
                 h2.contentHeader Account
+
+                if permissions && permissions.worker && profiles
+                    //- Event for this inside client.js script. 
+                    .selectContainer
+                        label(for="profileID") Select contractor-profile
+                        select#profileID(name="profile")
+                            each p in profiles
+                                option(value=p.contractorID selected=p.current )= p.name+" ("+(p.occupation)+")"
                 a(href="/login") 
                     div.sidebarLinkItem
                         span.material-symbols-outlined.icon passkey
