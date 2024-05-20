@@ -271,23 +271,25 @@ router.post("/verify_pwl", async(req,res)=>{
     }
 });
 
-router.post("/change_facility", mw.auth('PWL'), async(req,res)=>{
+router.post("/change_profile", mw.auth('PWL'), async(req,res)=>{
     try {
         const {newID} = req.body;
         const {email, id} = req.user.token;
         req.user.token.id = newID;
-        console.log(id);
+        //maybe overkill - however it validates that pre-swap-contractorID is valid, and has a valid email address. 
         const sql = "SELECT contractorID FROM contractors WHERE contractorID = ? AND email IN (SELECT email FROM contractors Where contractorID = ?)";
         const data = await db.query(sql, [newID,id]);
 
-        console.log(`${data[0]?.contractorID} != ${newID}`,);
         if(data[0]?.contractorID == id) return res.status(401).json({
             content:{
                 error:"unable to perform this facility change"
             }
         });
 
+        //Sigining a new token - so that the change actually happens.
         const newtoken = await jwt.sign(req.user.token, process.env.PWL_LONG_TERM_SECRET)
+
+        //validate required in order to verify signature of token for next request.
         req.user.validate_required = true;
 
         res.cookie('auth-token', newtoken, {
