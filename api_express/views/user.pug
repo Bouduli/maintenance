@@ -140,6 +140,11 @@ block content
                                 span(x-show="filterGroup=='tasks'") Task: #
                                 span(x-show="filterGroup=='suggestions'") Suggestion: #
                                 span(x-text="task.taskID")
+
+                            h3
+                                b Completed: 
+                                span(x-text="task.completed? 'Yes' : 'No' ")
+                            hr(style="margin-bottom:1em; margin-top:1em;")
                             .labelContainer(style="width:100%;")
                                 label Description:
                                 textarea(x-bind:value="task.description" rows="7" readonly="") 
