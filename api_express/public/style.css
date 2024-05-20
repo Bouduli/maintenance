@@ -345,8 +345,8 @@ main {
     }
     select{
         font-size: 1.25em;
-        max-width: 80vw;
-        overflow: none;
+        max-width: 90vw;
+        overflow: hidden;
         text-overflow: ellipsis;
     }
     input{
