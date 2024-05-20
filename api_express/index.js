@@ -1,3 +1,4 @@
+//#region Setup
 const express = require("express");
 require("dotenv").config();
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 require("pug");
 app.set("view engine", "pug");
 
+// initiate and test db (making sure that a connection can be retreived and released).
 (async()=>{
     try {
         if(await db.init()) console.log("Database opened at 3306");
@@ -39,7 +41,10 @@ app.listen(PORT, (err)=>{
     if(err) return console.log(err);
     console.log("Server at http://localhost:"+ PORT)
 });
+//#endregion
 
+//#region Routes
+// View-enpoints are in this `app` router.
 const appRouter = require("./routers/app");
 app.use("/", appRouter);
 
@@ -63,5 +68,6 @@ app.use("/worker", mw.auth("PWL"), workerRouter)
 
 //administrator api router
 const adminRouter = require("./routers/administrator");
-//MAKE SURE TO LOCK THIS ROUTER WITH MIDDLEWARE
-app.use("/administrator", mw.auth(), mw.admin(), adminRouter)
+app.use("/administrator", mw.auth(), mw.admin(), adminRouter);
+
+//#endregion

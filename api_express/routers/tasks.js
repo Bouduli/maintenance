@@ -5,8 +5,9 @@ const router = express.Router();
 const db = require("../db");
 const email_client = require("../email");
 
-//------------ MISC OPERATIONS ---- (they are at the top, because otherwise routes would conflict.)
 
+//---------------------Appointee management---------------------------
+//#region Appointee
 //Invite a contractor to a task
 router.post("/invite", async(req,res)=>{
     try {
@@ -154,6 +155,10 @@ router.delete("/appointee/:id", async(req,res)=>{
         });
     }
 })
+//#endregion Appointee
+
+//---------------------Suggestion management--------------------------
+//#region Suggestions
 //List all task suggestions
 router.get("/suggestion", async(req,res)=>{
 
@@ -308,8 +313,11 @@ router.delete("/suggestion/:id", async(req,res)=>{
         });
     }
 })
+//#endregion Suggestions
 
-//---------------- CRUD OPERATIONS ---------------------------
+//---------------------CRUD operations--------------------------------
+//#region CRUD
+//placed far down as they would conflict with routes above
 //index
 router.get("/", async ( req,res)=>{
     try {
@@ -504,5 +512,5 @@ router.put("/:id", async (req,res)=>{
         })
     }
 })
-
+//#endregion CRUD
 module.exports = router;

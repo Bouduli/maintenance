@@ -89,8 +89,6 @@ router.post("/", async(req,res)=>{
     }
 })
 
-
-
 //destroy
 router.delete("/:id", async (req,res)=>{
 

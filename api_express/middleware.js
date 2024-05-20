@@ -1,4 +1,4 @@
-//module.exports = {}
+//module.exports = {auth, admin, identity}
 
 // access control middlewares
 const jwt = require("jsonwebtoken");

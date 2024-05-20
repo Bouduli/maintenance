@@ -28,7 +28,7 @@ router.get("/user", async(req,res)=>{
     }
 });
 
-//show users (details of a user, showing all houses, tasks, and contractors they've created.)
+//show users (details of a user, showing all houses, tasks, and contractors they've created. - NOT IMPLEMENTED IN CLIENT)
 router.get("/user/:id", async(req,res)=>{
     try {
         //id of user is retreived from params

@@ -7,7 +7,16 @@ const email_client = require("../email");
 const db = require("../db");
 const mw = require("../middleware");
 
-//STATEUFL AUTHENTICATION FOR USERS
+//LOGOUT APPLICABLE TO BOTH AUTHENTICATION-TYPES
+router.get("/logout", async(req,res)=>{
+    res.clearCookie("auth-token");
+    return res.status(200).json({
+        message: "logged out"
+    });
+
+});
+
+//#region Stateful
 router.post("/login", async (req,res)=>{
 
     try {
@@ -132,8 +141,9 @@ router.post("/change_password", mw.auth(), async (req,res)=>{
         })
     }
 });
+//#endregion Stateful
 
-
+//#region PWL
 function generateOTP() {
  
     // Declare a digits variable
@@ -145,8 +155,6 @@ function generateOTP() {
     }
     return OTP;
 }
-
-
 
 // PASSWORDLESS AUTHENTICATION FOR CONTRACTORS
 router.post("/login_pwl", async (req,res)=>{
@@ -313,15 +321,8 @@ router.post("/change_profile", mw.auth('PWL'), async(req,res)=>{
         })
     }
 });
+//#endregion PWL
 
 
-//LOGOUT APPLICABLE TO BOTH AUTHENTICATION-TYPES
-router.get("/logout", async(req,res)=>{
-    res.clearCookie("auth-token");
-    return res.status(200).json({
-        message: "logged out"
-    });
-
-});
 
 module.exports = router;
