@@ -115,7 +115,7 @@ router.post("/", async(req,res)=>{
         });
 
         //invite of a contractor is successful, therefore an email is sent.
-        const email_data = await email_client.sendHtmlMail(email, {
+        const email_data = email_client.sendHtmlMail(email, {
             Header:"Welcome to the maintenance system!", //--------------------------------------------------------> Do something with this link <----------
             Body:"<p>You have been invited to the maintenance system as a contractor by a user!\rLogin today at: </p> <a href='http://localhost:12345'> Maintenance.com </a>",
             Footer :"If you beleive this was a mistake, I suggest you disregard this email"
