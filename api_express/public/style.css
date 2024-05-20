@@ -247,6 +247,8 @@ main {
           a : Borders on the left and right of items (separating clickable items)
           a.selected : no borders and no border-radius on selected item. 
     */
+
+    margin-bottom:1em;
     .tabs {
         border:2px solid black;
         border-radius:10px;
@@ -337,6 +339,9 @@ main {
     }
     select{
         font-size: 1.25em;
+        max-width: 80vw;
+        overflow: none;
+        text-overflow: ellipsis;
     }
     input{
         width: 100%;
