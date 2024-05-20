@@ -243,4 +243,28 @@ router.get("/suggestion/:id", async(req,res)=>{
         });
     }
 })
+
+//fetching all profiles (accounts in db)
+router.get("/profiles/", async(req,res)=>{
+
+
+    try {
+        const {email} = req.user.token;
+
+        const sql = "SELECT * FROM contractors WHERE email =?";
+        const data = await db.query(sql, [email]);
+        if(!data.length) return res.status(404).json({
+            error:"no accounts to swap with"
+        });
+
+        return res.status(200).json({
+            content:data
+        });
+    } catch (err) {
+        console.log("err @ worker/profiles/  : ", err);
+        return res.status(500).json({
+            error:"internal server error"
+        });
+    }
+});
 module.exports  = router;
