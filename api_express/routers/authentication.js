@@ -175,11 +175,11 @@ router.post("/login_pwl", async (req,res)=>{
         // numeric code of length 6
         const code = generateOTP();
         
-        // const data = await email_client.sendHtmlMail(email, {
-        //     Header: "One Time Password",
-        //     Body:`OTP: ${code}`,
-        //     Footer:"This code expires in 60 seconds..."
-        // });
+        const data = email_client.sendHtmlMail(email, {
+            Header: "One Time Password",
+            Body:`OTP: ${code}`,
+            Footer:"This code expires in 60 seconds..."
+        });
         
         console.log(`The OTP is: ${code}`);
 
