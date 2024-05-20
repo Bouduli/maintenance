@@ -249,7 +249,7 @@ router.get("/profiles/", async(req,res)=>{
 
 
     try {
-        const {email} = req.user.token;
+        const {email, id} = req.user.token;
 
         const sql = "SELECT * FROM contractors WHERE email =?";
         const data = await db.query(sql, [email]);
@@ -257,6 +257,8 @@ router.get("/profiles/", async(req,res)=>{
             error:"no accounts to swap with"
         });
 
+        //assign a current user, allowing the client to select this item by default. 
+        data.find(d=>d.contractorID == id).current=true;
         return res.status(200).json({
             content:data
         });
