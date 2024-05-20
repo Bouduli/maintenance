@@ -76,7 +76,7 @@ block content
                     input#userAdmin(type="checkbox", name="admin" checked=false)
                 input(type="submit", value="create user")
 
-        .modalContainer(x-show="modal")
+        .modalContainer(x-show="modal" x-cloak="")
             .confirmModal(x-show="modal=='deleteUserConfirm'")
                 h2.contentHeader Delete User
                 p.confirmContent Are you sure you want to delete this user?
