@@ -31,3 +31,39 @@ function toggleSidebar() {
     pushable.classList.toggle('pushed')
     document.querySelector('.overlay').classList.toggle('pushed');
 }
+
+//profile change for contractors
+document.querySelector('#profileID').addEventListener('change', swapProfile);
+
+async function swapProfile(ev) {
+    try {
+        console.log(ev.target);
+
+        newID = ev.target.value;
+
+        const body = { newID, isApi: true };
+        console.log(body);
+        const res = await fetch("/auth/change_profile", {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json"
+            }
+
+        });
+
+        console.log(res);
+
+        const data = await res.json();
+        if (res.ok) {
+            console.log("successfully swapped ", data.content);
+            location.reload();
+        }
+        else {
+            console.error("unsuccessful swap: ", data.content);
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
+}

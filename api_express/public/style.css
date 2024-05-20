@@ -66,6 +66,12 @@ header {
     padding: 2%;
     border:1px solid black;
     margin-bottom:10px;
+
+    select{
+        width:220px;
+        overflow: none;
+        text-overflow: ellipsis;
+    }
 }
 .sidebarLinkItem {
     padding: 3%;
