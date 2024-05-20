@@ -33,7 +33,7 @@ function toggleSidebar() {
 }
 
 //profile change for contractors
-document.querySelector('#profileID').addEventListener('change', swapProfile);
+document.querySelector('#profileID')?.addEventListener('change', swapProfile);
 
 async function swapProfile(ev) {
     try {
