@@ -38,24 +38,48 @@ html
                     .sidebarLinkItem
                         span.material-symbols-outlined.icon logout
                         span Logout
-            div.sidebarGroup
-                h2.contentHeader Views
-                a(href="/") 
-                    div.sidebarLinkItem
-                        span.material-symbols-outlined.icon home 
-                        span Index
-                a(href="/user")
-                    div.sidebarLinkItem
-                        span.material-symbols-outlined.icon person
-                        span User
-                a(href="/worker")
-                    div.sidebarLinkItem
-                        span.material-symbols-outlined.icon build
-                        span Worker
-                a(href="/admin") 
-                    div.sidebarLinkItem 
-                        span.material-symbols-outlined.icon shield_person
-                        span Admin
+            if permissions
+                div.sidebarGroup
+                    h2.contentHeader Views
+                        if permissions.user
+                            a(href="/")
+                                div.sidebarLinkItem
+                                    span.material-symbols-outlined.icon home 
+                                    span Index
+                            a(href="/")
+                                .sidebarLinkItem
+                                    span.material-symbols-outlined.icon person
+                                    span User
+                        if permissions.worker 
+                            a(href="/")
+                                .sidebarLinkItem
+                                    span.material-symbols-outlined.icon build
+                                    span Worker
+                        if permissions.admin
+                            a(href="/admin")
+                                div.sidebarLinkItem
+                                    span.material-symbols-outlined.icon shield_person
+                                    span Admin
+                    
+            else 
+                div.sidebarGroup
+                    h2.contentHeader Views
+                    a(href="/") 
+                        div.sidebarLinkItem
+                            span.material-symbols-outlined.icon home 
+                            span Index
+                    a(href="/user")
+                        div.sidebarLinkItem
+                            span.material-symbols-outlined.icon person
+                            span User
+                    a(href="/worker")
+                        div.sidebarLinkItem
+                            span.material-symbols-outlined.icon build
+                            span Worker
+                    a(href="/admin") 
+                        div.sidebarLinkItem 
+                            span.material-symbols-outlined.icon shield_person
+                            span Admin
         div.pushable
             div.overlay 
             header 

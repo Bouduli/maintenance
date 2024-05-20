@@ -11,7 +11,7 @@ block content
             .cardIcon
                 span.material-symbols-outlined home
 
-        if admin
+        if permissions.admin
             .card.purple(@click.prevent="window.location='/admin'")
                 .cardInfo 
                     h2 Administrator view
