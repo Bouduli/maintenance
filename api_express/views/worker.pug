@@ -36,10 +36,6 @@ block content
                         template(x-for="t in filteredTasks;" :key="t.taskID")
                             option(x-bind:value="t.taskID" x-text="`${filterGroup=='tasks'?'Task ': 'Suggestion'} #${t.taskID}`")
 
-            h2.contentHeader 
-                span(x-show="filterGroup=='tasks'") Task 
-                span(x-show="filterGroup=='suggestions'") Suggestion 
-                span Details
             .detailsBody()
                 h2 
                     span(x-show="filterGroup=='tasks'") Task: #
@@ -48,10 +44,10 @@ block content
                 h3
                     b Completed: 
                     span(x-text="task.completed? 'Yes' : 'No' ")
-                hr
-                p 
-                    b Description: 
-                    span(x-text="task.description")
+                hr( style="margin-bottom:1em; margin-top:1em;")
+                .labelContainer(style="width:100%;")
+                    label Description:
+                    textarea(x-bind:value="task.description" rows="7" readonly="") 
                 p 
                     b Address: 
                     span( style="color:#6aa4d8; text-decoration:underline;" x-text="task.house.address" @click="subtab='houseDetails'; house = getHouse(task.houseID);")
@@ -107,8 +103,8 @@ block content
             
             form#taskForm(@submit.prevent="selectedHouse = selectedHouse? selectedHouse : house.houseID? house.houseID : ''; if(await makeSuggestion(selectedHouse, $event.target.description.value)){$event.target.reset(); modal = 'suggestedSuccessmodal';} else modal='somethingWentWrongModal'; ")
                 .labelContainer
-                    label(for="description") Description: 
-                    input#description(type="text", name="description" placeholder="description")
+                    label(for="taskDescription") Description:   
+                    textarea#taskDescription(cols="30" rows="10" name="description" required="" placeholder="Description" x-bind:value="editTask? task.description :''")
                 input(type="hidden", name="houseID" x-bind:value="selectedHouse")
                 input(type="submit", value="Create Suggestion")
                     
