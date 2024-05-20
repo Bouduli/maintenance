@@ -55,21 +55,21 @@ block content
 
         #userForm(x-show="subtab=='form'")
             h2.contentHeader Create Users
-            form(@submit.prevent="tempUserID = await createUser($event.target); if(tempUserID) {subtab='userWrapper'; await data(); user=getUser(tempUserID);} else {modal='somethingWentWrongModal';}")
+            form(@submit.prevent="tempUserID = await createUser($event.target); if(tempUserID) {subtab='userDetails'; await data(); user=await getUser(tempUserID); console.log(user);} else {modal='somethingWentWrongModal';}")
                 .labelContainer
                     label(for="#userName") Name:  
-                    input#userName(type="text", name="name", placeholder="name")
+                    input#userName(type="text", name="name", required="", placeholder="name")
 
                 .labelContainer
                     label(for="userPhone") Phone: 
-                    input#userPhone(type="phone", name="phone", placeholder="telephone")
+                    input#userPhone(type="phone", name="phone", required="", placeholder="telephone")
                 
                 .labelContainer
                     label(for="userEmail") Email: 
-                    input#userEmail(type="email", name="email", placeholder="email")
+                    input#userEmail(type="email", name="email", required="",placeholder="email")
                 .labelContainer
                     label(for="userPassword") Password: 
-                    input#userPassword(type="password", name="password", placeholder="password")
+                    input#userPassword(type="password", name="password", required="", placeholder="password")
                 
                 .labelContainer
                     label(for="userAdmin") Administrator:

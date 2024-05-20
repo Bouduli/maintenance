@@ -24,7 +24,6 @@ async function destroy(type, id) {
         console.error(json);
 
     }
-
 }
 
 async function createUser(target){
@@ -51,6 +50,8 @@ async function createUser(target){
             // window.dispatchEvent(dataChangeEvent);
             console.log("created user: ", json.content);
             target.reset();
+
+            return json.content.id;
         }
         else console.error("unable to create user", json.content);
 
