@@ -110,16 +110,20 @@ block content
                 input(type="submit", value="Create Suggestion")
         
             
-        .modalContainer(x-show="modal" x-cloak="")
+        .modalContainer(x-show="modal" x-cloak="" x-data="{message: ''}")
             .confirmModal(x-show="modal=='toggleCompleteModal'" x-cloak="")
                 h2.contentHeader
                     span(x-show="task.completed") Mark as incomplete
                     span(x-show="!task.completed") Mark as complete 
-                p.confirmContent
+                p.confirmContent(style="margin-top:20px;")
                     span(x-show="!task.completed") Are you sure you want to mark this task as complete
                     span(x-show="task.completed") Are you sure you want to mark this task as not complete
+                div 
+                    .labelContainer
+                        label Notes (optional): 
+                        input(type="text" x-model="message" style="font-size:1.5em;")
                 .buttonBox(style="width:50%; margin-left:auto; margin-right:auto;")
-                    button.confirmButton(@click="modal=false; await markComplete(task.taskID, !(task.completed))") Yes
+                    button.confirmButton(@click="modal=false; await markComplete(task.taskID, !(task.completed), message)") Yes
                     button.cancelButton(@click="modal=false;") Cancel
             .confirmModal(x-show="modal=='suggestedSuccessmodal'" x-cloak="")
                 h2.contentHeader Suggestion

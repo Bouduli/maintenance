@@ -119,13 +119,21 @@ router.put("/task/:id", async (req,res)=>{
         if(!find_data.length) return res.status(404).json({
             error:"no task found with the provided id", id:taskID
         });
-
-        //update only allows a contractor to set completed, true or false.
-        const {completed} = req.body || false;
+        //update allows a contractor to set "completed" to true and false. 
+        // The application updates the "description" with timestamp for "completion". 
+        const {completed, message} = req.body || false;
         const sql_completed = completed? 1 : 0;
 
-        const update_sql = "UPDATE tasks SET completed=? where taskID = ?";
-        const update_data = await db.query(update_sql, [sql_completed, taskID]);
+        //Appending a message to description with timestamp.
+        let updateMessage = `\n`;
+        updateMessage+= completed? '---Marked complete---\n' : '---Marked uncomplete---\n';
+        updateMessage+= `At: ${new Date(Date.now()).toLocaleString()}\n`;
+        updateMessage+= `By: ${req.user.token.email}\n`;
+        updateMessage+= message? `Notes: ${message}\n` : '';
+        updateMessage+= '------';
+        
+        const update_sql = "UPDATE tasks SET completed=?, description=CONCAT(description, ?) where taskID = ?";
+        const update_data = await db.query(update_sql, [sql_completed, updateMessage, taskID]);
 
         // console.log(update_data);
 

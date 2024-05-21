@@ -28,12 +28,14 @@ async function makeSuggestion(houseID, description){
     }
 }
 
-async function markComplete(id, setStatus, target){
+async function markComplete(id, setStatus, message = undefined){
     console.log("taskID: ", id);
     console.log("setStatus: ", setStatus);
 
+
     const body = {
-        completed: setStatus
+        completed: setStatus,
+        message
     };
     
     const res = await fetch(`/worker/task/${id}`, {
