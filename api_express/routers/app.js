@@ -4,15 +4,20 @@ const mw = require("../middleware");
 const db = require("../db");
 
 router.get("/", mw.identity() ,async(req,res)=>{
-    const permissions = {'user':true};
-    if(req.user.token.role=='admin') permissions['admin'] = true;
+    
 
     // console.log("index user: ", req.user);
         
-    if(!req.user) return res.render("login", {title:"login"})
+    if(!req.user) return res.render("login", {title:"login"});
+
     if(req.user.role == 'contractor')
         return res.redirect('/worker');
-    else return res.render('index', {title: 'Maintenance System', permissions});
+
+    //permissions for landing page content. 
+    const permissions = {'user':true};
+    if(req.user.token.role=='admin') permissions['admin'] = true;
+    
+    return res.render('index', {title: 'Maintenance System', permissions});
 });
 router.get("/login", async(req,res)=>{
     res.render("login", {title:"Login"});
